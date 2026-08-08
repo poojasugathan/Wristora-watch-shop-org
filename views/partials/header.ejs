@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title><%= title || "Wristora" %></title>
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap 5 -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+    <!-- Wristora CSS -->
+    <link
+        rel="stylesheet"
+        href="/css/style.css"
+    >
+</head>
+
+<body>
+
+<!-- =====================================================
+     TOP OFFER BAR
+===================================================== -->
+
+<div class="wristora-offer-bar">
+    GET 20% OFF ON YOUR FIRST ORDER. USE CODE WRISTORANEW
+</div>
+
+
+<!-- =====================================================
+     MAIN HEADER
+===================================================== -->
+
+<header class="wristora-header">
+
+    <div class="container-fluid px-4 px-lg-5">
+
+        <div class="wristora-navbar">
+
+            <!-- LOGO -->
+            <a
+                href="/"
+                class="wristora-logo"
+            >
+                Wristora
+            </a>
+
+
+            <!-- NAVIGATION -->
+            <nav class="wristora-nav">
+
+                <a href="/collections">
+                    COLLECTIONS
+                </a>
+
+                <a href="/brands">
+                    BRANDS
+                </a>
+
+                <a href="/new-arrivals">
+                    NEW ARRIVALS
+                </a>
+
+                <a href="/limited-edition">
+                    LIMITED EDITION
+                </a>
+
+            </nav>
+
+
+            <!-- RIGHT SIDE -->
+            <div class="wristora-actions">
+
+                <!-- SEARCH -->
+                <form
+                    action="/products"
+                    method="GET"
+                    class="wristora-search"
+                >
+
+                    <input
+                        type="text"
+                        name="search"
+                        placeholder="Search Timepieces..."
+                        aria-label="Search Timepieces"
+                    >
+
+                    <button type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+
+                </form>
+
+
+                <!-- WISHLIST -->
+                <a
+                    href="/wishlist"
+                    class="wristora-icon-link"
+                    aria-label="Wishlist"
+                >
+                    <i class="bi bi-heart"></i>
+                </a>
+
+
+                <!-- CART -->
+                <a
+                    href="/cart"
+                    class="wristora-icon-link wristora-cart-icon"
+                    aria-label="Cart"
+                >
+                    <i class="bi bi-cart3"></i>
+
+                    <span class="wristora-cart-count">
+                        0
+                    </span>
+                </a>
+
+
+                <!-- ACCOUNT -->
+                <div class="dropdown">
+
+                    <button
+                        class="wristora-account-btn dropdown-toggle"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        aria-label="Account"
+                    >
+                        <i class="bi bi-person"></i>
+                    </button>
+
+
+                    <ul class="dropdown-menu dropdown-menu-end wristora-account-menu">
+
+                        <% if (typeof user !== "undefined" && user) { %>
+
+                            <li>
+                                <a
+                                    class="dropdown-item"
+                                    href="/profile"
+                                >
+                                    <i class="bi bi-person me-2"></i>
+                                    Profile
+                                </a>
+                            </li>
+
+                            <li>
+                                <a
+                                    class="dropdown-item"
+                                    href="/orders"
+                                >
+                                    <i class="bi bi-box-seam me-2"></i>
+                                    My Orders
+                                </a>
+                            </li>
+
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+
+                            <li>
+                                <form
+                                    action="/auth/logout"
+                                    method="POST"
+                                >
+                                    <button
+                                        type="submit"
+                                        class="dropdown-item"
+                                    >
+                                        <i class="bi bi-box-arrow-right me-2"></i>
+                                        Logout
+                                    </button>
+                                </form>
+                            </li>
+
+                        <% } else { %>
+
+                            <li>
+                                <a
+                                    class="dropdown-item"
+                                    href="/auth/login"
+                                >
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>
+                                    Login
+                                </a>
+                            </li>
+
+                            <li>
+                                <a
+                                    class="dropdown-item"
+                                    href="/auth/signup"
+                                >
+                                    <i class="bi bi-person-plus me-2"></i>
+                                    Signup
+                                </a>
+                            </li>
+
+                        <% } %>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</header>
