@@ -1,0 +1,689 @@
+/* =========================================================
+   WRISTORA HOME PAGE
+   ========================================================= */
+
+.home-page {
+    width: 100%;
+    background: #ffffff;
+    color: #292929;
+    font-family: "Inter", Arial, sans-serif;
+}
+
+
+/* =========================================================
+   HERO SECTION
+   ========================================================= */
+
+.hero-section {
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto;
+
+    padding: 55px 30px 70px;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 45px;
+}
+
+
+.hero-content {
+    padding-right: 15px;
+}
+
+
+.hero-content h1 {
+    margin: 0;
+
+    font-family: "EB Garamond", Georgia, serif;
+
+    font-size: 62px;
+    font-weight: 400;
+    line-height: 0.98;
+
+    color: #2b2b2b;
+
+    letter-spacing: -1.5px;
+}
+
+
+.hero-content h1 span {
+    color: #c69a4b;
+    font-style: italic;
+}
+
+
+.hero-description {
+    max-width: 430px;
+
+    margin-top: 22px;
+    margin-bottom: 25px;
+
+    font-size: 13px;
+    line-height: 1.65;
+
+    color: #414141;
+}
+
+
+.primary-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 100px;
+    height: 36px;
+
+    background: #2d2d2d;
+    color: #ffffff;
+
+    text-decoration: none;
+
+    font-size: 9px;
+    font-weight: 600;
+
+    letter-spacing: 1.1px;
+
+    transition: 0.2s ease;
+}
+
+
+.primary-btn:hover {
+    background: #111111;
+}
+
+
+/* =========================================================
+   HERO IMAGE
+   ========================================================= */
+
+.hero-image-wrapper {
+    width: 100%;
+    height: 430px;
+
+    overflow: hidden;
+
+    background: #111111;
+}
+
+
+.hero-image {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+}
+
+
+/* =========================================================
+   HERO STATS
+   ========================================================= */
+
+.hero-stats {
+    margin-top: 32px;
+
+    padding-top: 17px;
+
+    border-top: 1px solid #999999;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 65px;
+}
+
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.stat-item strong {
+    font-family: "EB Garamond", Georgia, serif;
+
+    font-size: 17px;
+    font-weight: 500;
+
+    color: #333333;
+}
+
+
+.stat-item span {
+    margin-top: -1px;
+
+    font-size: 7px;
+
+    letter-spacing: 0.8px;
+
+    color: #777777;
+}
+
+
+/* =========================================================
+   GENERAL PRODUCT SECTION
+   ========================================================= */
+
+.products-section {
+    max-width: 1180px;
+
+    margin: 0 auto;
+
+    padding: 0 30px 75px;
+}
+
+
+.section-title {
+    margin: 0 0 28px;
+
+    text-align: center;
+
+    font-family: "EB Garamond", Georgia, serif;
+
+    font-size: 28px;
+    font-weight: 400;
+
+    color: #303030;
+}
+
+
+/* =========================================================
+   PRODUCT GRID
+   ========================================================= */
+
+.product-grid {
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 16px;
+}
+
+
+.product-card {
+    min-width: 0;
+}
+
+
+.product-image-box {
+    position: relative;
+
+    width: 100%;
+    height: 180px;
+
+    background: #f2f0e9;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+}
+
+
+.product-image-box.white-bg {
+    background: #ffffff;
+    border: 1px solid #f3f3f3;
+}
+
+
+.product-image-box img {
+    width: 88%;
+    height: 88%;
+
+    object-fit: contain;
+
+    display: block;
+}
+
+
+/* =========================================================
+   PRODUCT BADGE
+   ========================================================= */
+
+.product-badge {
+    position: absolute;
+
+    top: 9px;
+    left: 9px;
+
+    padding: 4px 7px;
+
+    background: #bda05d;
+    color: white;
+
+    font-size: 7px;
+    font-weight: 600;
+
+    letter-spacing: 0.5px;
+
+    z-index: 2;
+}
+
+
+.product-badge.rare {
+    left: auto;
+    right: 9px;
+
+    background: #222222;
+}
+
+
+/* =========================================================
+   PRODUCT DETAILS
+   ========================================================= */
+
+.product-card h3 {
+    margin: 10px 0 1px;
+
+    font-family: "EB Garamond", Georgia, serif;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    line-height: 1.2;
+
+    color: #292929;
+}
+
+
+.product-category {
+    margin: 0;
+
+    font-family: "EB Garamond", Georgia, serif;
+
+    font-size: 10px;
+    font-style: italic;
+
+    color: #777777;
+}
+
+
+.rating {
+    margin-top: 3px;
+
+    color: #c39a4b;
+
+    font-size: 8px;
+    letter-spacing: 0.5px;
+}
+
+
+.rating span {
+    color: #666666;
+
+    font-size: 7px;
+
+    margin-left: 3px;
+}
+
+
+.product-price {
+    margin: 4px 0 0;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    color: #222222;
+}
+
+
+.product-price del {
+    margin-left: 7px;
+
+    color: #a5a5a5;
+
+    font-size: 8px;
+
+    font-weight: 400;
+}
+
+
+/* =========================================================
+   SECTION BUTTON
+   ========================================================= */
+
+.section-button-wrapper {
+    width: 100%;
+
+    margin-top: 24px;
+
+    display: flex;
+    justify-content: center;
+}
+
+
+.outline-btn {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 130px;
+    height: 30px;
+
+    padding: 0 18px;
+
+    border: 1px solid #dddddd;
+
+    background: #ffffff;
+
+    color: #333333;
+
+    text-decoration: none;
+
+    font-size: 7px;
+    font-weight: 600;
+
+    letter-spacing: 0.8px;
+
+    transition: 0.2s ease;
+}
+
+
+.outline-btn:hover {
+    background: #2d2d2d;
+    color: #ffffff;
+    border-color: #2d2d2d;
+}
+
+
+/* =========================================================
+   NEW ARRIVALS
+   ========================================================= */
+
+.arrivals-section {
+    padding-top: 0;
+}
+
+
+/* =========================================================
+   SHOP BY BRAND
+   ========================================================= */
+
+.brand-section {
+    max-width: 1180px;
+
+    margin: 0 auto;
+
+    padding: 5px 30px 65px;
+}
+
+
+.brand-grid {
+    display: grid;
+
+    grid-template-columns: repeat(5, 1fr);
+
+    gap: 22px;
+
+    max-width: 870px;
+
+    margin: 0 auto;
+}
+
+
+.brand-card {
+    height: 92px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    text-decoration: none;
+}
+
+
+.brand-card img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+
+    transition: transform 0.25s ease;
+}
+
+
+.brand-card:hover img {
+    transform: scale(1.04);
+}
+
+
+/* =========================================================
+   COLLECTOR VOICES
+   ========================================================= */
+
+.testimonials-section {
+    max-width: 1180px;
+
+    margin: 0 auto;
+
+    padding: 0 30px 110px;
+}
+
+
+.testimonial-title {
+    margin: 0 0 27px;
+
+    font-family: "EB Garamond", Georgia, serif;
+
+    font-size: 28px;
+    font-weight: 400;
+
+    color: #303030;
+}
+
+
+.testimonial-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 25px;
+}
+
+
+.testimonial-card {
+    min-height: 140px;
+
+    padding: 20px;
+
+    border: 1px solid #8c8c8c;
+
+    background: #ffffff;
+}
+
+
+.testimonial-rating {
+    color: #c69a4b;
+
+    font-size: 8px;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 12px;
+}
+
+
+.collector-name {
+    font-family: "EB Garamond", Georgia, serif;
+
+    font-size: 10px;
+    font-weight: 600;
+
+    color: #292929;
+}
+
+
+.collector-name span {
+    color: #1c9d50;
+
+    font-size: 7px;
+
+    margin-left: 3px;
+}
+
+
+.testimonial-card p {
+    margin: 10px 0 0;
+
+    font-family: "EB Garamond", Georgia, serif;
+
+    font-size: 10px;
+    font-style: italic;
+
+    line-height: 1.45;
+
+    color: #363636;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .hero-section {
+        grid-template-columns: 1fr;
+
+        gap: 35px;
+
+        padding-top: 35px;
+    }
+
+
+    .hero-content {
+        padding-right: 0;
+    }
+
+
+    .hero-content h1 {
+        font-size: 52px;
+    }
+
+
+    .hero-image-wrapper {
+        height: 400px;
+    }
+
+
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+
+        row-gap: 35px;
+    }
+
+
+    .brand-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+
+    .testimonial-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .hero-section {
+        padding: 30px 18px 50px;
+    }
+
+
+    .hero-content h1 {
+        font-size: 43px;
+
+        letter-spacing: -0.8px;
+    }
+
+
+    .hero-description {
+        font-size: 12px;
+    }
+
+
+    .hero-image-wrapper {
+        height: 300px;
+    }
+
+
+    .hero-stats {
+        gap: 35px;
+    }
+
+
+    .stat-item strong {
+        font-size: 15px;
+    }
+
+
+    .products-section,
+    .brand-section,
+    .testimonials-section {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+
+    .section-title,
+    .testimonial-title {
+        font-size: 24px;
+    }
+
+
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 14px;
+    }
+
+
+    .product-image-box {
+        height: 145px;
+    }
+
+
+    .product-card h3 {
+        font-size: 11px;
+    }
+
+
+    .product-category {
+        font-size: 9px;
+    }
+
+
+    .brand-grid {
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 12px;
+    }
+
+
+    .brand-card {
+        height: 85px;
+    }
+
+
+    .testimonial-card {
+        padding: 16px;
+    }
+
+}

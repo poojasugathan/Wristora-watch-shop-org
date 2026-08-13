@@ -1,0 +1,258 @@
+<%- include("../partials/header", { title: "My Profile", user: user }) %>
+<link rel="stylesheet" href="/css/profile.css">
+
+<main class="profile-page">
+
+    <div class="profile-container">
+
+        <!-- ==========================================
+             PROFILE SIDEBAR
+             KEEPING SIDEBAR AS REQUESTED
+        =========================================== -->
+
+        <aside class="profile-sidebar">
+
+            <nav class="profile-sidebar-menu">
+
+                <a href="/profile" class="profile-sidebar-link active">
+                    <i class="bi bi-person"></i>
+                    <span>Profile</span>
+                </a>
+
+                <a href="/orders" class="profile-sidebar-link">
+                    <i class="bi bi-box-seam"></i>
+                    <span>My Orders</span>
+                </a>
+
+                <a href="/wishlist" class="profile-sidebar-link">
+                    <i class="bi bi-heart"></i>
+                    <span>Wishlist</span>
+                </a>
+
+                <a href="/addresses" class="profile-sidebar-link">
+                    <i class="bi bi-geo-alt"></i>
+                    <span>Addresses</span>
+                </a>
+
+                <a href="/wallet" class="profile-sidebar-link">
+                    <i class="bi bi-wallet2"></i>
+                    <span>Wallet</span>
+                </a>
+
+                <a href="/coupons" class="profile-sidebar-link">
+                    <i class="bi bi-tag"></i>
+                    <span>My Coupons</span>
+                </a>
+
+
+            </nav>
+
+            <!-- LOGOUT -->
+
+            <form action="/auth/logout" method="POST" class="profile-logout-form">
+
+                <button type="submit" class="profile-logout">
+                    LOGOUT
+                </button>
+
+            </form>
+
+        </aside>
+
+
+        <!-- ==========================================
+             PROFILE MAIN CONTENT
+        =========================================== -->
+
+        <section class="profile-content">
+            <% if (profileUpdated) { %>
+
+           <div class="profile-success-message">
+           <i class="bi bi-check-circle"></i>
+           <span>Profile updated successfully.</span>
+           </div>
+
+           <% } %>
+
+            <!-- EDIT BUTTON -->
+
+            <a href="/profile/edit" class="profile-edit-btn">
+                EDIT
+            </a>
+
+
+            <!-- PROFILE TITLE -->
+
+            <div class="profile-title-section">
+
+                <p class="profile-label">
+                    MY PROFILE
+                </p>
+
+                <h1 class="profile-name">
+                    <%= user.firstName %> <%= user.lastName %>
+                </h1>
+
+                <p class="profile-member-since">
+                    MEMBER SINCE:
+                    <span>
+                        <%= memberSince %>
+                    </span>
+                </p>
+
+            </div>
+
+
+            <!-- ==========================================
+                 PROFILE IMAGE
+            =========================================== -->
+
+            <div class="profile-image-section">
+
+                <div class="profile-image-wrapper">
+
+                    <% if (user.profileImage && user.profileImage.url) { %>
+
+                        <img
+                            src="<%= user.profileImage.url %>"
+                            alt="Profile Image"
+                            class="profile-image"
+                        >
+
+                    <% } else { %>
+
+                        <div class="profile-default-image">
+                            <i class="bi bi-person"></i>
+                        </div>
+
+                    <% } %>
+
+                </div>
+
+                <div class="profile-image-info">
+
+                    <h2>
+                        <%= user.firstName %> <%= user.lastName %>
+                    </h2>
+
+                    <p>
+                        Wristora Member
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==========================================
+                 PERSONAL INFORMATION
+            =========================================== -->
+
+            <div class="profile-section">
+
+                <h2 class="profile-section-title">
+                    PERSONAL INFORMATION
+                </h2>
+
+
+                <div class="profile-details">
+
+
+                    <!-- FIRST NAME -->
+
+                    <div class="profile-detail">
+
+                        <p class="profile-detail-label">
+                            FIRST NAME
+                        </p>
+
+                        <p class="profile-detail-value">
+                            <%= user.firstName || "Not provided" %>
+                        </p>
+
+                    </div>
+
+
+                    <!-- LAST NAME -->
+
+                    <div class="profile-detail">
+
+                        <p class="profile-detail-label">
+                            LAST NAME
+                        </p>
+
+                        <p class="profile-detail-value">
+                            <%= user.lastName || "Not provided" %>
+                        </p>
+
+                    </div>
+
+
+                    <!-- EMAIL -->
+
+                    <div class="profile-detail">
+
+                        <p class="profile-detail-label">
+                            EMAIL
+                        </p>
+
+                        <p class="profile-detail-value">
+                            <%= user.email || "Not provided" %>
+                        </p>
+
+                    </div>
+
+
+                    <!-- PHONE -->
+
+                    <div class="profile-detail">
+
+                        <p class="profile-detail-label">
+                            PHONE
+                        </p>
+
+                        <p class="profile-detail-value">
+                            <%= user.phone || "Not provided" %>
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==========================================
+                 REFERRAL
+            =========================================== -->
+
+            <div class="profile-referral-section">
+
+                <div class="profile-referral-content">
+
+                    <p class="profile-detail-label">
+                        REFERRAL CODE
+                    </p>
+
+                    <p class="profile-referral-code">
+                        <%= user.referralCode || "Not available" %>
+                    </p>
+
+                </div>
+
+
+                <a href="/referrals" class="referral-link">
+                    VIEW REFERRAL DETAILS
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+
+<%- include("../partials/footer2") %>

@@ -24,7 +24,8 @@ const userSchema = new mongoose.Schema(
 
         phone: {
             type: String,
-            required: true,
+            required: false,
+            default: "",
             trim: true
         },
 
@@ -51,7 +52,9 @@ const userSchema = new mongoose.Schema(
 
         googleId: {
             type: String,
-            default: null
+            unique: true,
+            sparse: true
+    
         },
 
         isBlocked: {

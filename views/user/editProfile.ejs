@@ -1,0 +1,722 @@
+<%- include("../partials/header", { title: "Edit Profile", user: user }) %>
+
+<link rel="stylesheet" href="/css/profile.css">
+
+
+<main class="account-settings-page">
+
+    <div class="account-settings-container">
+
+
+        <!-- =====================================================
+             SIDEBAR
+        ====================================================== -->
+
+        <aside class="account-settings-sidebar">
+
+            <nav class="account-settings-menu">
+
+                <a href="/profile" class="account-settings-link active">
+                    <i class="bi bi-person"></i>
+                    <span>Profile</span>
+                </a>
+
+                <a href="/orders" class="account-settings-link">
+                    <i class="bi bi-box-seam"></i>
+                    <span>My Orders</span>
+                </a>
+
+                <a href="/wishlist" class="account-settings-link">
+                    <i class="bi bi-heart"></i>
+                    <span>Wishlist</span>
+                </a>
+
+                <a href="/addresses" class="account-settings-link">
+                    <i class="bi bi-geo-alt"></i>
+                    <span>Addresses</span>
+                </a>
+
+                <a href="/wallet" class="account-settings-link">
+                    <i class="bi bi-wallet2"></i>
+                    <span>Wallet</span>
+                </a>
+
+                <a href="/coupons" class="account-settings-link">
+                    <i class="bi bi-tag"></i>
+                    <span>My Coupons</span>
+                </a>
+
+            </nav>
+
+
+            <!-- LOGOUT -->
+
+            <form
+                action="/auth/logout"
+                method="POST"
+                class="account-settings-logout-form"
+            >
+
+                <button
+                    type="submit"
+                    class="account-settings-logout"
+                >
+                    LOGOUT
+                </button>
+
+            </form>
+
+        </aside>
+
+
+
+        <!-- =====================================================
+             MAIN CONTENT
+        ====================================================== -->
+
+        <section class="account-settings-content">
+
+
+            <!-- PAGE HEADING -->
+
+            <div class="account-settings-heading">
+
+                <h1>
+                    Edit profile
+                </h1>
+
+                <p>
+                    Manage your personal information and account details.
+                </p>
+
+            </div>
+
+
+
+            <!-- ERROR MESSAGE -->
+
+            <% if (errorMessage) { %>
+
+                <div class="account-settings-error">
+
+                    <i class="bi bi-exclamation-circle"></i>
+
+                    <span>
+                        <%= errorMessage %>
+                    </span>
+
+                </div>
+
+            <% } %>
+
+
+
+            <!-- =================================================
+                 PERSONAL DETAILS CARD
+            ================================================== -->
+
+            <div class="account-settings-card">
+
+
+                <!-- CARD HEADER -->
+
+                <div class="account-settings-card-header">
+
+                    <h2>
+                        Personal Details
+                    </h2>
+
+                    <button
+                        type="button"
+                        class="account-settings-edit-btn"
+                        id="personalEditBtn"
+                        aria-label="Edit personal details"
+                    >
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     PROFILE PHOTO
+                ================================================== -->
+
+                <div class="edit-profile-photo-section">
+
+                    <div class="edit-profile-photo-wrapper">
+
+                        <% if (user.profileImage && user.profileImage.url) { %>
+
+                            <img
+                                src="<%= user.profileImage.url %>"
+                                alt="Profile Image"
+                                class="edit-profile-photo"
+                                id="profilePreview"
+                            >
+
+                        <% } else { %>
+
+                            <div
+                                class="edit-profile-default-photo"
+                                id="profilePreview"
+                            >
+                                <i class="bi bi-person"></i>
+                            </div>
+
+                        <% } %>
+
+
+                        <!-- PHOTO EDIT BUTTON -->
+
+                        <button
+                            type="button"
+                            class="edit-profile-photo-btn"
+                            id="photoEditBtn"
+                            aria-label="Edit profile photo"
+                        >
+                            <i class="bi bi-camera"></i>
+                        </button>
+
+                    </div>
+
+
+                    <div class="edit-profile-photo-info">
+
+                        <h3>
+                            <%= user.firstName %> <%= user.lastName %>
+                        </h3>
+
+                        <p>
+                            Wristora Member
+                        </p>
+
+                        <input
+                            type="file"
+                            id="profilePhotoInput"
+                            name="profileImage"
+                            accept="image/*"
+                            hidden
+                        >
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     PERSONAL DETAILS FORM
+                ================================================== -->
+
+                <form
+                    action="/profile/edit"
+                    method="POST"
+                    id="personalForm"
+                >
+
+                    <div class="account-settings-details">
+
+
+                        <!-- FIRST NAME -->
+
+                        <div class="account-settings-field">
+
+                            <label for="firstName">
+                                FIRST NAME
+                            </label>
+
+                            <input
+                                type="text"
+                                id="firstName"
+                                name="firstName"
+                                value="<%= user.firstName || '' %>"
+                                maxlength="30"
+                                autocomplete="given-name"
+                                readonly
+                                class="profile-readonly"
+                                required
+                            >
+
+                        </div>
+
+
+
+                        <!-- LAST NAME -->
+
+                        <div class="account-settings-field">
+
+                            <label for="lastName">
+                                LAST NAME
+                            </label>
+
+                            <input
+                                type="text"
+                                id="lastName"
+                                name="lastName"
+                                value="<%= user.lastName || '' %>"
+                                maxlength="30"
+                                autocomplete="family-name"
+                                readonly
+                                class="profile-readonly"
+                                required
+                            >
+
+                        </div>
+
+
+
+                        <!-- PHONE -->
+
+                        <div class="account-settings-field">
+
+                            <label for="phone">
+                                PHONE NUMBER
+                            </label>
+
+                            <input
+                                type="tel"
+                                id="phone"
+                                name="phone"
+                                value="<%= user.phone || '' %>"
+                                maxlength="15"
+                                autocomplete="tel"
+                                placeholder="+91 9876543210"
+                                readonly
+                                class="profile-readonly"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- PERSONAL ACTIONS -->
+
+                    <div
+                        class="account-settings-section-actions"
+                        id="personalActions"
+                        style="display: none;"
+                    >
+
+                        <button
+                            type="button"
+                            class="account-settings-cancel"
+                            id="personalCancelBtn"
+                        >
+                            CANCEL
+                        </button>
+
+                        <button
+                            type="submit"
+                            class="account-settings-save"
+                        >
+                            SAVE CHANGES
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 EMAIL & PASSWORD CARD
+            ================================================== -->
+
+            <div class="account-settings-card">
+
+
+                <!-- CARD HEADER -->
+
+                <div class="account-settings-card-header">
+
+                    <h2>
+                        Email &amp; Password
+                    </h2>
+
+                    <button
+                        type="button"
+                        class="account-settings-edit-btn"
+                        id="emailEditBtn"
+                        aria-label="Edit email and password"
+                    >
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     EMAIL & PASSWORD FORM
+                ================================================== -->
+
+                <form
+                    action="/profile/edit/email"
+                    method="POST"
+                    id="emailForm"
+                >
+
+                    <div class="account-settings-security">
+
+
+                        <!-- EMAIL -->
+
+                        <div class="account-settings-security-item">
+
+                            <label for="email">
+                                EMAIL ADDRESS
+                            </label>
+
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                value="<%= user.email || '' %>"
+                                readonly
+                                class="profile-readonly"
+                                required
+                            >
+
+                        </div>
+
+
+
+                        <!-- PASSWORD -->
+
+                        <div class="account-settings-security-item">
+
+                            <label>
+                                PASSWORD
+                            </label>
+
+                            <div class="account-settings-password">
+
+                                <span class="password-dots">
+                                    ••••••••••••
+                                </span>
+
+                                <button
+                                    type="button"
+                                    class="change-password-btn"
+                                    disabled
+                                >
+                                    CHANGE PASSWORD
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- EMAIL ACTIONS -->
+
+                    <div
+                        class="account-settings-section-actions"
+                        id="emailActions"
+                        style="display: none;"
+                    >
+
+                        <button
+                            type="button"
+                            class="account-settings-cancel"
+                            id="emailCancelBtn"
+                        >
+                            CANCEL
+                        </button>
+
+                        <button
+                            type="submit"
+                            class="account-settings-save"
+                        >
+                            SAVE CHANGES
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+
+            <!-- BACK TO PROFILE -->
+
+            <div class="account-settings-bottom">
+
+                <a
+                    href="/profile"
+                    class="account-settings-back"
+                >
+                    ← BACK TO PROFILE
+                </a>
+
+            </div>
+
+
+        </section>
+
+    </div>
+
+</main>
+
+
+
+<!-- =====================================================
+     EDIT PROFILE JAVASCRIPT
+====================================================== -->
+
+<script>
+
+    // =====================================================
+    // PERSONAL DETAILS
+    // =====================================================
+
+    const personalEditBtn =
+        document.getElementById("personalEditBtn");
+
+    const personalCancelBtn =
+        document.getElementById("personalCancelBtn");
+
+    const personalActions =
+        document.getElementById("personalActions");
+
+    const firstNameInput =
+        document.getElementById("firstName");
+
+    const lastNameInput =
+        document.getElementById("lastName");
+
+    const phoneInput =
+        document.getElementById("phone");
+
+
+    const originalFirstName =
+        firstNameInput.value;
+
+    const originalLastName =
+        lastNameInput.value;
+
+    const originalPhone =
+        phoneInput.value;
+
+
+
+    // =====================================================
+    // ENABLE PERSONAL EDITING
+    // =====================================================
+
+    personalEditBtn.addEventListener("click", function () {
+
+        firstNameInput.removeAttribute("readonly");
+
+        lastNameInput.removeAttribute("readonly");
+
+        phoneInput.removeAttribute("readonly");
+
+
+        firstNameInput.classList.remove("profile-readonly");
+
+        lastNameInput.classList.remove("profile-readonly");
+
+        phoneInput.classList.remove("profile-readonly");
+
+
+        personalActions.style.display = "flex";
+
+        personalEditBtn.style.display = "none";
+
+
+        firstNameInput.focus();
+
+    });
+
+
+
+    // =====================================================
+    // CANCEL PERSONAL EDITING
+    // =====================================================
+
+    personalCancelBtn.addEventListener("click", function () {
+
+        firstNameInput.value = originalFirstName;
+
+        lastNameInput.value = originalLastName;
+
+        phoneInput.value = originalPhone;
+
+
+        firstNameInput.setAttribute("readonly", true);
+
+        lastNameInput.setAttribute("readonly", true);
+
+        phoneInput.setAttribute("readonly", true);
+
+
+        firstNameInput.classList.add("profile-readonly");
+
+        lastNameInput.classList.add("profile-readonly");
+
+        phoneInput.classList.add("profile-readonly");
+
+
+        personalActions.style.display = "none";
+
+        personalEditBtn.style.display = "block";
+
+    });
+
+
+
+    // =====================================================
+    // EMAIL
+    // =====================================================
+
+    const emailEditBtn =
+        document.getElementById("emailEditBtn");
+
+    const emailCancelBtn =
+        document.getElementById("emailCancelBtn");
+
+    const emailActions =
+        document.getElementById("emailActions");
+
+    const emailInput =
+        document.getElementById("email");
+
+
+    const originalEmail =
+        emailInput.value;
+
+
+
+    // =====================================================
+    // ENABLE EMAIL EDITING
+    // =====================================================
+
+    emailEditBtn.addEventListener("click", function () {
+
+        emailInput.removeAttribute("readonly");
+
+        emailInput.classList.remove("profile-readonly");
+
+
+        emailActions.style.display = "flex";
+
+        emailEditBtn.style.display = "none";
+
+
+        emailInput.focus();
+
+    });
+
+
+
+    // =====================================================
+    // CANCEL EMAIL EDITING
+    // =====================================================
+
+    emailCancelBtn.addEventListener("click", function () {
+
+        emailInput.value = originalEmail;
+
+        emailInput.setAttribute("readonly", true);
+
+        emailInput.classList.add("profile-readonly");
+
+
+        emailActions.style.display = "none";
+
+        emailEditBtn.style.display = "block";
+
+    });
+
+
+
+    // =====================================================
+    // PROFILE PHOTO
+    // =====================================================
+
+    const photoEditBtn =
+        document.getElementById("photoEditBtn");
+
+    const profilePhotoInput =
+        document.getElementById("profilePhotoInput");
+
+    const profilePreview =
+        document.getElementById("profilePreview");
+
+
+    photoEditBtn.addEventListener("click", function () {
+
+        profilePhotoInput.click();
+
+    });
+
+
+    profilePhotoInput.addEventListener("change", function (event) {
+
+        const file = event.target.files[0];
+
+        if (!file) {
+            return;
+        }
+
+
+        // Only allow image files
+
+        if (!file.type.startsWith("image/")) {
+
+            alert("Please select a valid image.");
+
+            profilePhotoInput.value = "";
+
+            return;
+
+        }
+
+
+        const reader = new FileReader();
+
+
+        reader.onload = function (e) {
+
+            if (profilePreview.tagName === "IMG") {
+
+                profilePreview.src = e.target.result;
+
+            } else {
+
+                const img =
+                    document.createElement("img");
+
+                img.src = e.target.result;
+
+                img.alt = "Profile Image";
+
+                img.className = "edit-profile-photo";
+
+                profilePreview.replaceWith(img);
+
+            }
+
+        };
+
+
+        reader.readAsDataURL(file);
+
+    });
+
+</script>
+
+
+
+<%- include("../partials/footer2") %>

@@ -1,24 +1,469 @@
 <%- include("../partials/header") %>
 
-<main class="container py-5">
+<link rel="stylesheet" href="/css/home.css">
 
-    <div class="text-center">
+<main class="home-page">
 
-        <h1
-            style="
-                font-family: 'Cormorant Garamond', Georgia, serif;
-                font-size: 64px;
-            "
-        >
-            Wristora
-        </h1>
+    <!-- ================= HERO SECTION ================= -->
+    <section class="hero-section">
 
-        <p class="text-secondary">
-            Your premium watch shopping destination.
-        </p>
+        <div class="hero-content">
 
-    </div>
+            <h1>
+                Timeless<br>
+                <span>Masterpieces</span> for<br>
+                the Elite.
+            </h1>
+
+            <p class="hero-description">
+                Experience the zenith of horology. Explore our
+                curated selection of pre-owned and vintage icons
+                from the world's most prestigious maisons.
+            </p>
+
+            <a href="/products" class="primary-btn">
+                SHOP NOW
+            </a>
+
+            <div class="hero-stats">
+
+                <div class="stat-item">
+                    <strong>450+</strong>
+                    <span>PIECES SOLD</span>
+                </div>
+
+                <div class="stat-item">
+                    <strong>120+</strong>
+                    <span>WATCHMAKERS</span>
+                </div>
+
+                <div class="stat-item">
+                    <strong>98%</strong>
+                    <span>CLIENT TRUST</span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="hero-image-wrapper">
+            <img
+                src="/images/hero-watch.jpg"
+                alt="Luxury Wristora Watch"
+                class="hero-image"
+            >
+        </div>
+
+    </section>
+
+
+    <!-- ================= NEW ACQUISITIONS ================= -->
+    <section class="products-section">
+
+        <h2 class="section-title">
+            NEW ACQUISITIONS
+        </h2>
+
+        <div class="product-grid">
+
+            <!-- Product 1 -->
+            <div class="product-card">
+
+                <div class="product-image-box">
+
+                    <img
+                        src="/images/rolex-daytona.jpg"
+                        alt="Rolex Cosmograph Daytona"
+                    >
+
+                </div>
+
+                <h3>Rolex Cosmograph Daytona</h3>
+
+                <p class="product-category">
+                    Yellow Gold
+                </p>
+
+                <div class="rating">
+                    ★★★★★
+                    <span>5.0/5</span>
+                </div>
+
+                <p class="product-price">
+                    ₹32,400
+                </p>
+
+            </div>
+
+
+            <!-- Product 2 -->
+            <div class="product-card">
+
+                <div class="product-image-box">
+
+                    <span class="product-badge">
+                        RESERVED
+                    </span>
+
+                    <img
+                        src="/images/patek-nautilus.jpg"
+                        alt="Patek Philippe Nautilus"
+                    >
+
+                </div>
+
+                <h3>Patek Philippe Nautilus</h3>
+
+                <p class="product-category">
+                    5711A
+                </p>
+
+                <div class="rating">
+                    ★★★★★
+                    <span>4.8/5</span>
+                </div>
+
+                <p class="product-price">
+                    ₹98,000
+                </p>
+
+            </div>
+
+
+            <!-- Product 3 -->
+            <div class="product-card">
+
+                <div class="product-image-box">
+
+                    <img
+                        src="/images/audemars-royal-oak.jpg"
+                        alt="Audemars Piguet Royal Oak"
+                    >
+
+                </div>
+
+                <h3>Audemars Piguet Royal Oak</h3>
+
+                <p class="product-category">
+                    15500ST
+                </p>
+
+                <div class="rating">
+                    ★★★★★
+                    <span>5.0/5</span>
+                </div>
+
+                <p class="product-price">
+                    ₹45,500
+                </p>
+
+            </div>
+
+
+            <!-- Product 4 -->
+            <div class="product-card">
+
+                <div class="product-image-box">
+
+                    <span class="product-badge rare">
+                        -10% RARE
+                    </span>
+
+                    <img
+                        src="/images/vacheron-222.jpg"
+                        alt="Vacheron Constantin 222"
+                    >
+
+                </div>
+
+                <h3>Vacheron Constantin 222</h3>
+
+                <p class="product-category">
+                    42042
+                </p>
+
+                <div class="rating">
+                    ★★★★★
+                    <span>4.9/5</span>
+                </div>
+
+                <p class="product-price">
+                    ₹72,000
+                    <del>₹80,000</del>
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="section-button-wrapper">
+
+            <a href="/products" class="outline-btn">
+                VIEW ENTIRE ARCHIVE
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= NEW ARRIVALS ================= -->
+    <section class="products-section arrivals-section">
+
+        <h2 class="section-title">
+            NEW ARRIVALS
+        </h2>
+
+        <div class="product-grid">
+
+            <!-- Product 1 -->
+            <div class="product-card">
+
+                <div class="product-image-box white-bg">
+
+                    <img
+                        src="/images/omega-speedmaster.jpg"
+                        alt="Omega Speedmaster Moonwatch"
+                    >
+
+                </div>
+
+                <h3>
+                    Omega Speedmaster 'Moonwatch'
+                </h3>
+
+                <p class="product-category">
+                    Professional Series
+                </p>
+
+                <p class="product-price">
+                    ₹7,200
+                </p>
+
+            </div>
+
+
+            <!-- Product 2 -->
+            <div class="product-card">
+
+                <div class="product-image-box white-bg">
+
+                    <img
+                        src="/images/cartier-tank.jpg"
+                        alt="Cartier Tank Louis"
+                    >
+
+                </div>
+
+                <h3>
+                    Cartier Tank Louis
+                </h3>
+
+                <p class="product-category">
+                    Yellow Gold
+                </p>
+
+                <p class="product-price">
+                    ₹12,400
+                </p>
+
+            </div>
+
+
+            <!-- Product 3 -->
+            <div class="product-card">
+
+                <div class="product-image-box white-bg">
+
+                    <img
+                        src="/images/iwc-pilot.jpg"
+                        alt="IWC Big Pilot Watch"
+                    >
+
+                </div>
+
+                <h3>
+                    IWC Big Pilot's Watch
+                </h3>
+
+                <p class="product-category">
+                    Edition Heritage
+                </p>
+
+                <p class="product-price">
+                    ₹11,500
+                </p>
+
+            </div>
+
+
+            <!-- Product 4 -->
+            <div class="product-card">
+
+                <div class="product-image-box white-bg">
+
+                    <img
+                        src="/images/jlc-reverso.jpg"
+                        alt="JLC Reverso Tribute"
+                    >
+
+                </div>
+
+                <h3>
+                    JLC Reverso Tribute
+                </h3>
+
+                <p class="product-category">
+                    Duoface Calendar
+                </p>
+
+                <p class="product-price">
+                    ₹14,900
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="section-button-wrapper">
+
+            <a href="/products" class="outline-btn">
+                BROWSE FULL COLLECTION
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= SHOP BY BRAND ================= -->
+    <section class="brand-section">
+
+        <h2 class="section-title">
+            SHOP BY BRAND
+        </h2>
+
+        <div class="brand-grid">
+
+            <a href="/products?brand=Rolex" class="brand-card">
+                <img
+                    src="/images/rolex-logo.jpg"
+                    alt="Rolex"
+                >
+            </a>
+
+            <a href="/products?brand=Omega" class="brand-card">
+                <img
+                    src="/images/omega-logo.jpg"
+                    alt="Omega"
+                >
+            </a>
+
+            <a href="/products?brand=Cartier" class="brand-card">
+                <img
+                    src="/images/cartier-logo.jpg"
+                    alt="Cartier"
+                >
+            </a>
+
+            <a href="/products?brand=Patek Philippe" class="brand-card">
+                <img
+                    src="/images/patek-logo.jpg"
+                    alt="Patek Philippe"
+                >
+            </a>
+
+            <a href="/products?brand=Audemars Piguet" class="brand-card">
+                <img
+                    src="/images/ap-logo.jpg"
+                    alt="Audemars Piguet"
+                >
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= COLLECTOR VOICES ================= -->
+    <section class="testimonials-section">
+
+        <h2 class="testimonial-title">
+            COLLECTOR VOICES
+        </h2>
+
+        <div class="testimonial-grid">
+
+            <!-- Testimonial 1 -->
+            <div class="testimonial-card">
+
+                <div class="testimonial-rating">
+                    ★★★★★
+                </div>
+
+                <div class="collector-name">
+                    Julian V.
+                    <span>●</span>
+                </div>
+
+                <p>
+                    "The provenance provided with my 1968
+                    GMT-Master was impeccable. Wristora
+                    understands that we aren't just buying
+                    watches, we're acquiring history."
+                </p>
+
+            </div>
+
+
+            <!-- Testimonial 2 -->
+            <div class="testimonial-card">
+
+                <div class="testimonial-rating">
+                    ★★★★★
+                </div>
+
+                <div class="collector-name">
+                    Henry R.
+                    <span>●</span>
+                </div>
+
+                <p>
+                    "Finding a Patek with original papers in
+                    this condition is rarity. The concierge
+                    service made the transition of ownership
+                    seamless and secure."
+                </p>
+
+            </div>
+
+
+            <!-- Testimonial 3 -->
+            <div class="testimonial-card">
+
+                <div class="testimonial-rating">
+                    ★★★★★
+                </div>
+
+                <div class="collector-name">
+                    Marcus T.
+                    <span>●</span>
+                </div>
+
+                <p>
+                    "Wristora's attention to detail during the
+                    inspection process gave me the confidence
+                    to buy remotely. A truly first-class
+                    horological experience."
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
 
 </main>
+
 
 <%- include("../partials/footer1") %>

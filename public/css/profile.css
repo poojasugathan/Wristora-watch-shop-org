@@ -1,0 +1,1248 @@
+/* =====================================================
+   WRISTORA PROFILE PAGE
+===================================================== */
+
+.profile-page {
+    background: #faf9f6;
+    min-height: 700px;
+    padding: 50px 40px 80px;
+    font-family: "Montserrat", sans-serif;
+}
+
+
+/* =====================================================
+   MAIN PROFILE CONTAINER
+===================================================== */
+
+.profile-container {
+    max-width: 1450px;
+    margin: 0 auto;
+
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 55px;
+}
+
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
+.profile-sidebar {
+    background: #efede8;
+    min-height: 500px;
+    padding: 28px 25px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+.profile-sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+
+.profile-sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+    padding: 12px 8px;
+
+    color: #4b4b4b;
+    text-decoration: none;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    transition: 0.2s ease;
+}
+
+
+.profile-sidebar-link i {
+    width: 20px;
+    font-size: 16px;
+}
+
+
+.profile-sidebar-link:hover {
+    color: #111;
+}
+
+
+.profile-sidebar-link.active {
+    color: #111;
+    font-weight: 600;
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+.profile-logout-form {
+    margin-top: auto;
+}
+
+
+.profile-logout {
+    border: none;
+    background: transparent;
+
+    padding: 0;
+
+    color: #292929;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    text-decoration: underline;
+    text-underline-offset: 4px;
+
+    cursor: pointer;
+}
+
+
+/* =====================================================
+   PROFILE CONTENT
+===================================================== */
+
+.profile-content {
+    position: relative;
+    padding: 5px 25px 50px;
+}
+
+
+/* =====================================================
+   EDIT BUTTON
+===================================================== */
+
+.profile-edit-btn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+
+    padding: 10px 30px;
+
+    background: #292929;
+    color: #ffffff;
+
+    border-radius: 6px;
+
+    text-decoration: none;
+
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+
+    transition: 0.2s ease;
+}
+
+
+.profile-edit-btn:hover {
+    background: #111111;
+    color: #ffffff;
+}
+
+
+/* =====================================================
+   PROFILE TITLE
+===================================================== */
+
+.profile-title-section {
+    padding-top: 45px;
+    margin-bottom: 45px;
+}
+
+
+.profile-label {
+    margin: 0 0 8px;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    letter-spacing: 1.5px;
+
+    color: #77736d;
+}
+
+
+.profile-name {
+    margin: 0;
+
+    font-family: "Cormorant Garamond", serif;
+
+    font-size: 48px;
+    font-weight: 500;
+
+    line-height: 1;
+
+    color: #202020;
+}
+
+
+.profile-member-since {
+    margin-top: 16px;
+    margin-bottom: 0;
+
+    font-size: 11px;
+    letter-spacing: 1px;
+
+    color: #77736d;
+}
+
+
+.profile-member-since span {
+    color: #292929;
+    font-weight: 600;
+}
+
+
+/* =====================================================
+   PROFILE IMAGE
+===================================================== */
+
+.profile-image-section {
+    display: flex;
+    align-items: center;
+
+    gap: 25px;
+
+    margin-bottom: 45px;
+}
+
+
+.profile-image-wrapper {
+    width: 120px;
+    height: 120px;
+
+    border-radius: 50%;
+
+    overflow: hidden;
+
+    background: #e6e2dc;
+
+    border: 1px solid #d7d2ca;
+
+    flex-shrink: 0;
+}
+
+
+.profile-image {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+
+.profile-default-image {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.profile-default-image i {
+    font-size: 45px;
+    color: #98938b;
+}
+
+
+.profile-image-info h2 {
+    margin: 0 0 5px;
+
+    font-family: "Cormorant Garamond", serif;
+
+    font-size: 29px;
+    font-weight: 500;
+
+    color: #242424;
+}
+
+
+.profile-image-info p {
+    margin: 0;
+
+    font-size: 11px;
+    color: #77736d;
+}
+
+
+/* =====================================================
+   PERSONAL INFORMATION
+===================================================== */
+
+.profile-section {
+    max-width: 900px;
+}
+
+
+.profile-section-title {
+    margin: 0 0 18px;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    letter-spacing: 1.4px;
+
+    color: #4d4a46;
+}
+
+
+.profile-details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+
+    border-top: 1px solid #dcd8d1;
+    border-left: 1px solid #dcd8d1;
+}
+
+
+.profile-detail {
+    min-height: 95px;
+
+    padding: 22px 24px;
+
+    border-right: 1px solid #dcd8d1;
+    border-bottom: 1px solid #dcd8d1;
+
+    background: #faf9f6;
+}
+
+
+.profile-detail-label {
+    margin: 0 0 9px;
+
+    font-size: 9px;
+    font-weight: 600;
+
+    letter-spacing: 1.2px;
+
+    color: #88837b;
+}
+
+
+.profile-detail-value {
+    margin: 0;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    color: #292929;
+
+    word-break: break-word;
+}
+
+
+/* =====================================================
+   REFERRAL
+===================================================== */
+
+.profile-referral-section {
+    max-width: 900px;
+
+    margin-top: 35px;
+
+    padding: 23px 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 25px;
+
+    background: #f1efeb;
+
+    border: 1px solid #dcd8d1;
+}
+
+
+.profile-referral-content .profile-detail-label {
+    margin-bottom: 8px;
+}
+
+
+.profile-referral-code {
+    margin: 0;
+
+    font-size: 17px;
+    font-weight: 600;
+
+    letter-spacing: 2px;
+
+    color: #242424;
+}
+
+
+.referral-link {
+    color: #292929;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    text-decoration: underline;
+    text-underline-offset: 4px;
+
+    white-space: nowrap;
+}
+
+
+.referral-link:hover {
+    color: #000;
+}
+
+
+.referral-link i {
+    margin-left: 5px;
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 991px) {
+
+    .profile-page {
+        padding: 40px 25px 60px;
+    }
+
+
+    .profile-container {
+        grid-template-columns: 220px 1fr;
+        gap: 30px;
+    }
+
+
+    .profile-sidebar {
+        padding: 25px 18px;
+    }
+
+
+    .profile-content {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+
+    .profile-edit-btn {
+        right: 5px;
+    }
+
+
+    .profile-name {
+        font-size: 42px;
+    }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 767px) {
+
+    .profile-page {
+        padding: 25px 15px 50px;
+    }
+
+
+    .profile-container {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+
+    .profile-sidebar {
+        min-height: auto;
+    }
+
+
+    .profile-sidebar-menu {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+
+    .profile-logout-form {
+        margin-top: 25px;
+    }
+
+
+    .profile-content {
+        padding: 10px 0 30px;
+    }
+
+
+    .profile-edit-btn {
+        position: static;
+
+        display: inline-block;
+
+        margin-bottom: 20px;
+    }
+
+
+    .profile-title-section {
+        padding-top: 0;
+        margin-bottom: 30px;
+    }
+
+
+    .profile-name {
+        font-size: 38px;
+    }
+
+
+    .profile-details {
+        grid-template-columns: 1fr;
+    }
+
+
+    .profile-referral-section {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width: 480px) {
+
+    .profile-sidebar-menu {
+        grid-template-columns: 1fr;
+    }
+
+
+    .profile-image-wrapper {
+        width: 95px;
+        height: 95px;
+    }
+
+
+    .profile-image-info h2 {
+        font-size: 24px;
+    }
+
+
+    .profile-name {
+        font-size: 34px;
+    }
+
+}
+/* =====================================================
+   EDIT PROFILE PAGE
+===================================================== */
+
+.account-settings-page {
+    background: #faf9f6;
+    min-height: 700px;
+    padding: 50px 40px 80px;
+    font-family: "Montserrat", sans-serif;
+}
+
+.account-settings-container {
+    max-width: 1450px;
+    margin: 0 auto;
+
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 55px;
+}
+
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
+.account-settings-sidebar {
+    background: #efede8;
+    min-height: 500px;
+    padding: 28px 25px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.account-settings-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.account-settings-link {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+    padding: 12px 8px;
+
+    color: #4b4b4b;
+    text-decoration: none;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    transition: 0.2s ease;
+}
+
+.account-settings-link i {
+    width: 20px;
+    font-size: 16px;
+}
+
+.account-settings-link:hover {
+    color: #111;
+}
+
+.account-settings-link.active {
+    color: #111;
+    font-weight: 600;
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+.account-settings-logout-form {
+    margin-top: auto;
+}
+
+.account-settings-logout {
+    border: none;
+    background: transparent;
+
+    padding: 0;
+
+    color: #292929;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    text-decoration: underline;
+    text-underline-offset: 4px;
+
+    cursor: pointer;
+}
+
+
+/* =====================================================
+   MAIN CONTENT
+===================================================== */
+
+.account-settings-content {
+    padding: 5px 25px 50px;
+    max-width: 950px;
+}
+
+
+/* =====================================================
+   HEADING
+===================================================== */
+
+.account-settings-heading {
+    margin-bottom: 35px;
+}
+
+.account-settings-heading h1 {
+    margin: 0 0 10px;
+
+    font-family: "Cormorant Garamond", serif;
+
+    font-size: 48px;
+    font-weight: 500;
+
+    color: #202020;
+}
+
+.account-settings-heading p {
+    margin: 0;
+
+    max-width: 650px;
+
+    font-size: 12px;
+    line-height: 1.7;
+
+    color: #77736d;
+}
+
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+.account-settings-error {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-bottom: 25px;
+
+    padding: 13px 16px;
+
+    background: #f7eaea;
+    border: 1px solid #e0caca;
+
+    color: #8a3f3f;
+
+    font-size: 12px;
+}
+
+
+/* =====================================================
+   CARD
+===================================================== */
+
+.account-settings-card {
+    margin-bottom: 30px;
+
+    background: #faf9f6;
+
+    border: 1px solid #dcd8d1;
+}
+
+
+/* =====================================================
+   CARD HEADER
+===================================================== */
+
+.account-settings-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 22px 25px;
+
+    border-bottom: 1px solid #dcd8d1;
+}
+
+.account-settings-card-header h2 {
+    margin: 0;
+
+    font-family: "Cormorant Garamond", serif;
+
+    font-size: 27px;
+    font-weight: 500;
+
+    color: #292929;
+}
+
+
+/* =====================================================
+   PENCIL BUTTON
+===================================================== */
+
+.account-settings-edit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 36px;
+    height: 36px;
+
+    border: none;
+    background: transparent;
+
+    color: #77736d;
+
+    font-size: 18px;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.account-settings-edit-btn:hover {
+    color: #1f1f1f;
+
+    background: #efede8;
+
+    border-radius: 50%;
+}
+
+
+/* =====================================================
+   PROFILE PHOTO
+===================================================== */
+
+.edit-profile-photo-section {
+    display: flex;
+    align-items: center;
+
+    gap: 20px;
+
+    padding: 25px;
+
+    border-bottom: 1px solid #dcd8d1;
+}
+
+.edit-profile-photo-wrapper {
+    position: relative;
+
+    width: 105px;
+    height: 105px;
+
+    flex-shrink: 0;
+}
+
+.edit-profile-photo {
+    width: 105px;
+    height: 105px;
+
+    border-radius: 50%;
+
+    object-fit: cover;
+
+    border: 1px solid #d7d2ca;
+
+    background: #e6e2dc;
+}
+
+.edit-profile-default-photo {
+    width: 105px;
+    height: 105px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #e6e2dc;
+
+    border: 1px solid #d7d2ca;
+}
+
+.edit-profile-default-photo i {
+    font-size: 40px;
+    color: #98938b;
+}
+
+
+/* =====================================================
+   PHOTO CAMERA BUTTON
+===================================================== */
+
+.edit-profile-photo-btn {
+    position: absolute;
+
+    right: -3px;
+    bottom: 2px;
+
+    width: 32px;
+    height: 32px;
+
+    border: 2px solid #faf9f6;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #292929;
+
+    color: #ffffff;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.edit-profile-photo-btn:hover {
+    background: #111111;
+}
+
+.edit-profile-photo-info h3 {
+    margin: 0 0 5px;
+
+    font-family: "Cormorant Garamond", serif;
+
+    font-size: 25px;
+    font-weight: 500;
+
+    color: #292929;
+}
+
+.edit-profile-photo-info p {
+    margin: 0;
+
+    font-size: 11px;
+
+    color: #77736d;
+}
+
+
+/* =====================================================
+   PERSONAL DETAILS
+===================================================== */
+
+.account-settings-details {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.account-settings-field {
+    padding: 22px 25px;
+
+    border-right: 1px solid #dcd8d1;
+    border-bottom: 1px solid #dcd8d1;
+}
+
+.account-settings-field:nth-child(even) {
+    border-right: none;
+}
+
+.account-settings-field label {
+    display: block;
+
+    margin-bottom: 9px;
+
+    font-size: 9px;
+    font-weight: 600;
+
+    letter-spacing: 1.2px;
+
+    color: #88837b;
+}
+
+.account-settings-field input {
+    width: 100%;
+
+    border: none;
+    outline: none;
+
+    background: transparent;
+
+    padding: 0;
+
+    font-family: "Montserrat", sans-serif;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    color: #292929;
+}
+
+.account-settings-field input:focus {
+    color: #111;
+}
+
+
+/* =====================================================
+   READONLY INPUT
+===================================================== */
+
+.profile-readonly {
+    cursor: default;
+}
+
+
+/* =====================================================
+   SECURITY SECTION
+===================================================== */
+
+.account-settings-security {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+}
+
+.account-settings-security-item {
+    padding: 25px;
+
+    border-right: 1px solid #dcd8d1;
+}
+
+.account-settings-security-item:last-child {
+    border-right: none;
+}
+
+.account-settings-security-item label {
+    display: block;
+
+    margin-bottom: 10px;
+
+    font-size: 9px;
+    font-weight: 600;
+
+    letter-spacing: 1.2px;
+
+    color: #88837b;
+}
+
+.account-settings-security-item input {
+    width: 100%;
+
+    border: none;
+    outline: none;
+
+    background: transparent;
+
+    padding: 0;
+
+    font-family: "Montserrat", sans-serif;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    color: #292929;
+}
+
+
+/* =====================================================
+   PASSWORD
+===================================================== */
+
+.account-settings-password {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+}
+
+.password-dots {
+    font-size: 16px;
+    letter-spacing: 3px;
+
+    color: #292929;
+}
+
+.change-password-btn {
+    border: none;
+    background: transparent;
+
+    padding: 0;
+
+    font-size: 9px;
+    font-weight: 600;
+
+    letter-spacing: 0.5px;
+
+    color: #aaa;
+
+    cursor: not-allowed;
+}
+
+
+/* =====================================================
+   ACTION BUTTONS
+===================================================== */
+
+.account-settings-section-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 18px 25px;
+
+    border-top: 1px solid #dcd8d1;
+}
+
+.account-settings-cancel {
+    border: none;
+    background: transparent;
+
+    color: #555;
+
+    font-size: 10px;
+    font-weight: 600;
+
+    letter-spacing: 0.5px;
+
+    cursor: pointer;
+
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.account-settings-cancel:hover {
+    color: #111;
+}
+
+.account-settings-save {
+    border: none;
+
+    padding: 11px 22px;
+
+    background: #292929;
+
+    color: #ffffff;
+
+    border-radius: 5px;
+
+    font-size: 10px;
+    font-weight: 600;
+
+    letter-spacing: 0.5px;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.account-settings-save:hover {
+    background: #111;
+}
+
+
+/* =====================================================
+   BOTTOM
+===================================================== */
+
+.account-settings-bottom {
+    margin-top: 10px;
+}
+
+.account-settings-back {
+    color: #4b4b4b;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    text-decoration: none;
+}
+
+.account-settings-back:hover {
+    color: #111;
+
+    text-decoration: underline;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 991px) {
+
+    .account-settings-page {
+        padding: 40px 25px 60px;
+    }
+
+    .account-settings-container {
+        grid-template-columns: 220px 1fr;
+        gap: 30px;
+    }
+
+    .account-settings-sidebar {
+        padding: 25px 18px;
+    }
+
+    .account-settings-content {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .account-settings-heading h1 {
+        font-size: 42px;
+    }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 767px) {
+
+    .account-settings-page {
+        padding: 25px 15px 50px;
+    }
+
+    .account-settings-container {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .account-settings-sidebar {
+        min-height: auto;
+    }
+
+    .account-settings-menu {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .account-settings-logout-form {
+        margin-top: 25px;
+    }
+
+    .account-settings-content {
+        padding: 10px 0 30px;
+    }
+
+    .account-settings-heading h1 {
+        font-size: 38px;
+    }
+
+    .account-settings-details {
+        grid-template-columns: 1fr;
+    }
+
+    .account-settings-field {
+        border-right: none;
+    }
+
+    .account-settings-security {
+        grid-template-columns: 1fr;
+    }
+
+    .account-settings-security-item {
+        border-right: none;
+        border-bottom: 1px solid #dcd8d1;
+    }
+
+    .account-settings-security-item:last-child {
+        border-bottom: none;
+    }
+
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width: 480px) {
+
+    .account-settings-menu {
+        grid-template-columns: 1fr;
+    }
+
+    .edit-profile-photo-wrapper,
+    .edit-profile-photo,
+    .edit-profile-default-photo {
+        width: 90px;
+        height: 90px;
+    }
+
+    .edit-profile-photo-info h3 {
+        font-size: 22px;
+    }
+
+    .account-settings-heading h1 {
+        font-size: 34px;
+    }
+
+}
