@@ -873,6 +873,753 @@ console.log("========== ADD ADDRESS CONTROLLER HIT ==========");
 
 };
 
+// =====================================================
+// LOAD EDIT ADDRESS PAGE
+// =====================================================
+
+const loadEditAddress = async (req, res) => {
+
+    try {
+
+        const userId =
+            req.session.user.id;
+
+        const addressId =
+            req.params.id;
+
+
+        // =================================================
+        // FIND ADDRESS
+        // =================================================
+
+        const address =
+            await Address.findOne({
+                _id: addressId,
+                userId
+            }).lean();
+
+
+        // =================================================
+        // ADDRESS NOT FOUND
+        // =================================================
+
+        if (!address) {
+
+            return res.redirect(
+                "/addresses"
+            );
+
+        }
+
+
+        // =================================================
+        // RENDER EDIT PAGE
+        // =================================================
+
+        return res.render(
+            "user/editAddress",
+            {
+                title: "Edit Address",
+
+                user: req.session.user,
+
+                formData: {
+
+                    firstName:
+                        address.firstName || "",
+
+                    lastName:
+                        address.lastName || "",
+
+                    pinCode:
+                        address.pinCode || "",
+
+                    addressLine1:
+                        address.addressLine1 || "",
+
+                    addressLine2:
+                        address.addressLine2 || "",
+
+                    city:
+                        address.city || "",
+
+                    state:
+                        address.state || "Kerala",
+
+                    country:
+                        address.country || "India",
+
+                    phone:
+                        address.phone || "",
+
+                    addressName:
+                        address.addressName || "",
+
+                    isDefault:
+                        address.isDefault || false
+
+                },
+
+                addressId:
+                    address._id,
+
+                errorMessage: null,
+
+                successMessage: null
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Load edit address error:",
+            error
+        );
+
+
+        return res.redirect(
+            "/addresses"
+        );
+
+    }
+
+};
+// =====================================================
+// UPDATE ADDRESS
+// =====================================================
+
+const updateAddress = async (req, res) => {
+
+    try {
+
+        const userId =
+            req.session.user.id;
+
+        const addressId =
+            req.params.id;
+
+
+        // =================================================
+        // GET FORM VALUES
+        // =================================================
+
+        let {
+
+            firstName,
+
+            lastName,
+
+            pinCode,
+
+            addressLine1,
+
+            addressLine2,
+
+            city,
+
+            state,
+
+            country,
+
+            phone,
+
+            addressName,
+
+            isDefault
+
+        } = req.body;
+
+
+        // =================================================
+        // TRIM VALUES
+        // =================================================
+
+        firstName =
+            firstName
+                ? firstName.trim()
+                : "";
+
+        lastName =
+            lastName
+                ? lastName.trim()
+                : "";
+
+        pinCode =
+            pinCode
+                ? pinCode.trim()
+                : "";
+
+        addressLine1 =
+            addressLine1
+                ? addressLine1.trim()
+                : "";
+
+        addressLine2 =
+            addressLine2
+                ? addressLine2.trim()
+                : "";
+
+        city =
+            city
+                ? city.trim()
+                : "";
+
+        state =
+            state
+                ? state.trim()
+                : "Kerala";
+
+        country =
+            country
+                ? country.trim()
+                : "India";
+
+        phone =
+            phone
+                ? phone.trim()
+                : "";
+
+        addressName =
+            addressName
+                ? addressName.trim()
+                : "";
+
+
+        const formData = {
+
+            firstName,
+
+            lastName,
+
+            pinCode,
+
+            addressLine1,
+
+            addressLine2,
+
+            city,
+
+            state,
+
+            country,
+
+            phone,
+
+            addressName,
+
+            isDefault:
+                isDefault === "true" ||
+                isDefault === "on"
+
+        };
+
+
+        // =================================================
+        // REGEX
+        // =================================================
+
+        const nameRegex =
+            /^[A-Za-z]+(?:[ '-][A-Za-z]+)*$/;
+
+        const pinCodeRegex =
+            /^\d{6}$/;
+
+        const phoneRegex =
+            /^\+?[0-9\s-]{7,15}$/;
+
+
+        // =================================================
+        // CHECK ADDRESS OWNERSHIP
+        // =================================================
+
+        const existingAddress =
+            await Address.findOne({
+                _id: addressId,
+                userId
+            });
+
+
+        if (!existingAddress) {
+
+            return res.redirect(
+                "/addresses"
+            );
+
+        }
+
+
+        // =================================================
+        // FIRST NAME
+        // =================================================
+
+        if (!firstName) {
+
+            return res.status(400).render(
+                "user/editAddress",
+                {
+                    title: "Edit Address",
+                    user: req.session.user,
+                    formData,
+                    addressId,
+                    errorMessage:
+                        "First name is required.",
+                    successMessage: null
+                }
+            );
+
+        }
+
+
+        if (
+            firstName.length < 2 ||
+            firstName.length > 30
+        ) {
+
+            return res.status(400).render(
+                "user/editAddress",
+                {
+                    title: "Edit Address",
+                    user: req.session.user,
+                    formData,
+                    addressId,
+                    errorMessage:
+                        "First name must be between 2 and 30 characters.",
+                    successMessage: null
+                }
+            );
+
+        }
+
+
+        if (!nameRegex.test(firstName)) {
+
+            return res.status(400).render(
+                "user/editAddress",
+                {
+                    title: "Edit Address",
+                    user: req.session.user,
+                    formData,
+                    addressId,
+                    errorMessage:
+                        "First name contains invalid characters.",
+                    successMessage: null
+                }
+            );
+
+        }
+
+
+        // =================================================
+        // LAST NAME
+        // =================================================
+
+        if (!lastName) {
+
+            return res.status(400).render(
+                "user/editAddress",
+                {
+                    title: "Edit Address",
+                    user: req.session.user,
+                    formData,
+                    addressId,
+                    errorMessage:
+                        "Last name is required.",
+                    successMessage: null
+                }
+            );
+
+        }
+
+
+        if (
+            lastName.length < 2 ||
+            lastName.length > 30
+        ) {
+
+            return res.status(400).render(
+                "user/editAddress",
+                {
+                    title: "Edit Address",
+                    user: req.session.user,
+                    formData,
+                    addressId,
+                    errorMessage:
+                        "Last name must be between 2 and 30 characters.",
+                    successMessage: null
+                }
+            );
+
+        }
+
+
+        if (!nameRegex.test(lastName)) {
+
+            return res.status(400).render(
+                "user/editAddress",
+                {
+                    title: "Edit Address",
+                    user: req.session.user,
+                    formData,
+                    addressId,
+                    errorMessage:
+                        "Last name contains invalid characters.",
+                    successMessage: null
+                }
+            );
+
+        }
+
+
+        // =================================================
+        // PIN CODE
+        // =================================================
+
+        if (!pinCode) {
+
+            return res.status(400).render(
+                "user/editAddress",
+                {
+                    title: "Edit Address",
+                    user: req.session.user,
+                    formData,
+                    addressId,
+                    errorMessage:
+                        "PIN code is required.",
+                    successMessage: null
+                }
+            );
+
+        }
+
+
+        if (!pinCodeRegex.test(pinCode)) {
+
+            return res.status(400).render(
+                "user/editAddress",
+                {
+                    title: "Edit Address",
+                    user: req.session.user,
+                    formData,
+                    addressId,
+                    errorMessage:
+                        "Please enter a valid 6-digit PIN code.",
+                    successMessage: null
+                }
+            );
+
+        }
+
+
+        // =================================================
+        // ADDRESS LINE 1
+        // =================================================
+
+        if (!addressLine1) {
+
+            return res.status(400).render(
+                "user/editAddress",
+                {
+                    title: "Edit Address",
+                    user: req.session.user,
+                    formData,
+                    addressId,
+                    errorMessage:
+                        "Address Line 1 is required.",
+                    successMessage: null
+                }
+            );
+
+        }
+
+
+        if (
+            addressLine1.length < 5 ||
+            addressLine1.length > 150
+        ) {
+
+            return res.status(400).render(
+                "user/editAddress",
+                {
+                    title: "Edit Address",
+                    user: req.session.user,
+                    formData,
+                    addressId,
+                    errorMessage:
+                        "Address Line 1 must be between 5 and 150 characters.",
+                    successMessage: null
+                }
+            );
+
+        }
+
+
+        // =================================================
+        // CITY
+        // =================================================
+
+        if (!city) {
+
+            return res.status(400).render(
+                "user/editAddress",
+                {
+                    title: "Edit Address",
+                    user: req.session.user,
+                    formData,
+                    addressId,
+                    errorMessage:
+                        "City is required.",
+                    successMessage: null
+                }
+            );
+
+        }
+
+
+        if (
+            city.length < 2 ||
+            city.length > 50
+        ) {
+
+            return res.status(400).render(
+                "user/editAddress",
+                {
+                    title: "Edit Address",
+                    user: req.session.user,
+                    formData,
+                    addressId,
+                    errorMessage:
+                        "Please enter a valid city.",
+                    successMessage: null
+                }
+            );
+
+        }
+
+
+        // =================================================
+        // STATE
+        // =================================================
+
+        if (!state) {
+
+            return res.status(400).render(
+                "user/editAddress",
+                {
+                    title: "Edit Address",
+                    user: req.session.user,
+                    formData,
+                    addressId,
+                    errorMessage:
+                        "State is required.",
+                    successMessage: null
+                }
+            );
+
+        }
+
+
+        // =================================================
+        // PHONE
+        // =================================================
+
+        if (!phone) {
+
+            return res.status(400).render(
+                "user/editAddress",
+                {
+                    title: "Edit Address",
+                    user: req.session.user,
+                    formData,
+                    addressId,
+                    errorMessage:
+                        "Phone number is required.",
+                    successMessage: null
+                }
+            );
+
+        }
+
+
+        if (!phoneRegex.test(phone)) {
+
+            return res.status(400).render(
+                "user/editAddress",
+                {
+                    title: "Edit Address",
+                    user: req.session.user,
+                    formData,
+                    addressId,
+                    errorMessage:
+                        "Please enter a valid phone number.",
+                    successMessage: null
+                }
+            );
+
+        }
+
+
+        // =================================================
+        // ADDRESS NAME
+        // =================================================
+
+        if (addressName.length > 30) {
+
+            return res.status(400).render(
+                "user/editAddress",
+                {
+                    title: "Edit Address",
+                    user: req.session.user,
+                    formData,
+                    addressId,
+                    errorMessage:
+                        "Address name cannot exceed 30 characters.",
+                    successMessage: null
+                }
+            );
+
+        }
+
+
+        // =================================================
+        // DEFAULT ADDRESS
+        // =================================================
+
+        if (formData.isDefault) {
+
+            await Address.updateMany(
+                {
+                    userId,
+                    _id: {
+                        $ne: addressId
+                    },
+                    isDefault: true
+                },
+                {
+                    $set: {
+                        isDefault: false
+                    }
+                }
+            );
+
+        }
+
+
+        // =================================================
+        // UPDATE ADDRESS
+        // =================================================
+
+        existingAddress.firstName =
+            firstName;
+
+        existingAddress.lastName =
+            lastName;
+
+        existingAddress.pinCode =
+            pinCode;
+
+        existingAddress.addressLine1 =
+            addressLine1;
+
+        existingAddress.addressLine2 =
+            addressLine2;
+
+        existingAddress.city =
+            city;
+
+        existingAddress.state =
+            state;
+
+        existingAddress.country =
+            country;
+
+        existingAddress.phone =
+            phone;
+
+        existingAddress.addressName =
+            addressName;
+
+        existingAddress.isDefault =
+            formData.isDefault;
+
+
+        await existingAddress.save();
+
+
+        // =================================================
+        // SUCCESS
+        // =================================================
+
+        return res.redirect(
+            "/addresses?updated=1"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Update address error:",
+            error
+        );
+
+
+        return res.status(500).render(
+            "user/editAddress",
+            {
+                title: "Edit Address",
+                user: req.session.user,
+
+                formData: {
+
+                    firstName:
+                        req.body.firstName || "",
+
+                    lastName:
+                        req.body.lastName || "",
+
+                    pinCode:
+                        req.body.pinCode || "",
+
+                    addressLine1:
+                        req.body.addressLine1 || "",
+
+                    addressLine2:
+                        req.body.addressLine2 || "",
+
+                    city:
+                        req.body.city || "",
+
+                    state:
+                        req.body.state || "Kerala",
+
+                    country:
+                        req.body.country || "India",
+
+                    phone:
+                        req.body.phone || "",
+
+                    addressName:
+                        req.body.addressName || "",
+
+                    isDefault:
+                        req.body.isDefault === "true" ||
+                        req.body.isDefault === "on"
+
+                },
+
+                addressId,
+
+                errorMessage:
+                    "Unable to update your address. Please try again.",
+
+                successMessage: null
+            }
+        );
+
+    }
+
+};
 
 // =====================================================
 // DELETE ADDRESS
@@ -1058,6 +1805,10 @@ module.exports = {
     loadAddAddress,
 
     addAddress,
+
+    loadEditAddress,
+
+    updateAddress,
 
     deleteAddress,
 

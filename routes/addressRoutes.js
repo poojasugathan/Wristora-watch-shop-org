@@ -44,22 +44,22 @@ router.post(
 // // EDIT ADDRESS PAGE
 // // =====================================================
 
-// router.get(
-//     "/edit/:id",
-//     requireAuth,
-//     addressController.loadEditAddress
-// );
+router.get(
+    "/edit/:id",
+    requireAuth,
+    addressController.loadEditAddress
+);
 
 
 // // =====================================================
 // // UPDATE ADDRESS
 // // =====================================================
 
-// router.post(
-//     "/edit/:id",
-//     requireAuth,
-//     addressController.updateAddress
-// );
+router.post(
+    "/edit/:id",
+    requireAuth,
+    addressController.updateAddress
+);
 
 
 // =====================================================
