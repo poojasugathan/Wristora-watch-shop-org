@@ -78,6 +78,7 @@ const createOtp = async (email, purpose) => {
 
     // Generate new OTP
     const otp = generateOtp();
+    console.log("otp:",otp)
 
 
     // Hash OTP before storing

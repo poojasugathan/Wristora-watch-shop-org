@@ -9,6 +9,7 @@ const sessionConfig = require("./config/session");
 const authRoutes = require("./routes/authRoutes");
 const passport = require("./config/passport");
 const profileRoutes = require("./routes/profileRoutes");
+const addressRoutes = require("./routes/addressRoutes");
 
 const app = express();
 connectDB();
@@ -36,6 +37,7 @@ app.set("views", path.join(__dirname, "views"));
 
 app.use("/auth", authRoutes);
 app.use("/profile", profileRoutes);
+app.use("/addresses", addressRoutes);
 
 
 app.get("/", (req, res) => {

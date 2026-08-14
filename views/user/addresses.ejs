@@ -1,0 +1,454 @@
+<%- include("../partials/header", { title: "My Addresses", user: user }) %>
+
+<link rel="stylesheet" href="/css/profile.css">
+
+<main class="profile-page">
+
+    <div class="profile-container">
+
+        <!-- =====================================================
+             SIDEBAR
+        ====================================================== -->
+
+        <aside class="profile-sidebar">
+
+            <nav class="profile-sidebar-menu">
+
+                <a href="/profile" class="profile-sidebar-link">
+                    <i class="bi bi-person"></i>
+                    <span>Profile</span>
+                </a>
+
+                <a href="/orders" class="profile-sidebar-link">
+                    <i class="bi bi-box-seam"></i>
+                    <span>My Orders</span>
+                </a>
+
+                <a href="/wishlist" class="profile-sidebar-link">
+                    <i class="bi bi-heart"></i>
+                    <span>Wishlist</span>
+                </a>
+
+                <a href="/addresses" class="profile-sidebar-link active">
+                    <i class="bi bi-geo-alt"></i>
+                    <span>Addresses</span>
+                </a>
+
+                <a href="/wallet" class="profile-sidebar-link">
+                    <i class="bi bi-wallet2"></i>
+                    <span>Wallet</span>
+                </a>
+
+                <a href="/coupons" class="profile-sidebar-link">
+                    <i class="bi bi-tag"></i>
+                    <span>My Coupons</span>
+                </a>
+
+            </nav>
+
+            <!-- LOGOUT -->
+
+            <form
+                action="/auth/logout"
+                method="POST"
+                class="profile-logout-form"
+            >
+
+                <button
+                    type="submit"
+                    class="profile-logout"
+                >
+                    LOGOUT
+                </button>
+
+            </form>
+
+        </aside>
+
+
+        <!-- =====================================================
+             ADDRESS CONTENT
+        ====================================================== -->
+
+        <section class="profile-content address-page-content">
+
+            <!-- SUCCESS: ADDED -->
+
+            <% if (added) { %>
+
+                <div class="profile-success-message">
+
+                    <i class="bi bi-check-circle"></i>
+
+                    <span>
+                        Address added successfully.
+                    </span>
+
+                </div>
+
+            <% } %>
+
+
+            <!-- SUCCESS: UPDATED -->
+
+            <% if (updated) { %>
+
+                <div class="profile-success-message">
+
+                    <i class="bi bi-check-circle"></i>
+
+                    <span>
+                        Address updated successfully.
+                    </span>
+
+                </div>
+
+            <% } %>
+
+
+            <!-- SUCCESS: DELETED -->
+
+            <% if (deleted) { %>
+
+                <div class="profile-success-message">
+
+                    <i class="bi bi-check-circle"></i>
+
+                    <span>
+                        Address deleted successfully.
+                    </span>
+
+                </div>
+
+            <% } %>
+
+
+            <!-- SUCCESS: DEFAULT -->
+
+            <% if (defaultUpdated) { %>
+
+                <div class="profile-success-message">
+
+                    <i class="bi bi-check-circle"></i>
+
+                    <span>
+                        Default address updated successfully.
+                    </span>
+
+                </div>
+
+            <% } %>
+
+
+            <!-- ERROR -->
+
+            <% if (errorMessage) { %>
+
+                <div class="profile-error-message">
+
+                    <i class="bi bi-exclamation-circle"></i>
+
+                    <span>
+                        <%= errorMessage %>
+                    </span>
+
+                </div>
+
+            <% } %>
+
+
+            <!-- =================================================
+                 PAGE HEADER
+            ================================================== -->
+
+            <div class="address-page-header">
+
+                <div>
+
+                    <p class="address-page-eyebrow">
+                        DELIVERY INFORMATION
+                    </p>
+
+                    <h1 class="profile-name">
+                        ADDRESSES
+                    </h1>
+
+                    <p class="address-page-description">
+                        Manage your saved delivery addresses.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ADD NEW ADDRESS
+            ================================================== -->
+
+            <a
+                href="/addresses/add"
+                class="address-add-button"
+            >
+
+                <i class="bi bi-plus-lg"></i>
+
+                <span>
+                    ADD NEW ADDRESS
+                </span>
+
+            </a>
+
+
+            <!-- =================================================
+                 ADDRESS LIST
+            ================================================== -->
+
+            <% if (addresses && addresses.length > 0) { %>
+
+                <div class="address-grid">
+
+                    <% addresses.forEach((address) => { %>
+
+                        <article class="address-card">
+
+                            <!-- EDIT -->
+
+                            <a
+                                href="/addresses/edit/<%= address._id %>"
+                                class="address-edit-button"
+                                aria-label="Edit address"
+                                title="Edit address"
+                            >
+                                <i class="bi bi-pencil"></i>
+                            </a>
+
+
+                            <!-- DEFAULT BADGE -->
+
+                            <% if (address.isDefault) { %>
+
+                                <span class="address-default-badge">
+                                    DEFAULT
+                                </span>
+
+                            <% } %>
+
+
+                            <!-- NAME -->
+
+                            <h2 class="address-name">
+                                <%= address.firstName %>
+                                <%= address.lastName %>
+                            </h2>
+
+
+                            <!-- ADDRESS DETAILS -->
+
+                            <div class="address-details">
+
+                                <% if (address.addressName) { %>
+
+                                    <p class="address-type-name">
+                                        <%= address.addressName %>
+                                    </p>
+
+                                <% } %>
+
+
+                                <p>
+                                    <%= address.addressLine1 %>
+                                </p>
+
+
+                                <% if (address.addressLine2) { %>
+
+                                    <p>
+                                        <%= address.addressLine2 %>
+                                    </p>
+
+                                <% } %>
+
+
+                                <p>
+                                    <%= address.city %>,
+                                    <%= address.state %>
+                                </p>
+
+
+                                <p>
+                                    <%= address.pinCode %>
+                                </p>
+
+
+                                <p>
+                                    <%= address.country %>
+                                </p>
+
+
+                                <p class="address-phone">
+                                    <strong>Ph:</strong>
+                                    <%= address.phone %>
+                                </p>
+
+                            </div>
+
+
+                            <!-- ACTIONS -->
+
+                            <div class="address-actions">
+
+                                <!-- ADDRESS TYPE -->
+
+                                <span class="address-label">
+
+                                    <% if (address.addressName) { %>
+
+                                        <%= address.addressName.toUpperCase() %>
+
+                                    <% } else { %>
+
+                                        ADDRESS
+
+                                    <% } %>
+
+                                </span>
+
+
+                                <!-- SET DEFAULT -->
+
+                                <% if (!address.isDefault) { %>
+
+                                    <form
+                                        action="/addresses/default/<%= address._id %>"
+                                        method="POST"
+                                        class="address-inline-form"
+                                    >
+
+                                        <button
+                                            type="submit"
+                                            class="address-set-default"
+                                        >
+                                            SET DEFAULT
+                                        </button>
+
+                                    </form>
+
+                                <% } %>
+
+
+                                <!-- DELETE -->
+
+                                <form
+                                    action="/addresses/delete/<%= address._id %>"
+                                    method="POST"
+                                    class="address-inline-form delete-address-form"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="address-delete-button"
+                                    >
+                                        DELETE
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </article>
+
+                    <% }); %>
+
+                </div>
+
+
+            <% } else { %>
+
+                <!-- =================================================
+                     EMPTY STATE
+                ================================================== -->
+
+                <div class="address-empty-state">
+
+                    <div class="address-empty-icon">
+                        <i class="bi bi-geo-alt"></i>
+                    </div>
+
+                    <h2>
+                        No addresses saved
+                    </h2>
+
+                    <p>
+                        Add an address to make checkout faster and easier.
+                    </p>
+
+                    <a
+                        href="/addresses/add"
+                        class="address-empty-button"
+                    >
+                        ADD YOUR FIRST ADDRESS
+                    </a>
+
+                </div>
+
+            <% } %>
+
+        </section>
+
+    </div>
+
+</main>
+
+
+<!-- =====================================================
+     DELETE CONFIRMATION
+====================================================== -->
+
+<script>
+
+document
+    .querySelectorAll(".delete-address-form")
+    .forEach((form) => {
+
+        form.addEventListener("submit", function (event) {
+
+            event.preventDefault();
+
+            Swal.fire({
+
+                title: "Delete address?",
+
+                text:
+                    "This address will be permanently removed.",
+
+                icon: "warning",
+
+                showCancelButton: true,
+
+                confirmButtonText:
+                    "Yes, delete it",
+
+                cancelButtonText:
+                    "Cancel",
+
+                reverseButtons: true
+
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    form.submit();
+
+                }
+
+            });
+
+        });
+
+    });
+
+</script>
+
+
+<%- include("../partials/footer2") %>

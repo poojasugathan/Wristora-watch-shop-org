@@ -1,0 +1,602 @@
+<%- include("../partials/header", { title: "Add New Address", user: user }) %>
+
+<link rel="stylesheet" href="/css/profile.css">
+
+<main class="profile-page">
+
+    <div class="profile-container">
+
+        <!-- =====================================================
+             SIDEBAR
+        ====================================================== -->
+
+        <aside class="profile-sidebar">
+
+            <nav class="profile-sidebar-menu">
+
+                <a href="/profile" class="profile-sidebar-link">
+                    <i class="bi bi-person"></i>
+                    <span>Profile</span>
+                </a>
+
+                <a href="/orders" class="profile-sidebar-link">
+                    <i class="bi bi-box-seam"></i>
+                    <span>My Orders</span>
+                </a>
+
+                <a href="/wishlist" class="profile-sidebar-link">
+                    <i class="bi bi-heart"></i>
+                    <span>Wishlist</span>
+                </a>
+
+                <a href="/addresses" class="profile-sidebar-link active">
+                    <i class="bi bi-geo-alt"></i>
+                    <span>Addresses</span>
+                </a>
+
+                <a href="/wallet" class="profile-sidebar-link">
+                    <i class="bi bi-wallet2"></i>
+                    <span>Wallet</span>
+                </a>
+
+                <a href="/coupons" class="profile-sidebar-link">
+                    <i class="bi bi-tag"></i>
+                    <span>My Coupons</span>
+                </a>
+
+            </nav>
+
+            <!-- LOGOUT -->
+
+            <form
+                action="/auth/logout"
+                method="POST"
+                class="profile-logout-form"
+            >
+
+                <button
+                    type="submit"
+                    class="profile-logout"
+                >
+                    LOGOUT
+                </button>
+
+            </form>
+
+        </aside>
+
+
+        <!-- =====================================================
+             ADD ADDRESS CONTENT
+        ====================================================== -->
+
+        <section class="profile-content add-address-content">
+
+            <!-- PAGE HEADER -->
+
+            <div class="add-address-header">
+
+                <div>
+
+                    <p class="add-address-eyebrow">
+                        MY ADDRESSES
+                    </p>
+
+                    <h1>
+                        ADD NEW ADDRESS
+                    </h1>
+
+                    <p class="add-address-description">
+                        Save your delivery details for a faster and easier
+                        checkout experience.
+                    </p>
+
+                </div>
+
+                <a
+                    href="/addresses"
+                    class="add-address-back"
+                >
+                    <i class="bi bi-arrow-left"></i>
+                    BACK TO ADDRESSES
+                </a>
+
+            </div>
+
+
+            <!-- ERROR MESSAGE -->
+
+            <% if (typeof errorMessage !== "undefined" && errorMessage) { %>
+
+                <div class="address-form-error">
+
+                    <i class="bi bi-exclamation-circle"></i>
+
+                    <span>
+                        <%= errorMessage %>
+                    </span>
+
+                </div>
+
+            <% } %>
+
+
+            <!-- =================================================
+                 FORM CARD
+            ================================================== -->
+
+            <div class="add-address-card">
+
+                <form
+                    action="/addresses/add"
+                    method="POST"
+                    class="clean-address-form"
+                >
+
+                    <!-- =================================================
+                         PERSONAL DETAILS
+                    ================================================== -->
+
+                    <div class="address-section">
+
+                        <div class="address-section-heading">
+
+                            <span class="address-section-number">
+                                01
+                            </span>
+
+                            <div>
+
+                                <h2>
+                                    Personal Details
+                                </h2>
+
+                                <p>
+                                    Enter the name of the person receiving
+                                    the order.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="address-fields two-columns">
+
+                            <!-- FIRST NAME -->
+
+                            <div class="address-field">
+
+                                <label for="firstName">
+                                    FIRST NAME
+                                    <span>*</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="firstName"
+                                    name="firstName"
+                                    placeholder="Enter first name"
+                                    value="<%= formData && formData.firstName ? formData.firstName : '' %>"
+                                    autocomplete="given-name"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <!-- LAST NAME -->
+
+                            <div class="address-field">
+
+                                <label for="lastName">
+                                    LAST NAME
+                                    <span>*</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="lastName"
+                                    name="lastName"
+                                    placeholder="Enter last name"
+                                    value="<%= formData && formData.lastName ? formData.lastName : '' %>"
+                                    autocomplete="family-name"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="address-section-divider"></div>
+
+
+                    <!-- =================================================
+                         DELIVERY ADDRESS
+                    ================================================== -->
+
+                    <div class="address-section">
+
+                        <div class="address-section-heading">
+
+                            <span class="address-section-number">
+                                02
+                            </span>
+
+                            <div>
+
+                                <h2>
+                                    Delivery Address
+                                </h2>
+
+                                <p>
+                                    Where should we deliver your timepiece?
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="address-fields">
+
+                            <!-- PIN CODE -->
+
+                            <div class="address-field address-field-medium">
+
+                                <label for="pinCode">
+                                    PIN CODE
+                                    <span>*</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="pinCode"
+                                    name="pinCode"
+                                    placeholder="Enter PIN code"
+                                    value="<%= formData && formData.pinCode ? formData.pinCode : '' %>"
+                                    inputmode="numeric"
+                                    maxlength="6"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <!-- ADDRESS LINE 1 -->
+
+                            <div class="address-field">
+
+                                <label for="addressLine1">
+                                    ADDRESS LINE 1
+                                    <span>*</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="addressLine1"
+                                    name="addressLine1"
+                                    placeholder="House / Flat / Building / Street"
+                                    value="<%= formData && formData.addressLine1 ? formData.addressLine1 : '' %>"
+                                    autocomplete="address-line1"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <!-- ADDRESS LINE 2 -->
+
+                            <div class="address-field">
+
+                                <label for="addressLine2">
+                                    ADDRESS LINE 2
+                                    <small>OPTIONAL</small>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="addressLine2"
+                                    name="addressLine2"
+                                    placeholder="Landmark, Area, Locality"
+                                    value="<%= formData && formData.addressLine2 ? formData.addressLine2 : '' %>"
+                                    autocomplete="address-line2"
+                                >
+
+                            </div>
+
+
+                            <!-- CITY + STATE -->
+
+                            <div class="address-fields two-columns">
+
+                                <div class="address-field">
+
+                                    <label for="city">
+                                        CITY
+                                        <span>*</span>
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        id="city"
+                                        name="city"
+                                        placeholder="Enter city"
+                                        value="<%= formData && formData.city ? formData.city : '' %>"
+                                        autocomplete="address-level2"
+                                        required
+                                    >
+
+                                </div>
+
+
+                                <div class="address-field">
+
+                                    <label for="state">
+                                        STATE
+                                        <span>*</span>
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        id="state"
+                                        name="state"
+                                        placeholder="Enter state"
+                                        value="<%= formData && formData.state ? formData.state : 'Kerala' %>"
+                                        autocomplete="address-level1"
+                                        required
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- COUNTRY -->
+
+                            <div class="address-field address-field-medium">
+
+                                <label for="country">
+                                    COUNTRY
+                                    <span>*</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="country"
+                                    name="country"
+                                    placeholder="Enter country"
+                                    value="<%= formData && formData.country ? formData.country : 'India' %>"
+                                    autocomplete="country-name"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="address-section-divider"></div>
+
+
+                    <!-- =================================================
+                         CONTACT DETAILS
+                    ================================================== -->
+
+                    <div class="address-section">
+
+                        <div class="address-section-heading">
+
+                            <span class="address-section-number">
+                                03
+                            </span>
+
+                            <div>
+
+                                <h2>
+                                    Contact Details
+                                </h2>
+
+                                <p>
+                                    We'll use this number for delivery updates.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="address-fields">
+
+                            <div class="address-field address-phone-field">
+
+                                <label for="phone">
+                                    PHONE NUMBER
+                                    <span>*</span>
+                                </label>
+
+                                <input
+                                    type="tel"
+                                    id="phone"
+                                    name="phone"
+                                    placeholder="Enter phone number"
+                                    value="<%= formData && formData.phone ? formData.phone : '' %>"
+                                    autocomplete="tel"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="address-section-divider"></div>
+
+
+                    <!-- =================================================
+                         ADDRESS PREFERENCES
+                    ================================================== -->
+
+                    <div class="address-section">
+
+                        <div class="address-section-heading">
+
+                            <span class="address-section-number">
+                                04
+                            </span>
+
+                            <div>
+
+                                <h2>
+                                    Address Preferences
+                                </h2>
+
+                                <p>
+                                    Help you identify this address easily.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ADDRESS TYPE -->
+
+                        <div class="address-preference-group">
+
+                            <label class="address-preference-label">
+                                SAVE ADDRESS AS
+                            </label>
+
+
+                            <div class="address-type-options">
+
+                                <label class="address-type-option">
+
+                                    <input
+                                        type="radio"
+                                        name="addressName"
+                                        value="Home"
+                                        <%= formData && formData.addressName === "Home" ? "checked" : "" %>
+                                    >
+
+                                    <span>
+                                        <i class="bi bi-house"></i>
+                                        HOME
+                                    </span>
+
+                                </label>
+
+
+                                <label class="address-type-option">
+
+                                    <input
+                                        type="radio"
+                                        name="addressName"
+                                        value="Work"
+                                        <%= formData && formData.addressName === "Work" ? "checked" : "" %>
+                                    >
+
+                                    <span>
+                                        <i class="bi bi-briefcase"></i>
+                                        WORK
+                                    </span>
+
+                                </label>
+
+
+                                <label class="address-type-option">
+
+                                    <input
+                                        type="radio"
+                                        name="addressName"
+                                        value="Other"
+                                        <%= formData && formData.addressName === "Other" ? "checked" : "" %>
+                                    >
+
+                                    <span>
+                                        <i class="bi bi-geo-alt"></i>
+                                        OTHER
+                                    </span>
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- DEFAULT ADDRESS -->
+
+                        <label class="default-address-option">
+
+                            <input
+                                type="checkbox"
+                                name="isDefault"
+                                value="true"
+                                <%= formData && formData.isDefault ? "checked" : "" %>
+                            >
+
+                            <span class="default-address-check">
+                                <i class="bi bi-check"></i>
+                            </span>
+
+                            <span class="default-address-text">
+
+                                <strong>
+                                    Set as default address
+                                </strong>
+
+                                <small>
+                                    Use this address automatically during checkout.
+                                </small>
+
+                            </span>
+
+                        </label>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         FORM ACTIONS
+                    ================================================== -->
+
+                    <div class="address-form-actions">
+
+                        <a
+                            href="/addresses"
+                            class="address-cancel-button"
+                        >
+                            CANCEL
+                        </a>
+
+
+                        <button
+                            type="submit"
+                            class="address-save-button"
+                        >
+                            SAVE ADDRESS
+                            <i class="bi bi-arrow-right"></i>
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+<%- include("../partials/footer2") %>

@@ -1294,3 +1294,1432 @@
 
     font-size: 12px;
 }
+
+
+
+/* =====================================================
+   ADD ADDRESS PAGE
+   WRISTORA CLEAN FORM DESIGN
+===================================================== */
+
+.add-address-content {
+    max-width: 100%;
+}
+
+
+/* =====================================================
+   PAGE HEADER
+===================================================== */
+
+.add-address-header {
+    display: flex;
+
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 30px;
+
+    margin-bottom: 35px;
+}
+
+
+.add-address-eyebrow {
+    margin: 0 0 8px;
+
+    color: #777;
+
+    font-family: "Montserrat", sans-serif;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    letter-spacing: 2px;
+}
+
+
+.add-address-header h1 {
+    margin: 0;
+
+    color: #111;
+
+    font-family: "Cormorant Garamond", serif;
+
+    font-size: 42px;
+
+    font-weight: 500;
+
+    letter-spacing: 0.5px;
+}
+
+
+.add-address-description {
+    max-width: 520px;
+
+    margin: 10px 0 0;
+
+    color: #777;
+
+    font-family: "Montserrat", sans-serif;
+
+    font-size: 12px;
+
+    line-height: 1.7;
+}
+
+
+.add-address-back {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding-bottom: 5px;
+
+    color: #444;
+
+    border-bottom: 1px solid #aaa;
+
+    text-decoration: none;
+
+    font-family: "Montserrat", sans-serif;
+
+    font-size: 9px;
+
+    font-weight: 600;
+
+    letter-spacing: 1.2px;
+
+    white-space: nowrap;
+
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.add-address-back:hover {
+    color: #000;
+
+    border-color: #111;
+}
+
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+.address-form-error {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 25px;
+
+    padding: 14px 18px;
+
+    border: 1px solid #dedede;
+
+    background: #fafafa;
+
+    color: #333;
+
+    font-family: "Montserrat", sans-serif;
+
+    font-size: 11px;
+}
+
+
+/* =====================================================
+   FORM CARD
+===================================================== */
+
+.add-address-card {
+    width: 100%;
+
+    background: #fff;
+
+    border: 1px solid #e4e4e4;
+
+    padding: 42px 45px;
+}
+
+
+/* =====================================================
+   ADDRESS SECTION
+===================================================== */
+
+.address-section {
+    width: 100%;
+}
+
+
+.address-section-heading {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 16px;
+
+    margin-bottom: 28px;
+}
+
+
+.address-section-number {
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+
+    border: 1px solid #222;
+
+    color: #222;
+
+    font-family: "Montserrat", sans-serif;
+
+    font-size: 9px;
+
+    font-weight: 600;
+
+    letter-spacing: 0.5px;
+}
+
+
+.address-section-heading h2 {
+    margin: 0 0 4px;
+
+    color: #111;
+
+    font-family: "Cormorant Garamond", serif;
+
+    font-size: 25px;
+
+    font-weight: 600;
+}
+
+
+.address-section-heading p {
+    margin: 0;
+
+    color: #888;
+
+    font-family: "Montserrat", sans-serif;
+
+    font-size: 10px;
+
+    line-height: 1.6;
+}
+
+
+/* =====================================================
+   FIELD GRID
+===================================================== */
+
+.address-fields {
+    display: grid;
+
+    grid-template-columns: 1fr;
+
+    gap: 22px;
+}
+
+
+.address-fields.two-columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 20px;
+}
+
+
+/* =====================================================
+   FIELD
+===================================================== */
+
+.address-field {
+    display: flex;
+
+    flex-direction: column;
+
+    min-width: 0;
+}
+
+
+.address-field-medium {
+    max-width: 48%;
+}
+
+
+.address-field label {
+    margin-bottom: 8px;
+
+    color: #333;
+
+    font-family: "Montserrat", sans-serif;
+
+    font-size: 9px;
+
+    font-weight: 600;
+
+    letter-spacing: 1.3px;
+}
+
+
+.address-field label span {
+    color: #777;
+}
+
+
+.address-field label small {
+    margin-left: 5px;
+
+    color: #aaa;
+
+    font-size: 7px;
+
+    letter-spacing: 1px;
+}
+
+
+.address-field input {
+    width: 100%;
+
+    height: 48px;
+
+    padding: 0 15px;
+
+    border: 1px solid #d9d9d9;
+
+    outline: none;
+
+    background: #fff;
+
+    color: #222;
+
+    font-family: "Montserrat", sans-serif;
+
+    font-size: 12px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.address-field input::placeholder {
+    color: #aaa;
+}
+
+
+.address-field input:hover {
+    border-color: #bbb;
+}
+
+
+.address-field input:focus {
+    border-color: #222;
+
+    box-shadow: 0 0 0 1px #222;
+}
+
+
+/* =====================================================
+   PHONE
+===================================================== */
+
+.address-phone-field {
+    max-width: 420px;
+}
+
+
+/* =====================================================
+   DIVIDER
+===================================================== */
+
+.address-section-divider {
+    height: 1px;
+
+    margin: 38px 0;
+
+    background: #e8e8e8;
+}
+
+
+/* =====================================================
+   ADDRESS PREFERENCE
+===================================================== */
+
+.address-preference-group {
+    margin-bottom: 25px;
+}
+
+
+.address-preference-label {
+    display: block;
+
+    margin-bottom: 12px;
+
+    color: #333;
+
+    font-family: "Montserrat", sans-serif;
+
+    font-size: 9px;
+
+    font-weight: 600;
+
+    letter-spacing: 1.3px;
+}
+
+
+/* =====================================================
+   ADDRESS TYPE OPTIONS
+===================================================== */
+
+.address-type-options {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+}
+
+
+.address-type-option {
+    position: relative;
+
+    cursor: pointer;
+}
+
+
+.address-type-option input {
+    position: absolute;
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+
+.address-type-option span {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    min-width: 110px;
+
+    height: 44px;
+
+    padding: 0 16px;
+
+    border: 1px solid #ddd;
+
+    color: #555;
+
+    background: #fff;
+
+    font-family: "Montserrat", sans-serif;
+
+    font-size: 9px;
+
+    font-weight: 600;
+
+    letter-spacing: 1px;
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+
+.address-type-option span i {
+    font-size: 13px;
+}
+
+
+.address-type-option:hover span {
+    border-color: #999;
+}
+
+
+.address-type-option input:checked + span {
+    border-color: #111;
+
+    background: #111;
+
+    color: #fff;
+}
+
+
+/* =====================================================
+   DEFAULT ADDRESS
+===================================================== */
+
+.default-address-option {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    width: fit-content;
+
+    cursor: pointer;
+}
+
+
+.default-address-option > input {
+    position: absolute;
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+
+.default-address-check {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 20px;
+    height: 20px;
+
+    border: 1px solid #aaa;
+
+    background: #fff;
+
+    color: transparent;
+
+    font-size: 12px;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.default-address-option > input:checked
++ .default-address-check {
+    border-color: #111;
+
+    background: #111;
+
+    color: #fff;
+}
+
+
+.default-address-text {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+
+.default-address-text strong {
+    color: #333;
+
+    font-family: "Montserrat", sans-serif;
+
+    font-size: 10px;
+
+    font-weight: 600;
+}
+
+
+.default-address-text small {
+    color: #999;
+
+    font-family: "Montserrat", sans-serif;
+
+    font-size: 9px;
+}
+
+
+/* =====================================================
+   FORM ACTIONS
+===================================================== */
+
+.address-form-actions {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 18px;
+
+    margin-top: 42px;
+
+    padding-top: 28px;
+
+    border-top: 1px solid #e8e8e8;
+}
+
+
+/* =====================================================
+   CANCEL
+===================================================== */
+
+.address-cancel-button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    height: 48px;
+
+    padding: 0 25px;
+
+    border: 1px solid #d5d5d5;
+
+    color: #555;
+
+    background: #fff;
+
+    text-decoration: none;
+
+    font-family: "Montserrat", sans-serif;
+
+    font-size: 9px;
+
+    font-weight: 600;
+
+    letter-spacing: 1.3px;
+
+    transition:
+        border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+
+.address-cancel-button:hover {
+    border-color: #111;
+
+    color: #111;
+}
+
+
+/* =====================================================
+   SAVE BUTTON
+===================================================== */
+
+.address-save-button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 14px;
+
+    height: 48px;
+
+    padding: 0 28px;
+
+    border: 1px solid #111;
+
+    background: #111;
+
+    color: #fff;
+
+    cursor: pointer;
+
+    font-family: "Montserrat", sans-serif;
+
+    font-size: 9px;
+
+    font-weight: 600;
+
+    letter-spacing: 1.5px;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.address-save-button:hover {
+    background: #333;
+
+    border-color: #333;
+}
+
+
+.address-save-button i {
+    font-size: 12px;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 1000px) {
+
+    .add-address-card {
+        padding: 35px;
+    }
+
+}
+
+
+@media (max-width: 800px) {
+
+    .add-address-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .add-address-header h1 {
+        font-size: 36px;
+    }
+
+    .address-field-medium,
+    .address-phone-field {
+        max-width: 100%;
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .add-address-card {
+        padding: 25px 20px;
+    }
+
+    .address-fields.two-columns {
+        grid-template-columns: 1fr;
+    }
+
+    .address-section-heading {
+        gap: 12px;
+    }
+
+    .address-section-heading h2 {
+        font-size: 22px;
+    }
+
+    .address-type-options {
+        flex-direction: column;
+    }
+
+    .address-type-option span {
+        width: 100%;
+    }
+
+    .address-form-actions {
+        flex-direction: column-reverse;
+
+        align-items: stretch;
+    }
+
+    .address-cancel-button,
+    .address-save-button {
+        width: 100%;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .add-address-header h1 {
+        font-size: 31px;
+    }
+
+    .add-address-description {
+        font-size: 11px;
+    }
+
+    .add-address-back {
+        font-size: 8px;
+    }
+
+}
+/* =====================================================
+   ADDRESS LIST PAGE
+===================================================== */
+
+.address-page-content {
+    max-width: 1100px;
+}
+
+
+/* =====================================================
+   ADDRESS PAGE HEADER
+===================================================== */
+
+.address-page-header {
+    margin-bottom: 30px;
+}
+
+
+.address-page-eyebrow {
+    margin: 0 0 8px;
+
+    color: #77736d;
+
+    font-family: "Montserrat", sans-serif;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    letter-spacing: 1.8px;
+}
+
+
+.address-page-description {
+    margin: 12px 0 0;
+
+    color: #77736d;
+
+    font-size: 11px;
+
+    line-height: 1.6;
+}
+
+
+/* =====================================================
+   SUCCESS MESSAGE
+===================================================== */
+
+.profile-success-message {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 25px;
+
+    padding: 13px 16px;
+
+    background: #f1f5f1;
+
+    border: 1px solid #d5ded5;
+
+    color: #405540;
+
+    font-size: 11px;
+
+    font-weight: 500;
+}
+
+
+.profile-success-message i {
+    font-size: 15px;
+}
+
+
+/* =====================================================
+   ERROR MESSAGE
+===================================================== */
+
+.profile-error-message {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 25px;
+
+    padding: 13px 16px;
+
+    background: #f7eaea;
+
+    border: 1px solid #e0caca;
+
+    color: #8a3f3f;
+
+    font-size: 11px;
+}
+
+
+.profile-error-message i {
+    font-size: 15px;
+}
+
+
+/* =====================================================
+   ADD ADDRESS BUTTON
+===================================================== */
+
+.address-add-button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    min-height: 45px;
+
+    padding: 0 22px;
+
+    margin-bottom: 30px;
+
+    background: #292929;
+
+    border: 1px solid #292929;
+
+    color: #ffffff;
+
+    text-decoration: none;
+
+    font-size: 9px;
+
+    font-weight: 600;
+
+    letter-spacing: 1.2px;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.address-add-button:hover {
+    background: #111111;
+
+    border-color: #111111;
+
+    color: #ffffff;
+}
+
+
+.address-add-button i {
+    font-size: 12px;
+}
+
+
+/* =====================================================
+   ADDRESS GRID
+===================================================== */
+
+.address-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 22px;
+}
+
+
+/* =====================================================
+   ADDRESS CARD
+===================================================== */
+
+.address-card {
+    position: relative;
+
+    min-width: 0;
+
+    padding: 28px 25px 20px;
+
+    background: #ffffff;
+
+    border: 1px solid #dedbd5;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.address-card:hover {
+    border-color: #bbb7b0;
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.04);
+}
+
+
+/* =====================================================
+   EDIT BUTTON
+===================================================== */
+
+.address-edit-button {
+    position: absolute;
+
+    top: 18px;
+
+    right: 18px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+
+    color: #77736d;
+
+    background: transparent;
+
+    border: 1px solid transparent;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    transition:
+        color 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.address-edit-button:hover {
+    color: #111111;
+
+    background: #efede8;
+
+    border-color: #dedbd5;
+}
+
+
+/* =====================================================
+   DEFAULT BADGE
+===================================================== */
+
+.address-default-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    min-height: 24px;
+
+    padding: 0 9px;
+
+    margin-bottom: 15px;
+
+    background: #292929;
+
+    color: #ffffff;
+
+    font-size: 8px;
+
+    font-weight: 600;
+
+    letter-spacing: 1px;
+}
+
+
+/* =====================================================
+   ADDRESS NAME
+===================================================== */
+
+.address-name {
+    margin: 0 45px 18px 0;
+
+    color: #222222;
+
+    font-family: "Cormorant Garamond", serif;
+
+    font-size: 27px;
+
+    font-weight: 600;
+
+    line-height: 1.1;
+}
+
+
+/* =====================================================
+   ADDRESS DETAILS
+===================================================== */
+
+.address-details {
+    min-height: 155px;
+
+    padding-bottom: 20px;
+}
+
+
+.address-details p {
+    margin: 0 0 6px;
+
+    color: #66625c;
+
+    font-size: 11px;
+
+    line-height: 1.5;
+
+    word-break: break-word;
+}
+
+
+.address-details p:last-child {
+    margin-bottom: 0;
+}
+
+
+.address-details .address-type-name {
+    margin-bottom: 10px;
+
+    color: #292929;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    letter-spacing: 1px;
+
+    text-transform: uppercase;
+}
+
+
+.address-details .address-phone {
+    margin-top: 10px;
+
+    color: #44413d;
+}
+
+
+.address-details .address-phone strong {
+    font-weight: 600;
+}
+
+
+/* =====================================================
+   ADDRESS ACTIONS
+===================================================== */
+
+.address-actions {
+    display: flex;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    padding-top: 17px;
+
+    border-top: 1px solid #e5e2dd;
+}
+
+
+/* =====================================================
+   ADDRESS LABEL
+===================================================== */
+
+.address-label {
+    display: inline-flex;
+
+    align-items: center;
+
+    min-height: 26px;
+
+    padding: 0 9px;
+
+    background: #efede8;
+
+    color: #55514c;
+
+    font-size: 8px;
+
+    font-weight: 600;
+
+    letter-spacing: 1px;
+}
+
+
+/* =====================================================
+   INLINE FORM
+===================================================== */
+
+.address-inline-form {
+    display: inline-flex;
+
+    margin: 0;
+}
+
+
+/* =====================================================
+   SET DEFAULT
+===================================================== */
+
+.address-set-default {
+    border: none;
+
+    padding: 0;
+
+    background: transparent;
+
+    color: #55514c;
+
+    font-family: "Montserrat", sans-serif;
+
+    font-size: 8px;
+
+    font-weight: 600;
+
+    letter-spacing: 0.8px;
+
+    cursor: pointer;
+
+    text-decoration: underline;
+
+    text-underline-offset: 3px;
+
+    transition: color 0.2s ease;
+}
+
+
+.address-set-default:hover {
+    color: #111111;
+}
+
+
+/* =====================================================
+   DELETE
+===================================================== */
+
+.address-delete-button {
+    border: none;
+
+    padding: 0;
+
+    background: transparent;
+
+    color: #77736d;
+
+    font-family: "Montserrat", sans-serif;
+
+    font-size: 8px;
+
+    font-weight: 600;
+
+    letter-spacing: 0.8px;
+
+    cursor: pointer;
+
+    text-decoration: underline;
+
+    text-underline-offset: 3px;
+
+    transition: color 0.2s ease;
+}
+
+
+.address-delete-button:hover {
+    color: #8a3f3f;
+}
+
+
+/* =====================================================
+   EMPTY STATE
+===================================================== */
+
+.address-empty-state {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 300px;
+
+    padding: 45px 25px;
+
+    background: #ffffff;
+
+    border: 1px solid #dedbd5;
+
+    text-align: center;
+}
+
+
+.address-empty-icon {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 55px;
+    height: 55px;
+
+    margin-bottom: 18px;
+
+    background: #efede8;
+
+    border-radius: 50%;
+
+    color: #77736d;
+
+    font-size: 22px;
+}
+
+
+.address-empty-state h2 {
+    margin: 0 0 8px;
+
+    color: #292929;
+
+    font-family: "Cormorant Garamond", serif;
+
+    font-size: 27px;
+
+    font-weight: 600;
+}
+
+
+.address-empty-state p {
+    max-width: 400px;
+
+    margin: 0 0 25px;
+
+    color: #77736d;
+
+    font-size: 11px;
+
+    line-height: 1.6;
+}
+
+
+/* =====================================================
+   EMPTY BUTTON
+===================================================== */
+
+.address-empty-button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 44px;
+
+    padding: 0 22px;
+
+    background: #292929;
+
+    border: 1px solid #292929;
+
+    color: #ffffff;
+
+    text-decoration: none;
+
+    font-size: 8px;
+
+    font-weight: 600;
+
+    letter-spacing: 1.2px;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.address-empty-button:hover {
+    background: #111111;
+
+    border-color: #111111;
+
+    color: #ffffff;
+}
+
+
+/* =====================================================
+   ADDRESS TABLET
+===================================================== */
+
+@media (max-width: 991px) {
+
+    .address-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .address-page-content {
+        max-width: 100%;
+    }
+
+}
+
+
+/* =====================================================
+   ADDRESS MOBILE
+===================================================== */
+
+@media (max-width: 767px) {
+
+    .address-page-header {
+        margin-bottom: 25px;
+    }
+
+
+    .address-add-button {
+        width: 100%;
+    }
+
+
+    .address-card {
+        padding: 24px 20px 18px;
+    }
+
+
+    .address-name {
+        font-size: 25px;
+    }
+
+
+    .address-details {
+        min-height: auto;
+    }
+
+
+    .address-actions {
+        align-items: flex-start;
+    }
+
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width: 480px) {
+
+    .address-page-description {
+        font-size: 10px;
+    }
+
+
+    .address-name {
+        font-size: 23px;
+    }
+
+
+    .address-actions {
+        gap: 12px;
+    }
+
+
+    .address-empty-state {
+        padding: 35px 20px;
+    }
+
+}
