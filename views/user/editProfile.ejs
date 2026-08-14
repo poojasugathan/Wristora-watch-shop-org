@@ -93,6 +93,88 @@
 
 
 
+            <!-- =================================================
+                 PROFILE IMAGE SUCCESS / ERROR MESSAGES
+            ================================================== -->
+
+            <% if (imageUpdated) { %>
+
+                <div class="account-settings-success">
+
+                    <i class="bi bi-check-circle"></i>
+
+                    <span>
+                        Profile image updated successfully.
+                    </span>
+
+                </div>
+
+            <% } %>
+
+
+            <% if (imageDeleted) { %>
+
+                <div class="account-settings-success">
+
+                    <i class="bi bi-check-circle"></i>
+
+                    <span>
+                        Profile image removed successfully.
+                    </span>
+
+                </div>
+
+            <% } %>
+
+
+            <% if (imageError) { %>
+
+                <div class="account-settings-error">
+
+                    <i class="bi bi-exclamation-circle"></i>
+
+                    <span>
+                        Unable to update your profile image. Please try again.
+                    </span>
+
+                </div>
+
+            <% } %>
+
+            <!-- SUCCESS MESSAGE -->
+
+<% if (successMessage) { %>
+
+    <div class="account-settings-success">
+
+        <i class="bi bi-check-circle"></i>
+
+        <span>
+            <%= successMessage %>
+        </span>
+
+    </div>
+
+<% } %>
+            
+
+
+            <% if (imageDeleteError) { %>
+
+                <div class="account-settings-error">
+
+                    <i class="bi bi-exclamation-circle"></i>
+
+                    <span>
+                        Unable to remove your profile image. Please try again.
+                    </span>
+
+                </div>
+
+            <% } %>
+
+
+
             <!-- ERROR MESSAGE -->
 
             <% if (errorMessage) { %>
@@ -192,13 +274,51 @@
                             Wristora Member
                         </p>
 
-                        <input
-                            type="file"
-                            id="profilePhotoInput"
-                            name="profileImage"
-                            accept="image/*"
-                            hidden
+
+                        <!-- =================================================
+                             UPLOAD FORM
+                        ================================================== -->
+
+                        <form
+                            action="/profile/image"
+                            method="POST"
+                            enctype="multipart/form-data"
+                            id="profileImageForm"
                         >
+
+                            <input
+                                type="file"
+                                id="profilePhotoInput"
+                                name="profileImage"
+                                accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                                hidden
+                            >
+
+                        </form>
+
+
+                        <!-- =================================================
+                             REMOVE IMAGE
+                        ================================================== -->
+
+                        <% if (user.profileImage && user.profileImage.url) { %>
+
+                            <form
+                                action="/profile/image/delete"
+                                method="POST"
+                                id="deleteProfileImageForm"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="profile-remove-image-btn"
+                                >
+                                    REMOVE PHOTO
+                                </button>
+
+                            </form>
+
+                        <% } %>
 
                     </div>
 
@@ -401,13 +521,12 @@
                                     ••••••••••••
                                 </span>
 
-                                <button
-                                    type="button"
-                                    class="change-password-btn"
-                                    disabled
+                                <a
+                                 href="/profile/change-password"
+                                 class="change-password-btn"
                                 >
-                                    CHANGE PASSWORD
-                                </button>
+                                   CHANGE PASSWORD
+                                </a>
 
                             </div>
 
@@ -651,9 +770,16 @@
     const profilePhotoInput =
         document.getElementById("profilePhotoInput");
 
+    const profileImageForm =
+        document.getElementById("profileImageForm");
+
     const profilePreview =
         document.getElementById("profilePreview");
 
+
+    // =====================================================
+    // OPEN FILE SELECTOR
+    // =====================================================
 
     photoEditBtn.addEventListener("click", function () {
 
@@ -661,6 +787,10 @@
 
     });
 
+
+    // =====================================================
+    // IMAGE VALIDATION + PREVIEW + UPLOAD
+    // =====================================================
 
     profilePhotoInput.addEventListener("change", function (event) {
 
@@ -671,11 +801,22 @@
         }
 
 
-        // Only allow image files
+        // =================================================
+        // ALLOWED TYPES
+        // =================================================
 
-        if (!file.type.startsWith("image/")) {
+        const allowedTypes = [
+            "image/jpeg",
+            "image/png",
+            "image/webp"
+        ];
 
-            alert("Please select a valid image.");
+
+        if (!allowedTypes.includes(file.type)) {
+
+            alert(
+                "Only JPG, JPEG, PNG and WEBP images are allowed."
+            );
 
             profilePhotoInput.value = "";
 
@@ -683,6 +824,30 @@
 
         }
 
+
+        // =================================================
+        // FILE SIZE
+        // =================================================
+
+        const maxFileSize = 5 * 1024 * 1024;
+
+
+        if (file.size > maxFileSize) {
+
+            alert(
+                "Profile image must be smaller than 5 MB."
+            );
+
+            profilePhotoInput.value = "";
+
+            return;
+
+        }
+
+
+        // =================================================
+        // PREVIEW
+        // =================================================
 
         const reader = new FileReader();
 
@@ -704,6 +869,8 @@
 
                 img.className = "edit-profile-photo";
 
+                img.id = "profilePreview";
+
                 profilePreview.replaceWith(img);
 
             }
@@ -713,7 +880,46 @@
 
         reader.readAsDataURL(file);
 
+
+        // =================================================
+        // SUBMIT TO CLOUDINARY
+        // =================================================
+
+        profileImageForm.submit();
+
     });
+
+
+
+    // =====================================================
+    // DELETE PROFILE IMAGE CONFIRMATION
+    // =====================================================
+
+    const deleteProfileImageForm =
+        document.getElementById("deleteProfileImageForm");
+
+
+    if (deleteProfileImageForm) {
+
+        deleteProfileImageForm.addEventListener(
+            "submit",
+            function (event) {
+
+                const confirmed = confirm(
+                    "Are you sure you want to remove your profile photo?"
+                );
+
+
+                if (!confirmed) {
+
+                    event.preventDefault();
+
+                }
+
+            }
+        );
+
+    }
 
 </script>
 

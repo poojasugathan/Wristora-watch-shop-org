@@ -1246,3 +1246,51 @@
     }
 
 }
+
+/* =====================================================
+   CHANGE PASSWORD
+===================================================== */
+
+.password-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+
+.password-input-wrapper input {
+    width: 100%;
+    padding-right: 48px;
+}
+
+
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+
+    border: none;
+    background: transparent;
+
+    color: #777;
+
+    cursor: pointer;
+
+    padding: 4px;
+}
+
+
+.password-toggle:hover {
+    color: #111;
+}
+
+
+.account-settings-security-item small {
+    display: block;
+
+    margin-top: 8px;
+
+    color: #777;
+
+    font-size: 12px;
+}

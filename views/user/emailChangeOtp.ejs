@@ -1,0 +1,967 @@
+<%- include("../partials/header", { title: "Verify New Email | Wristora" }) %>
+
+<link
+    rel="stylesheet"
+    href="/css/otp.css"
+>
+
+
+<main class="otp-main">
+
+    <div class="otp-container">
+
+
+        <!-- =================================================
+             TITLE
+        ================================================== -->
+
+        <h1>
+            Verify New Email
+        </h1>
+
+
+        <!-- =================================================
+             DESCRIPTION
+        ================================================== -->
+
+        <p class="otp-description">
+
+            We've sent a 6-digit verification code to
+
+            <br>
+
+            <strong>
+                <%= email %>
+            </strong>
+
+        </p>
+
+
+        <!-- =================================================
+             OTP FORM
+        ================================================== -->
+
+        <form
+            id="emailChangeOtpForm"
+        >
+
+
+            <div class="otp-inputs">
+
+                <input
+                    type="text"
+                    maxlength="1"
+                    class="otp-input"
+                    inputmode="numeric"
+                    autocomplete="one-time-code"
+                >
+
+                <input
+                    type="text"
+                    maxlength="1"
+                    class="otp-input"
+                    inputmode="numeric"
+                >
+
+                <input
+                    type="text"
+                    maxlength="1"
+                    class="otp-input"
+                    inputmode="numeric"
+                >
+
+                <input
+                    type="text"
+                    maxlength="1"
+                    class="otp-input"
+                    inputmode="numeric"
+                >
+
+                <input
+                    type="text"
+                    maxlength="1"
+                    class="otp-input"
+                    inputmode="numeric"
+                >
+
+                <input
+                    type="text"
+                    maxlength="1"
+                    class="otp-input"
+                    inputmode="numeric"
+                >
+
+            </div>
+
+
+            <!-- =================================================
+                 TIMER
+            ================================================== -->
+
+            <div class="timer-text">
+
+                Send code again
+
+                <span id="timer">
+                    00:30
+                </span>
+
+            </div>
+
+
+            <!-- =================================================
+                 RESEND
+            ================================================== -->
+
+            <div class="resend-text">
+
+                Didn't receive a code?
+
+                <button
+                    type="button"
+                    id="resendBtn"
+                    disabled
+                >
+                    Resend
+                </button>
+
+            </div>
+
+
+            <!-- =================================================
+                 VERIFY
+            ================================================== -->
+
+            <button
+                type="submit"
+                class="verify-button"
+                id="verifyButton"
+            >
+                VERIFY
+            </button>
+
+
+            <!-- =================================================
+                 BACK
+            ================================================== -->
+
+            <a
+                href="/profile/edit"
+                class="back-signup"
+            >
+                Back to Edit Profile
+            </a>
+
+        </form>
+
+    </div>
+
+</main>
+
+
+<footer class="otp-footer">
+
+    © 2024 WRISTORA MAISON DE HAUTE HORLOGERIE
+
+</footer>
+
+
+<script>
+
+
+// =====================================================
+// OTP ELEMENTS
+// =====================================================
+
+const otpInputs =
+    document.querySelectorAll(".otp-input");
+
+const form =
+    document.getElementById(
+        "emailChangeOtpForm"
+    );
+
+const resendBtn =
+    document.getElementById(
+        "resendBtn"
+    );
+
+const timerElement =
+    document.getElementById(
+        "timer"
+    );
+
+const verifyButton =
+    document.getElementById(
+        "verifyButton"
+    );
+
+
+// =====================================================
+// TIMER
+// =====================================================
+
+let seconds = 30;
+
+let countdown = null;
+
+
+// =====================================================
+// START TIMER
+// =====================================================
+
+const startTimer = (
+    initialSeconds = 30
+) => {
+
+    if (countdown) {
+
+        clearInterval(countdown);
+
+    }
+
+
+    seconds =
+        initialSeconds;
+
+
+    resendBtn.disabled =
+        true;
+
+
+    timerElement.textContent =
+        seconds
+            .toString()
+            .padStart(2, "0");
+
+
+    countdown =
+        setInterval(() => {
+
+            seconds--;
+
+
+            timerElement.textContent =
+                seconds
+                    .toString()
+                    .padStart(2, "0");
+
+
+            if (seconds <= 0) {
+
+                clearInterval(
+                    countdown
+                );
+
+                countdown = null;
+
+
+                timerElement.textContent =
+                    "00";
+
+
+                resendBtn.disabled =
+                    false;
+
+            }
+
+        }, 1000);
+
+};
+
+
+// =====================================================
+// CLEAR OTP
+// =====================================================
+
+const clearOtpInputs = () => {
+
+    otpInputs.forEach(
+        (input) => {
+
+            input.value = "";
+
+        }
+    );
+
+
+    otpInputs[0].focus();
+
+};
+
+
+// =====================================================
+// OTP INPUT BEHAVIOUR
+// =====================================================
+
+otpInputs.forEach(
+    (input, index) => {
+
+
+        input.addEventListener(
+            "input",
+            () => {
+
+                input.value =
+                    input.value.replace(
+                        /\D/g,
+                        ""
+                    );
+
+
+                if (
+                    input.value &&
+                    index <
+                    otpInputs.length - 1
+                ) {
+
+                    otpInputs[
+                        index + 1
+                    ].focus();
+
+                }
+
+            }
+        );
+
+
+        input.addEventListener(
+            "keydown",
+            (event) => {
+
+                if (
+                    event.key ===
+                        "Backspace" &&
+                    !input.value &&
+                    index > 0
+                ) {
+
+                    otpInputs[
+                        index - 1
+                    ].focus();
+
+                }
+
+            }
+        );
+
+
+        // =================================================
+        // PASTE OTP
+        // =================================================
+
+        input.addEventListener(
+            "paste",
+            (event) => {
+
+                event.preventDefault();
+
+
+                const pastedData =
+                    event.clipboardData
+                        .getData("text")
+                        .replace(
+                            /\D/g,
+                            ""
+                        )
+                        .slice(0, 6);
+
+
+                pastedData
+                    .split("")
+                    .forEach(
+                        (digit, i) => {
+
+                            if (
+                                otpInputs[i]
+                            ) {
+
+                                otpInputs[i]
+                                    .value =
+                                    digit;
+
+                            }
+
+                        }
+                    );
+
+
+                if (
+                    pastedData.length > 0
+                ) {
+
+                    const nextIndex =
+                        Math.min(
+                            pastedData.length,
+                            otpInputs.length - 1
+                        );
+
+
+                    otpInputs[
+                        nextIndex
+                    ].focus();
+
+                }
+
+            }
+        );
+
+    }
+);
+
+
+// =====================================================
+// VERIFY OTP
+// =====================================================
+
+form.addEventListener(
+    "submit",
+    async (event) => {
+
+        event.preventDefault();
+
+
+        let otp = "";
+
+
+        otpInputs.forEach(
+            (input) => {
+
+                otp += input.value;
+
+            }
+        );
+
+
+        // =================================================
+        // VALIDATE OTP
+        // =================================================
+
+        if (!/^\d{6}$/.test(otp)) {
+
+            Swal.fire({
+
+                icon: "warning",
+
+                title:
+                    "Incomplete OTP",
+
+                text:
+                    "Please enter the complete 6-digit OTP.",
+
+                confirmButtonColor:
+                    "#2c2c2c"
+
+            });
+
+            return;
+
+        }
+
+
+        // =================================================
+        // DISABLE VERIFY
+        // =================================================
+
+        verifyButton.disabled =
+            true;
+
+        verifyButton.textContent =
+            "VERIFYING...";
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/profile/change-email/otp",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+
+                        },
+
+                        body:
+                            JSON.stringify({
+                                otp
+                            })
+
+                    }
+                );
+
+
+            const result =
+                await response.json();
+
+
+            // =================================================
+            // SUCCESS
+            // =================================================
+
+            if (result.success) {
+
+                Swal.fire({
+
+                    icon: "success",
+
+                    title:
+                        "Email Updated",
+
+                    text:
+                        "Your email address has been updated successfully.",
+
+                    confirmButtonColor:
+                        "#2c2c2c",
+
+                    confirmButtonText:
+                        "Continue"
+
+                }).then(() => {
+
+                    window.location.href =
+                        "/profile/edit";
+
+                });
+
+
+                return;
+
+            }
+
+
+            // =================================================
+            // SESSION EXPIRED
+            // =================================================
+
+            if (
+                result.reason ===
+                "session_expired"
+            ) {
+
+                Swal.fire({
+
+                    icon: "error",
+
+                    title:
+                        "Session Expired",
+
+                    text:
+                        result.message,
+
+                    confirmButtonColor:
+                        "#2c2c2c"
+
+                }).then(() => {
+
+                    window.location.href =
+                        "/auth/login";
+
+                });
+
+
+                return;
+
+            }
+
+
+            // =================================================
+            // EXPIRED OTP
+            // =================================================
+
+            if (
+                result.reason ===
+                "expired"
+            ) {
+
+                Swal.fire({
+
+                    icon: "error",
+
+                    title:
+                        "OTP Expired",
+
+                    text:
+                        "Your OTP has expired. Please request a new OTP.",
+
+                    confirmButtonColor:
+                        "#2c2c2c"
+
+                });
+
+
+                verifyButton.disabled =
+                    false;
+
+                verifyButton.textContent =
+                    "VERIFY";
+
+
+                return;
+
+            }
+
+
+            // =================================================
+            // MAX ATTEMPTS
+            // =================================================
+
+            if (
+                result.reason ===
+                "max_attempts"
+            ) {
+
+                Swal.fire({
+
+                    icon: "error",
+
+                    title:
+                        "Too Many Attempts",
+
+                    text:
+                        "Maximum OTP attempts reached. Please request a new OTP.",
+
+                    confirmButtonColor:
+                        "#2c2c2c"
+
+                });
+
+
+                clearOtpInputs();
+
+
+                verifyButton.disabled =
+                    false;
+
+                verifyButton.textContent =
+                    "VERIFY";
+
+
+                return;
+
+            }
+
+
+            // =================================================
+            // DUPLICATE EMAIL
+            // =================================================
+
+            if (
+                result.reason ===
+                "duplicate"
+            ) {
+
+                Swal.fire({
+
+                    icon: "error",
+
+                    title:
+                        "Email Already Registered",
+
+                    text:
+                        "An account with this email already exists.",
+
+                    confirmButtonColor:
+                        "#2c2c2c"
+
+                }).then(() => {
+
+                    window.location.href =
+                        "/profile/edit";
+
+                });
+
+
+                return;
+
+            }
+
+
+            // =================================================
+            // INVALID OTP
+            // =================================================
+
+            let message =
+                result.message ||
+                "Invalid OTP.";
+
+
+            if (
+                result.attemptsRemaining
+            ) {
+
+                message +=
+                    ` ${result.attemptsRemaining} attempt(s) remaining.`;
+
+            }
+
+
+            Swal.fire({
+
+                icon: "error",
+
+                title:
+                    "Invalid OTP",
+
+                text:
+                    message,
+
+                confirmButtonColor:
+                    "#2c2c2c"
+
+            });
+
+
+            clearOtpInputs();
+
+
+            verifyButton.disabled =
+                false;
+
+            verifyButton.textContent =
+                "VERIFY";
+
+        } catch (error) {
+
+            console.error(
+                "Email change OTP verification error:",
+                error
+            );
+
+
+            Swal.fire({
+
+                icon: "error",
+
+                title:
+                    "Something went wrong",
+
+                text:
+                    "Please try again.",
+
+                confirmButtonColor:
+                    "#2c2c2c"
+
+            });
+
+
+            verifyButton.disabled =
+                false;
+
+            verifyButton.textContent =
+                "VERIFY";
+
+        }
+
+    }
+);
+
+
+// =====================================================
+// RESEND OTP
+// =====================================================
+
+resendBtn.addEventListener(
+    "click",
+    async () => {
+
+        resendBtn.disabled =
+            true;
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/profile/change-email/resend",
+                    {
+                        method: "POST"
+                    }
+                );
+
+
+            const result =
+                await response.json();
+
+
+            // =================================================
+            // SUCCESS
+            // =================================================
+
+            if (result.success) {
+
+                clearOtpInputs();
+
+
+                Swal.fire({
+
+                    icon: "success",
+
+                    title:
+                        "OTP Sent",
+
+                    text:
+                        "A new OTP has been sent to your email.",
+
+                    confirmButtonColor:
+                        "#2c2c2c"
+
+                });
+
+
+                startTimer(
+                    result.remainingSeconds || 30
+                );
+
+
+                return;
+
+            }
+
+
+            // =================================================
+            // SESSION EXPIRED
+            // =================================================
+
+            if (
+                result.reason ===
+                "session_expired"
+            ) {
+
+                Swal.fire({
+
+                    icon: "error",
+
+                    title:
+                        "Session Expired",
+
+                    text:
+                        result.message,
+
+                    confirmButtonColor:
+                        "#2c2c2c"
+
+                }).then(() => {
+
+                    window.location.href =
+                        "/auth/login";
+
+                });
+
+
+                return;
+
+            }
+
+
+            // =================================================
+            // COOLDOWN
+            // =================================================
+
+            if (
+                result.reason ===
+                "cooldown"
+            ) {
+
+                const remaining =
+                    result.remainingSeconds ||
+                    30;
+
+
+                Swal.fire({
+
+                    icon: "info",
+
+                    title:
+                        "Please Wait",
+
+                    text:
+                        `Please wait ${remaining} seconds before requesting another OTP.`,
+
+                    confirmButtonColor:
+                        "#2c2c2c"
+
+                });
+
+
+                startTimer(
+                    remaining
+                );
+
+
+                return;
+
+            }
+
+
+            // =================================================
+            // ERROR
+            // =================================================
+
+            Swal.fire({
+
+                icon: "error",
+
+                title:
+                    "Unable to Resend OTP",
+
+                text:
+                    result.message ||
+                    "Please try again later.",
+
+                confirmButtonColor:
+                    "#2c2c2c"
+
+            });
+
+
+            resendBtn.disabled =
+                false;
+
+        } catch (error) {
+
+            console.error(
+                "Email change resend error:",
+                error
+            );
+
+
+            Swal.fire({
+
+                icon: "error",
+
+                title:
+                    "Unable to Resend OTP",
+
+                text:
+                    "Please try again later.",
+
+                confirmButtonColor:
+                    "#2c2c2c"
+
+            });
+
+
+            resendBtn.disabled =
+                false;
+
+        }
+
+    }
+);
+
+
+// =====================================================
+// START TIMER
+// =====================================================
+
+startTimer(30);
+
+</script>
+
+
+<%- include("../partials/footer2") %>
