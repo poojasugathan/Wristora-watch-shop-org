@@ -1,0 +1,290 @@
+/* =====================================================
+   ADMIN LOGIN PAGE
+===================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+    margin: 0;
+
+    background: #faf9f6;
+
+    color: #222;
+
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/* =====================================================
+   ADMIN HEADER
+===================================================== */
+
+.admin-header {
+
+    height: 81px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding-left: 32px;
+
+    border-bottom: 1px solid #e5e3df;
+
+}
+
+
+.admin-logo {
+
+    font-family: Georgia, "Times New Roman", serif;
+
+    font-size: 24px;
+
+    font-weight: 700;
+
+    letter-spacing: -1.2px;
+
+    color: #222;
+
+}
+
+
+/* =====================================================
+   LOGIN PAGE
+===================================================== */
+
+.admin-login-page {
+
+    min-height: calc(100vh - 81px);
+
+    display: flex;
+
+    justify-content: center;
+
+}
+
+
+.admin-login-container {
+
+    width: 400px;
+
+    margin-top: 91px;
+
+    text-align: left;
+
+}
+
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.admin-login-title {
+
+    margin: 0 0 57px 0;
+
+    text-align: center;
+
+    font-family: Georgia, "Times New Roman", serif;
+
+    font-size: 30px;
+
+    font-weight: 500;
+
+    letter-spacing: 8px;
+
+    color: #202020;
+
+}
+
+
+/* =====================================================
+   FORM
+===================================================== */
+
+.admin-login-form {
+
+    width: 100%;
+
+}
+
+
+/* =====================================================
+   FORM GROUP
+===================================================== */
+
+.admin-form-group {
+
+    margin-bottom: 32px;
+
+}
+
+
+.admin-form-group label {
+
+    display: block;
+
+    margin-bottom: 9px;
+
+    font-size: 12px;
+
+    font-weight: 400;
+
+    letter-spacing: 0.3px;
+
+    color: #222;
+
+}
+
+
+.admin-form-group input {
+
+    width: 100%;
+
+    height: 46px;
+
+    padding: 0 14px;
+
+    border: 1px solid #333;
+
+    border-radius: 10px;
+
+    outline: none;
+
+    background: transparent;
+
+    color: #222;
+
+    font-size: 14px;
+
+}
+
+
+.admin-form-group input:focus {
+
+    border-color: #111;
+
+}
+
+
+/* =====================================================
+   LOGIN BUTTON
+===================================================== */
+
+.admin-login-button {
+
+    display: block;
+
+    width: 256px;
+
+    height: 50px;
+
+    margin: 48px auto 0;
+
+    border: none;
+
+    background: #292929;
+
+    color: #fff;
+
+    cursor: pointer;
+
+    font-size: 11px;
+
+    font-weight: 400;
+
+    letter-spacing: 2px;
+
+}
+
+
+.admin-login-button:hover {
+
+    background: #1f1f1f;
+
+}
+
+
+
+/* =====================================================
+   ERROR MESSAGE
+===================================================== */
+
+.admin-login-error {
+
+    margin: -32px 0 28px;
+
+    text-align: center;
+
+    font-size: 12px;
+
+    color: #b42318;
+
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 600px) {
+
+    .admin-header {
+
+        height: 70px;
+
+        padding-left: 20px;
+
+    }
+
+
+    .admin-logo {
+
+        font-size: 21px;
+
+    }
+
+
+    .admin-login-page {
+
+        min-height: calc(100vh - 70px);
+
+        padding: 0 20px;
+
+    }
+
+
+    .admin-login-container {
+
+        width: 100%;
+
+        max-width: 400px;
+
+        margin-top: 70px;
+
+    }
+
+
+    .admin-login-title {
+
+        font-size: 24px;
+
+        letter-spacing: 6px;
+
+        margin-bottom: 45px;
+
+    }
+
+
+    .admin-login-button {
+
+        width: 100%;
+
+        max-width: 256px;
+
+    }
+
+}

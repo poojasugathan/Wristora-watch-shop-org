@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title><%= title %> | Wristora</title>
+
+
+    <link
+        rel="stylesheet"
+        href="/css/adminDashboard.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/adminUsers.css"
+    >
+
+</head>
+
+
+<body>
+
+<div class="admin-layout">
+
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <%- include("partials/sidebar", { currentPage: "users" }) %>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="admin-main customers-main">
+
+
+        <!-- =================================================
+             PAGE HEADER
+        ================================================== -->
+
+        <div class="customers-header">
+
+            <div>
+
+                <h1>
+                    Customers
+                </h1>
+
+                <h2>
+                    Customer report for this week
+                </h2>
+
+            </div>
+
+
+            <div class="period-toggle">
+
+                <button class="period-button">
+                    This month
+                </button>
+
+                <button class="period-button active">
+                    This week
+                </button>
+
+                <button class="period-button">
+                    This month
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             SUMMARY CARDS
+        ================================================== -->
+
+        <section class="customer-summary-grid">
+
+
+            <!-- TOTAL CUSTOMERS -->
+
+            <div class="customer-summary-card">
+
+                <span class="customer-summary-label">
+                    Total Customers
+                </span>
+
+                <strong class="customer-summary-value">
+                    <%= totalCustomers.toLocaleString("en-IN") %>
+                </strong>
+
+                <span class="customer-summary-info">
+                    All registered customers
+                </span>
+
+
+                
+
+            </div>
+
+
+
+            <!-- NEW CUSTOMERS -->
+
+            <div class="customer-summary-card">
+
+                <span class="customer-summary-label">
+                    New Customers
+                </span>
+
+                <strong class="customer-summary-value">
+                    <%= newCustomers.toLocaleString("en-IN") %>
+                </strong>
+
+                <span class="customer-summary-info">
+                    Last 7 days
+                </span>
+
+
+                
+
+            </div>
+
+
+
+            <!-- VISITOR -->
+
+            <div class="customer-summary-card">
+
+                <span class="customer-summary-label">
+                    Visitor
+                </span>
+
+                <strong class="customer-summary-value">
+                    —
+                </strong>
+
+                <span class="customer-summary-info">
+                    Visitor tracking not implemented
+                </span>
+
+
+                
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             CUSTOMER OVERVIEW
+        ================================================== -->
+
+        <section class="customer-overview-card">
+
+            <div class="customer-overview-header">
+
+                <h2>
+                    Customer Overview
+                </h2>
+
+
+                <div class="customer-overview-stats">
+
+                    <div>
+                        <strong>
+                            <%= totalCustomers.toLocaleString("en-IN") %>
+                        </strong>
+
+                        <span>
+                            Active Customers
+                        </span>
+                    </div>
+
+
+                    <div>
+                        <strong>
+                            —
+                        </strong>
+
+                        <span>
+                            Repeat Customers
+                        </span>
+                    </div>
+
+
+                    <div>
+                        <strong>
+                            —
+                        </strong>
+
+                        <span>
+                            Shop Visitor
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="overview-placeholder">
+
+                <div class="overview-grid-line"></div>
+                <div class="overview-grid-line"></div>
+                <div class="overview-grid-line"></div>
+                <div class="overview-grid-line"></div>
+
+                <div class="overview-message">
+                    Customer activity overview will be connected
+                    to order/visitor data in a later phase.
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             CUSTOMER LIST HEADER
+        ================================================== -->
+
+        <div class="customer-list-header">
+
+            <h2>
+                Customer List
+            </h2>
+
+
+            <div class="customer-tools">
+
+
+                <!-- SEARCH UI ONLY FOR PHASE 24 -->
+
+                <form
+                    class="customer-search"
+                    action="/admin/users"
+                    method="GET"
+                >
+
+                    <span class="search-icon">
+                        ⌕
+                    </span>
+
+                    <input
+                        type="text"
+                        name="search"
+                        placeholder="Search user"
+                        value="<%= typeof search !== 'undefined' ? search : '' %>"
+                        autocomplete="off"
+                    >
+
+                </form>
+                
+                 <% if (typeof search !== "undefined" && search) { %>
+
+                    <a
+                       href="/admin/users"
+                       class="customer-tool-button"
+                       title="Clear search"
+                    >
+                     X
+                    </a>
+
+                    <% } %>
+
+                <!-- FILTER UI -->
+
+                <button
+                    type="button"
+                    class="customer-tool-button"
+                    title="Filter"
+                >
+                    ♢
+                </button>
+
+
+                <!-- SORT UI -->
+
+                <button
+                    type="button"
+                    class="customer-tool-button"
+                    title="Sort"
+                >
+                    ☷
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             ERROR MESSAGE
+        ================================================== -->
+
+        <% if (typeof error !== "undefined" && error) { %>
+
+            <div class="customer-error">
+                <%= error %>
+            </div>
+
+        <% } %>
+
+
+
+        <!-- =================================================
+             CUSTOMER TABLE
+        ================================================== -->
+
+        <section class="customer-table-card">
+
+            <% if (users && users.length > 0) { %>
+
+
+                <div class="customer-table">
+
+
+                    <!-- TABLE HEADER -->
+
+                    <div class="customer-table-header">
+
+                        <span>
+                            CUSTOMER ID
+                        </span>
+
+                        <span>
+                            NAME
+                        </span>
+
+                        <span>
+                            EMAIL
+                        </span>
+
+                        <span>
+                            PHONE
+                        </span>
+
+                        <span>
+                            STATUS
+                        </span>
+
+                        <span>
+                            ACTION
+                        </span>
+
+                    </div>
+
+
+
+                    <!-- USERS -->
+
+                    <% users.forEach(user => { %>
+
+                        <div class="customer-row">
+
+
+                            <!-- CUSTOMER ID -->
+
+                            <a
+                                href="/admin/users/<%= user._id %>"
+                                class="customer-id"
+                                title="View customer details"
+                            >
+                                #<%= user._id.toString().slice(-6).toUpperCase() %>
+                            </a>
+
+
+
+                            <!-- NAME -->
+
+                            <a
+                                href="/admin/users/<%= user._id %>"
+                                class="customer-name customer-details-link"
+                            >
+
+                                <% if (
+                                    user.profileImage &&
+                                    user.profileImage.url
+                                ) { %>
+
+                                    <img
+                                        src="<%= user.profileImage.url %>"
+                                        alt="Customer"
+                                        class="customer-avatar"
+                                    >
+
+                                <% } else { %>
+
+                                    <div class="customer-avatar customer-avatar-placeholder">
+
+                                        <%= (
+                                            user.firstName || "U"
+                                        ).charAt(0).toUpperCase() %>
+
+                                    </div>
+
+                                <% } %>
+
+
+                                <div class="customer-name-text">
+
+                                    <strong>
+                                        <%= user.firstName || "" %>
+                                        <%= user.lastName || "" %>
+                                    </strong>
+
+                                </div>
+
+                            </a>
+
+
+
+                            <!-- EMAIL -->
+
+                            <span class="customer-email">
+                                <%= user.email || "—" %>
+                            </span>
+
+
+
+                            <!-- PHONE -->
+
+                            <span class="customer-phone">
+                                <%= user.phone || "—" %>
+                            </span>
+
+
+
+                            <!-- STATUS -->
+
+                            <% if (user.isBlocked === true) { %>
+
+                                <span class="customer-status blocked">
+
+                                    <span class="status-dot"></span>
+
+                                    Blocked
+
+                                </span>
+
+                            <% } else { %>
+
+                                <span class="customer-status active">
+
+                                    <span class="status-dot"></span>
+
+                                    Active
+
+                                </span>
+
+                            <% } %>
+
+
+
+                            <!-- =================================================
+                                 ACTION
+
+                                 CHANGED:
+                                 No BLOCK / UNBLOCK here.
+                                 Only VIEW CUSTOMER.
+                            ================================================== -->
+
+                            <div class="customer-action">
+
+                                <a
+                                    href="/admin/users/<%= user._id %>"
+                                    class="customer-action-button view"
+                                >
+                                    VIEW
+                                </a>
+
+                            </div>
+
+
+                        </div>
+
+                    <% }) %>
+
+
+                </div>
+
+
+            <% } else { %>
+
+
+                <!-- =================================================
+                     EMPTY STATE
+                ================================================== -->
+
+                <div class="customer-empty">
+
+                    <div class="customer-empty-icon">
+                        ♙
+                    </div>
+
+                    <h3>
+                        No users found
+                    </h3>
+
+                    <p>
+                        There are no registered customers yet.
+                    </p>
+
+                </div>
+
+
+            <% } %>
+
+        </section>
+        <!-- =====================================================
+     PAGINATION
+====================================================== -->
+
+<% if (totalPages > 1) { %>
+
+    <div class="customer-pagination">
+
+        <!-- PREVIOUS -->
+
+        <% if (currentPage > 1) { %>
+
+            <a
+                href="/admin/users?page=<%= currentPage - 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"
+                class="pagination-button"
+            >
+                Previous
+            </a>
+
+        <% } else { %>
+
+            <span class="pagination-button disabled">
+                Previous
+            </span>
+
+        <% } %>
+
+
+        <!-- PAGE NUMBERS -->
+
+        <div class="pagination-pages">
+
+            <% for (
+                let pageNumber = 1;
+                pageNumber <= totalPages;
+                pageNumber++
+            ) { %>
+
+                <% if (pageNumber === currentPage) { %>
+
+                    <span class="pagination-page active">
+                        <%= pageNumber %>
+                    </span>
+
+                <% } else { %>
+
+                    <a
+                        href="/admin/users?page=<%= pageNumber %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"
+                        class="pagination-page"
+                    >
+                        <%= pageNumber %>
+                    </a>
+
+                <% } %>
+
+            <% } %>
+
+        </div>
+
+
+        <!-- NEXT -->
+
+        <% if (currentPage < totalPages) { %>
+
+            <a
+                href="/admin/users?page=<%= currentPage + 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"
+                class="pagination-button"
+            >
+                Next
+            </a>
+
+        <% } else { %>
+
+            <span class="pagination-button disabled">
+                Next
+            </span>
+
+        <% } %>
+
+    </div>
+
+<% } %>
+
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

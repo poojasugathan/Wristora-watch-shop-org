@@ -10,6 +10,7 @@ const authRoutes = require("./routes/authRoutes");
 const passport = require("./config/passport");
 const profileRoutes = require("./routes/profileRoutes");
 const addressRoutes = require("./routes/addressRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 const app = express();
 connectDB();
@@ -38,6 +39,7 @@ app.set("views", path.join(__dirname, "views"));
 app.use("/auth", authRoutes);
 app.use("/profile", profileRoutes);
 app.use("/addresses", addressRoutes);
+app.use("/admin", adminRoutes);
 
 
 app.get("/", (req, res) => {

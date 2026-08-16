@@ -1,0 +1,1007 @@
+/* =====================================================
+   WRISTORA ADMIN - CUSTOMER MANAGEMENT
+===================================================== */
+
+.customers-main {
+    padding-top: 31px;
+}
+
+
+/* =====================================================
+   PAGE HEADER
+===================================================== */
+
+.customers-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 35px;
+}
+
+.customers-header h1 {
+    margin: 0 0 35px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 29px;
+    color: #172033;
+}
+
+.customers-header h2 {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 18px;
+    color: #222;
+}
+
+
+/* =====================================================
+   SUMMARY CARDS
+===================================================== */
+
+.customer-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 8px;
+}
+
+.customer-summary-card {
+    min-height: 118px;
+    background: #fff;
+    border: 1px solid #ededed;
+    border-radius: 11px;
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+}
+
+.customer-summary-label {
+    display: block;
+    color: #737d8e;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.customer-summary-value {
+    display: block;
+    margin-top: 7px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 29px;
+    color: #172033;
+}
+
+.customer-summary-info {
+    display: block;
+    margin-top: 3px;
+    color: #737d8e;
+    font-size: 11px;
+}
+
+.summary-line {
+    position: absolute;
+    right: 18px;
+    top: 35px;
+    font-size: 26px;
+    letter-spacing: -7px;
+    color: #c6a16f;
+    transform: rotate(-7deg);
+}
+
+
+/* =====================================================
+   CUSTOMER OVERVIEW
+===================================================== */
+
+.customer-overview-card {
+    margin-top: 8px;
+    background: #fff;
+    border: 1px solid #ededed;
+    border-radius: 11px;
+    min-height: 310px;
+    padding: 30px;
+}
+
+.customer-overview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.customer-overview-header h2 {
+    margin: 14px 0 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 17px;
+}
+
+.customer-overview-stats {
+    display: flex;
+    gap: 55px;
+}
+
+.customer-overview-stats div {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.customer-overview-stats strong {
+    font-size: 23px;
+    color: #172033;
+}
+
+.customer-overview-stats span {
+    margin-top: 3px;
+    color: #737d8e;
+    font-size: 10px;
+}
+
+
+/* =====================================================
+   OVERVIEW PLACEHOLDER
+===================================================== */
+
+.overview-placeholder {
+    height: 190px;
+    margin: 40px 30px 0;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.overview-grid-line {
+    height: 1px;
+    background: #eeeeee;
+    border-top: 1px dashed #e8e8e8;
+    margin-bottom: 34px;
+}
+
+.overview-message {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 65px;
+    text-align: center;
+    color: #8a929e;
+    font-size: 12px;
+}
+
+
+/* =====================================================
+   CUSTOMER LIST HEADER
+===================================================== */
+
+.customer-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 27px;
+    margin-bottom: 18px;
+}
+
+.customer-list-header h2 {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 17px;
+}
+
+
+/* =====================================================
+   CUSTOMER TOOLS
+===================================================== */
+
+.customer-tools {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.customer-search {
+    width: 220px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 0 11px;
+    background: #fff;
+    border: 1px solid #dedfe3;
+    border-radius: 7px;
+}
+
+.search-icon {
+    color: #5e6877;
+    font-size: 18px;
+}
+
+.customer-search input {
+    width: 100%;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font-size: 11px;
+    color: #222;
+}
+
+.customer-search input::placeholder {
+    color: #89919d;
+}
+
+.customer-tool-button {
+    width: 35px;
+    height: 35px;
+    border: 1px solid #dedfe3;
+    background: #fff;
+    border-radius: 7px;
+    color: #526070;
+    cursor: pointer;
+}
+
+.customer-tool-button:hover {
+    background: #f7f7f7;
+}
+
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+.customer-error {
+    margin-bottom: 15px;
+    padding: 12px 15px;
+    border: 1px solid #f0c8c8;
+    border-radius: 8px;
+    background: #fff3f3;
+    color: #c93636;
+    font-size: 12px;
+}
+
+
+/* =====================================================
+   CUSTOMER TABLE
+===================================================== */
+
+.customer-table-card {
+    background: #fff;
+    border: 1px solid #ededed;
+    border-radius: 11px;
+    overflow-x: auto;
+}
+
+.customer-table {
+    min-width: 920px;
+}
+
+.customer-table-header,
+.customer-row {
+    display: grid;
+    grid-template-columns:
+        1fr
+        1.45fr
+        1.7fr
+        1.2fr
+        .9fr
+        .85fr;
+
+    align-items: center;
+    column-gap: 14px;
+}
+
+.customer-table-header {
+    min-height: 55px;
+    padding: 0 20px;
+    background: #fcfcfc;
+    color: #737d8e;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .4px;
+}
+
+.customer-row {
+    min-height: 72px;
+    padding: 0 20px;
+    border-top: 1px solid #f0f0f0;
+    color: #505b6c;
+    font-size: 12px;
+}
+
+.customer-id {
+    color: #687385;
+    white-space: nowrap;
+}
+
+
+/* =====================================================
+   CUSTOMER NAME
+===================================================== */
+
+.customer-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.customer-avatar {
+    width: 31px;
+    height: 31px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #e2e2e2;
+}
+
+.customer-avatar-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e7e7e7;
+    color: #555;
+    font-weight: 600;
+}
+
+.customer-name-text {
+    min-width: 0;
+}
+
+.customer-name-text strong {
+    display: block;
+    color: #1d2635;
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+.customer-email,
+.customer-phone {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+.customer-status {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.customer-status .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.customer-status.active {
+    color: #00a879;
+}
+
+.customer-status.blocked {
+    color: #e63333;
+}
+
+
+/* =====================================================
+   ACTION BUTTONS
+===================================================== */
+
+.customer-action {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.customer-action-button {
+    min-width: 63px;
+    height: 27px;
+    padding: 0 11px;
+    border: 0;
+    border-radius: 16px;
+    font-size: 9px;
+    font-weight: 700;
+    cursor: default;
+}
+
+.customer-action-button.block {
+    background: #f0f1f4;
+    color: #4f5968;
+}
+
+.customer-action-button.unblock {
+    background: #ed2b2b;
+    color: #fff;
+}
+
+
+/* =====================================================
+   EMPTY STATE
+===================================================== */
+
+.customer-empty {
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px;
+}
+
+.customer-empty-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #f2f2f2;
+    color: #6c7583;
+    font-size: 22px;
+}
+
+.customer-empty h3 {
+    margin: 15px 0 5px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 17px;
+}
+
+.customer-empty p {
+    margin: 0;
+    color: #7d8591;
+    font-size: 12px;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 1100px) {
+
+    .customer-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .customer-overview-header {
+        flex-direction: column;
+        gap: 25px;
+    }
+
+    .customer-overview-stats {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+}
+
+
+@media (max-width: 760px) {
+
+    .customers-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .customers-header h1 {
+        margin-bottom: 15px;
+    }
+
+    .customer-list-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .customer-tools {
+        width: 100%;
+    }
+
+    .customer-search {
+        flex: 1;
+        width: auto;
+    }
+
+    .customer-overview-card {
+        padding: 20px;
+    }
+
+    .customer-overview-stats {
+        gap: 15px;
+    }
+
+}
+
+
+/* =====================================================
+   CUSTOMER DETAILS PAGE
+===================================================== */
+
+.customer-details-main {
+    padding-top: 31px;
+}
+
+
+/* =====================================================
+   DETAILS HEADER
+===================================================== */
+
+.customer-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.customer-details-header h1 {
+    margin: 0 0 8px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 29px;
+    color: #172033;
+}
+
+.customer-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 13px;
+    color: #687385;
+}
+
+.customer-breadcrumb strong {
+    color: #172033;
+    font-weight: 500;
+}
+
+
+/* =====================================================
+   BLOCK / UNBLOCK BUTTON
+===================================================== */
+
+.customer-details-status-button {
+    min-width: 155px;
+    height: 40px;
+    padding: 0 20px;
+    border: 0;
+    border-radius: 9px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.customer-details-status-button.block {
+    background: #e52b2b;
+}
+
+.customer-details-status-button.unblock {
+    background: #16a05d;
+}
+
+.customer-details-status-button:hover {
+    opacity: 0.9;
+}
+
+
+/* =====================================================
+   DETAILS LAYOUT
+===================================================== */
+
+.customer-details-layout {
+    display: grid;
+    grid-template-columns: 300px minmax(0, 1fr);
+    gap: 32px;
+    align-items: start;
+}
+
+
+/* =====================================================
+   PROFILE CARD
+===================================================== */
+
+.customer-profile-card {
+    background: #fff;
+    border: 1px solid #ededed;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.customer-profile-cover {
+    height: 128px;
+    background:
+        linear-gradient(
+            135deg,
+            #071017,
+            #1b2a39,
+            #080d12
+        );
+}
+
+.customer-profile-image-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: -64px;
+    position: relative;
+}
+
+.customer-profile-image {
+    width: 132px;
+    height: 132px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid #fff;
+    background: #e9e9e9;
+}
+
+.customer-profile-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 42px;
+    font-weight: 600;
+    color: #555;
+}
+
+
+.customer-profile-name {
+    margin: 20px 20px 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eeeeee;
+    text-align: center;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 19px;
+    color: #172033;
+}
+
+
+/* =====================================================
+   CUSTOMER INFORMATION
+===================================================== */
+
+.customer-profile-information {
+    padding: 0 22px 25px;
+}
+
+.customer-information-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    margin-bottom: 22px;
+}
+
+.customer-information-icon {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: #f6f6f6;
+    color: #303946;
+    font-size: 15px;
+}
+
+.customer-information-item span {
+    display: block;
+    margin-bottom: 4px;
+    color: #4f5968;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .3px;
+}
+
+.customer-information-item strong {
+    display: block;
+    color: #202938;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+.details-status.active {
+    color: #00a879;
+}
+
+.details-status.blocked {
+    color: #e63333;
+}
+
+
+/* =====================================================
+   RIGHT SIDE
+===================================================== */
+
+.customer-details-right {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+
+/* =====================================================
+   SUMMARY CARDS
+===================================================== */
+
+.customer-detail-summary-card {
+    min-height: 114px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 25px;
+    background: #fff;
+    border: 1px solid #ededed;
+    border-radius: 14px;
+}
+
+.customer-detail-summary-card span {
+    display: block;
+    margin-bottom: 6px;
+    color: #303030;
+    font-size: 14px;
+}
+
+.customer-detail-summary-card strong {
+    display: block;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 27px;
+    color: #111a28;
+}
+
+.customer-detail-summary-icon {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    font-size: 25px;
+}
+
+.customer-detail-summary-icon.wallet {
+    background: #edfbf2;
+    color: #08a957;
+}
+
+.customer-detail-summary-icon.orders {
+    background: #fff5e9;
+    color: #f57b00;
+}
+
+
+/* =====================================================
+   TRANSACTION CARD
+===================================================== */
+
+.customer-transaction-card {
+    grid-column: 1 / -1;
+    min-height: 600px;
+    background: #fff;
+    border: 1px solid #ededed;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.customer-transaction-header {
+    min-height: 86px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.customer-transaction-header h2 {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 17px;
+    color: #172033;
+}
+
+.customer-transaction-tools {
+    display: flex;
+    gap: 10px;
+}
+
+.customer-detail-tool-button {
+    height: 38px;
+    padding: 0 15px;
+    border: 1px solid #e0e1e4;
+    border-radius: 8px;
+    background: #fff;
+    color: #303946;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+
+/* =====================================================
+   TRANSACTION TABLE
+===================================================== */
+
+.customer-transaction-table-header {
+    min-height: 50px;
+    display: grid;
+    grid-template-columns:
+        1fr
+        2fr
+        1fr
+        1fr
+        .8fr;
+    align-items: center;
+    padding: 0 24px;
+    background: #07140f;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .3px;
+}
+
+.customer-transaction-empty {
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #697383;
+    font-size: 13px;
+}
+
+.customer-transaction-empty span {
+    margin-top: 8px;
+    color: #9299a4;
+    font-size: 11px;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 1000px) {
+
+    .customer-details-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .customer-details-right {
+        grid-template-columns: 1fr 1fr;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .customer-details-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .customer-details-right {
+        grid-template-columns: 1fr;
+    }
+
+    .customer-transaction-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 15px;
+        padding: 20px;
+    }
+
+    .customer-transaction-table {
+        overflow-x: auto;
+    }
+
+    .customer-transaction-table-header {
+        min-width: 650px;
+    }
+
+}
+
+
+
+/* =====================================================
+   CUSTOMER PAGINATION
+===================================================== */
+
+.customer-pagination {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 18px;
+
+    margin-top: 24px;
+
+    margin-bottom: 30px;
+
+}
+
+
+.pagination-pages {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+}
+
+
+.pagination-page,
+.pagination-button {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-width: 36px;
+
+    height: 36px;
+
+    padding: 0 12px;
+
+    border: 1px solid #e5e5e5;
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #222222;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    font-weight: 500;
+
+    transition: all 0.2s ease;
+
+}
+
+
+.pagination-page:hover,
+.pagination-button:hover {
+
+    background: #f5f5f5;
+
+    border-color: #cccccc;
+
+}
+
+
+.pagination-page.active {
+
+    background: #111111;
+
+    color: #ffffff;
+
+    border-color: #111111;
+
+}
+
+
+.pagination-button.disabled {
+
+    color: #aaaaaa;
+
+    background: #f8f8f8;
+
+    border-color: #eeeeee;
+
+    cursor: not-allowed;
+
+}

@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title><%= title %> | Wristora</title>
+
+
+    <link
+        rel="stylesheet"
+        href="/css/adminDashboard.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/adminUsers.css"
+    >
+
+</head>
+
+
+<body>
+
+<div class="admin-layout">
+
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <%- include("partials/sidebar", { currentPage: "users" }) %>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="admin-main customer-details-main">
+
+
+        <!-- =================================================
+             PAGE HEADER
+        ================================================== -->
+
+        <div class="customer-details-header">
+
+            <div>
+
+                <h1>
+                    CUSTOMERS
+                </h1>
+
+
+                <div class="customer-breadcrumb">
+
+                    <span>
+                        Customer List
+                    </span>
+
+                    <span>
+                        /
+                    </span>
+
+                    <strong>
+                        Customer Details
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 BLOCK / UNBLOCK BUTTON
+            ================================================== -->
+
+            <form
+                action="/admin/users/<%= user._id %>/block"
+                method="POST"
+                onsubmit="return confirmCustomerAction();"
+            >
+
+                <% if (user.isBlocked === true) { %>
+
+                    <button
+                        type="submit"
+                        class="customer-details-status-button unblock"
+                    >
+                        Unblock Customer
+                    </button>
+
+                <% } else { %>
+
+                    <button
+                        type="submit"
+                        class="customer-details-status-button block"
+                    >
+                        Block Customer
+                    </button>
+
+                <% } %>
+
+            </form>
+
+        </div>
+
+
+
+        <!-- =================================================
+             CUSTOMER DETAILS CONTENT
+        ================================================== -->
+
+        <section class="customer-details-layout">
+
+
+            <!-- =================================================
+                 LEFT CUSTOMER PROFILE CARD
+            ================================================== -->
+
+            <div class="customer-profile-card">
+
+
+                <!-- PROFILE COVER -->
+
+                <div class="customer-profile-cover"></div>
+
+
+
+                <!-- PROFILE IMAGE -->
+
+                <div class="customer-profile-image-wrapper">
+
+                    <% if (
+                        user.profileImage &&
+                        user.profileImage.url
+                    ) { %>
+
+                        <img
+                            src="<%= user.profileImage.url %>"
+                            alt="Customer"
+                            class="customer-profile-image"
+                        >
+
+                    <% } else { %>
+
+                        <div class="customer-profile-image customer-profile-placeholder">
+
+                            <%= (
+                                user.firstName || "U"
+                            ).charAt(0).toUpperCase() %>
+
+                        </div>
+
+                    <% } %>
+
+                </div>
+
+
+
+                <!-- CUSTOMER NAME -->
+
+                <h2 class="customer-profile-name">
+
+                    <%= user.firstName || "" %>
+                    <%= user.lastName || "" %>
+
+                </h2>
+
+
+
+                <!-- CUSTOMER INFORMATION -->
+
+                <div class="customer-profile-information">
+
+
+                    <!-- CUSTOMER ID -->
+
+                    <div class="customer-information-item">
+
+                        <div class="customer-information-icon">
+                            #
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Customer ID
+                            </span>
+
+                            <strong>
+                                CUST-<%= user._id.toString().slice(-6).toUpperCase() %>
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- EMAIL -->
+
+                    <div class="customer-information-item">
+
+                        <div class="customer-information-icon">
+                            ✉
+                        </div>
+
+                        <div>
+
+                            <span>
+                                EMAIL ADDRESS
+                            </span>
+
+                            <strong>
+                                <%= user.email || "—" %>
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- PHONE -->
+
+                    <div class="customer-information-item">
+
+                        <div class="customer-information-icon">
+                            ☎
+                        </div>
+
+                        <div>
+
+                            <span>
+                                PHONE NUMBER
+                            </span>
+
+                            <strong>
+                                <%= user.phone || "—" %>
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- ACCOUNT STATUS -->
+
+                    <div class="customer-information-item">
+
+                        <div class="customer-information-icon">
+                            ●
+                        </div>
+
+                        <div>
+
+                            <span>
+                                ACCOUNT STATUS
+                            </span>
+
+
+                            <% if (user.isBlocked === true) { %>
+
+                                <strong class="details-status blocked">
+                                    Blocked
+                                </strong>
+
+                            <% } else { %>
+
+                                <strong class="details-status active">
+                                    Active
+                                </strong>
+
+                            <% } %>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- VERIFIED STATUS -->
+
+                    <div class="customer-information-item">
+
+                        <div class="customer-information-icon">
+                            ✓
+                        </div>
+
+                        <div>
+
+                            <span>
+                                VERIFICATION
+                            </span>
+
+
+                            <% if (user.isVerified === true) { %>
+
+                                <strong class="details-status active">
+                                    Verified
+                                </strong>
+
+                            <% } else { %>
+
+                                <strong class="details-status blocked">
+                                    Not Verified
+                                </strong>
+
+                            <% } %>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- JOINED DATE -->
+
+                    <div class="customer-information-item">
+
+                        <div class="customer-information-icon">
+                            ◷
+                        </div>
+
+                        <div>
+
+                            <span>
+                                CUSTOMER SINCE
+                            </span>
+
+                            <strong>
+
+                                <%= user.createdAt
+                                    ? new Date(user.createdAt).toLocaleDateString("en-IN", {
+                                        day: "2-digit",
+                                        month: "short",
+                                        year: "numeric"
+                                    })
+                                    : "—"
+                                %>
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 RIGHT SIDE
+            ================================================== -->
+
+            <div class="customer-details-right">
+
+
+                <!-- =================================================
+                     WALLET CARD
+                ================================================== -->
+
+                <div class="customer-detail-summary-card">
+
+                    <div class="customer-detail-summary-icon wallet">
+                        ₹
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Wallet Balance
+                        </span>
+
+                        <strong>
+                            ₹0.00
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     TOTAL ORDERS CARD
+                ================================================== -->
+
+                <div class="customer-detail-summary-card">
+
+                    <div class="customer-detail-summary-icon orders">
+                        🛍
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Total Orders
+                        </span>
+
+                        <strong>
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     TRANSACTION HISTORY
+                ================================================== -->
+
+                <div class="customer-transaction-card">
+
+                    <div class="customer-transaction-header">
+
+                        <h2>
+                            Transaction History
+                        </h2>
+
+
+                        <div class="customer-transaction-tools">
+
+                            <button
+                                type="button"
+                                class="customer-detail-tool-button"
+                            >
+                                ◷ Select Date
+                            </button>
+
+                            <button
+                                type="button"
+                                class="customer-detail-tool-button"
+                            >
+                                ♢ Filters
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- TRANSACTION TABLE -->
+
+                    <div class="customer-transaction-table">
+
+                        <div class="customer-transaction-table-header">
+
+                            <span>
+                                ORDER ID
+                            </span>
+
+                            <span>
+                                PRODUCT
+                            </span>
+
+                            <span>
+                                TOTAL
+                            </span>
+
+                            <span>
+                                STATUS
+                            </span>
+
+                            <span>
+                                DATE
+                            </span>
+
+                        </div>
+
+
+
+                        <!-- EMPTY TRANSACTION STATE -->
+
+                        <div class="customer-transaction-empty">
+
+                            <div>
+                                No transactions available
+                            </div>
+
+                            <span>
+                                Order and transaction history will appear here.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+
+<!-- =====================================================
+     CONFIRMATION
+====================================================== -->
+
+<script>
+
+function confirmCustomerAction() {
+
+    const isBlocked = <%= user.isBlocked ? "true" : "false" %>;
+
+    if (isBlocked) {
+
+        return confirm(
+            "Are you sure you want to unblock this customer?"
+        );
+
+    }
+
+
+    return confirm(
+        "Are you sure you want to block this customer?"
+    );
+
+}
+
+</script>
+
+
+</body>
+
+</html>

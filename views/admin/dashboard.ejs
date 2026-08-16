@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title><%= title %> | Wristora</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/adminDashboard.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         ADMIN LAYOUT
+    ====================================================== -->
+
+    <div class="admin-layout">
+
+
+        <!-- =================================================
+             SIDEBAR
+        ================================================== -->
+
+        <%- include("partials/sidebar", { currentPage: "dashboard" }) %>
+
+
+        <!-- =================================================
+             MAIN CONTENT
+        ================================================== -->
+
+        <main class="admin-main">
+
+
+            <!-- =================================================
+                 HEADER
+            ================================================== -->
+
+            <div class="dashboard-header">
+
+
+                <div>
+
+                    <h1>
+                        Dashboard
+                    </h1>
+
+                    <h2>
+                        Sales report for this week
+                    </h2>
+
+                </div>
+
+
+                <div class="period-toggle">
+
+                    <button class="period-button active">
+                        This week
+                    </button>
+
+                    <button class="period-button">
+                        This month
+                    </button>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 SUMMARY CARDS
+            ================================================== -->
+
+            <section class="summary-grid">
+
+
+                <!-- TOTAL SALES -->
+
+                <div class="summary-card">
+
+                    <div class="summary-label">
+                        Total Sales
+                    </div>
+
+                    <div class="summary-subtitle">
+                        Last 7 days
+                    </div>
+
+                    <div class="summary-value">
+
+                        ₹<%= dashboardData.totalSales.toLocaleString("en-IN") %>
+
+                    </div>
+
+                    <span class="growth-badge positive">
+                        Sales ↑ <%= dashboardData.salesGrowth %>%
+                    </span>
+
+                    <div class="previous-value">
+
+                        Previous 7days
+                        (₹<%= dashboardData.previousSales.toLocaleString("en-IN") %>)
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- TOTAL ORDERS -->
+
+                <div class="summary-card">
+
+                    <div class="summary-label">
+                        Total Orders
+                    </div>
+
+                    <div class="summary-subtitle">
+                        Last 7 days
+                    </div>
+
+                    <div class="summary-value">
+                        <%= dashboardData.totalOrders %>
+                    </div>
+
+                    <span class="growth-badge positive">
+                        order ↑ <%= dashboardData.orderGrowth %>%
+                    </span>
+
+                    <div class="previous-value">
+
+                        Previous 7days
+                        (<%= dashboardData.previousOrders %>)
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- PENDING / CANCELLED -->
+
+                <div class="summary-card pending-card">
+
+                    <div class="summary-label">
+                        Pending &amp; Canceled
+                    </div>
+
+                    <div class="summary-subtitle">
+                        Last 7 days
+                    </div>
+
+
+                    <div class="pending-grid">
+
+                        <div>
+
+                            <span class="small-label">
+                                Pending
+                            </span>
+
+                            <strong>
+                                <%= dashboardData.pendingOrders %>
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span class="small-label">
+                                Cancelled
+                            </span>
+
+                            <strong class="cancelled-number">
+                                <%= dashboardData.cancelledOrders %>
+                            </strong>
+
+                            <span class="cancelled-growth">
+                                ↓ <%= dashboardData.cancelledGrowth %>%
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- =================================================
+                 SALES CHART
+            ================================================== -->
+
+            <section class="sales-chart-card">
+
+
+                <div class="chart-statistics">
+
+
+                    <div>
+
+                        <strong>
+                            <%= dashboardData.totalCollections %>
+                        </strong>
+
+                        <span>
+                            Total Collections
+                        </span>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            <%= dashboardData.netRevenue %>
+                        </strong>
+
+                        <span>
+                            Net Revenue
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="chart-area">
+
+
+                    <div class="chart-y-axis">
+
+                        <span>40k</span>
+                        <span>30k</span>
+                        <span>20k</span>
+                        <span>10k</span>
+                        <span>0k</span>
+
+                    </div>
+
+
+                    <div class="chart-content">
+
+
+                        <div class="chart-grid-lines">
+
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+
+                        </div>
+
+
+                        <svg
+                            class="sales-svg"
+                            viewBox="0 0 900 250"
+                            preserveAspectRatio="none"
+                        >
+
+                            <polyline
+                                points="
+                                    0,180
+                                    80,180
+                                    180,125
+                                    280,125
+                                    370,125
+                                    420,75
+                                    510,135
+                                    590,135
+                                    680,55
+                                    760,55
+                                    810,135
+                                    860,125
+                                    900,125
+                                "
+                                fill="none"
+                                stroke="#c6a16f"
+                                stroke-width="2"
+                            />
+
+                            <circle
+                                cx="420"
+                                cy="75"
+                                r="4"
+                                fill="#c6a16f"
+                            />
+
+                        </svg>
+
+
+                        <div class="chart-tooltip">
+                            Tuesday<br>
+                            <strong>32k</strong>
+                        </div>
+
+
+                        <div class="chart-days">
+
+                            <span>Sun</span>
+                            <span>Mon</span>
+                            <span>Tue</span>
+                            <span>Wed</span>
+                            <span>Thu</span>
+                            <span>Fri</span>
+                            <span>Sat</span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- =================================================
+                 LOWER DASHBOARD
+            ================================================== -->
+
+            <section class="dashboard-bottom-grid">
+
+
+                <!-- =================================================
+                     BEST SELLING PRODUCTS
+                ================================================== -->
+
+                <div class="best-selling-card">
+
+                    <h2>
+                        Best selling product
+                    </h2>
+
+
+                    <div class="product-table-header">
+
+                        <span>PRODUCT</span>
+                        <span>TOTAL ORDER</span>
+                        <span>STATUS</span>
+                        <span>PRICE</span>
+
+                    </div>
+
+
+                    <% bestSellingProducts.forEach(product => { %>
+
+                        <div class="product-row">
+
+
+                            <div class="product-name">
+
+                                <div class="product-image">
+                                    W
+                                </div>
+
+                                <span>
+                                    <%= product.name %>
+                                </span>
+
+                            </div>
+
+
+                            <span>
+                                <%= product.totalOrders %>
+                            </span>
+
+
+                            <span
+                                class="<%= product.status === 'Stock' ? 'stock-status' : 'stock-status out' %>"
+                            >
+
+                                <span class="status-dot"></span>
+
+                                <%= product.status %>
+
+                            </span>
+
+
+                            <strong>
+                                <%= product.price %>
+                            </strong>
+
+
+                        </div>
+
+                    <% }) %>
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                     SALES PROGRESS
+                ================================================== -->
+
+                <div class="sales-progress-card">
+
+                    <h2>
+                        Sales Progress
+                    </h2>
+
+                    <span class="progress-period">
+                        This Week
+                    </span>
+
+
+                    <div class="progress-circle">
+
+                        <div class="progress-inner">
+
+                            <strong>
+                                <%= salesProgress.percentage %>%
+                            </strong>
+
+                            <span>
+                                +<%= salesProgress.increase %>%
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <p class="progress-message">
+
+                        You succeed earn ₹8960 today,<br>
+                        its higher than yesterday
+
+                    </p>
+
+
+                    <div class="progress-divider"></div>
+
+
+                    <div class="progress-stats">
+
+
+                        <div>
+
+                            <span>
+                                TARGET
+                            </span>
+
+                            <strong>
+                                <%= salesProgress.target %>
+                                <small>↓</small>
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                REVENUE
+                            </span>
+
+                            <strong>
+                                <%= salesProgress.revenue %>
+                                <small class="up">↑</small>
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                TODAY
+                            </span>
+
+                            <strong>
+                                <%= salesProgress.today %>
+                                <small class="up">↑</small>
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+            </section>
+
+
+        </main>
+
+
+    </div>
+
+
+</body>
+
+</html>

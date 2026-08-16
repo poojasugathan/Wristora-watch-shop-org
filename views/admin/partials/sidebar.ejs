@@ -1,0 +1,208 @@
+<!-- =====================================================
+     ADMIN SIDEBAR
+====================================================== -->
+
+<aside class="admin-sidebar">
+
+    <!-- BRAND -->
+
+    <div class="sidebar-brand">
+        Wristora
+    </div>
+
+
+    <!-- MAIN MENU -->
+
+    <div class="sidebar-section">
+
+        <div class="sidebar-section-title">
+            MAIN MENU
+        </div>
+
+
+        <a
+            href="/admin/dashboard"
+            class="sidebar-link <%= currentPage === 'dashboard' ? 'active' : '' %>"
+        >
+
+            <span class="sidebar-icon">⌂</span>
+
+            <span>Dashboard</span>
+
+        </a>
+
+
+        <a href="#" class="sidebar-link">
+
+            <span class="sidebar-icon">♧</span>
+
+            <span>Order Management</span>
+
+        </a>
+
+
+        <a
+            href="/admin/users"
+            class="sidebar-link <%= currentPage === 'users' ? 'active' : '' %>"
+        >
+
+            <span class="sidebar-icon">♙</span>
+
+            <span>Customers</span>
+
+        </a>
+
+
+        <a href="#" class="sidebar-link">
+
+            <span class="sidebar-icon">▣</span>
+
+            <span>Coupons</span>
+
+        </a>
+
+
+        <a href="#" class="sidebar-link">
+
+            <span class="sidebar-icon">☰</span>
+
+            <span>Categories</span>
+
+        </a>
+
+
+        <a href="#" class="sidebar-link">
+
+            <span class="sidebar-icon">▤</span>
+
+            <span>Transaction</span>
+
+        </a>
+
+    </div>
+
+
+
+    <!-- PRODUCT -->
+
+    <div class="sidebar-section">
+
+        <div class="sidebar-section-title">
+            PRODUCT
+        </div>
+
+
+        <a href="#" class="sidebar-link">
+
+            <span class="sidebar-icon">⊕</span>
+
+            <span>Add Products</span>
+
+        </a>
+
+
+        <a href="#" class="sidebar-link">
+
+            <span class="sidebar-icon">☰</span>
+
+            <span>Product List</span>
+
+        </a>
+
+    </div>
+
+
+
+    <!-- ADMIN -->
+
+    <div class="sidebar-section">
+
+        <div class="sidebar-section-title">
+            ADMIN
+        </div>
+
+
+        <a href="#" class="sidebar-link">
+
+            <span class="sidebar-icon">♙</span>
+
+            <span>Admin role</span>
+
+        </a>
+
+
+        <a href="#" class="sidebar-link">
+
+            <span class="sidebar-icon">✉</span>
+
+            <span>Inbox</span>
+
+        </a>
+
+    </div>
+
+
+
+    <!-- SIDEBAR BOTTOM -->
+
+    <div class="sidebar-bottom">
+
+        <div class="admin-profile">
+
+            <div class="admin-avatar">
+                A
+            </div>
+
+
+            <div class="admin-profile-info">
+
+                <strong>
+                    Wristora Admin
+                </strong>
+
+                <span>
+                    Administrator
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <a
+            href="/"
+            class="visit-store"
+        >
+
+            <span>
+                ◷
+            </span>
+
+            <span>
+                Visit store
+            </span>
+
+            <span>
+                ↗
+            </span>
+
+        </a>
+
+
+        <form
+            action="/admin/logout"
+            method="POST"
+        >
+
+            <button
+                type="submit"
+                class="sidebar-logout"
+            >
+                Logout
+            </button>
+
+        </form>
+
+    </div>
+
+</aside>
