@@ -7,10 +7,6 @@ const requireAuth = require("../middlewares/authMiddleware");
 const upload = require("../middlewares/uploadMiddleware");
 
 
-// =====================================================
-// PROFILE PAGE
-// =====================================================
-
 router.get(
     "/",
     requireAuth,
@@ -18,9 +14,6 @@ router.get(
 );
 
 
-// =====================================================
-// EDIT PROFILE PAGE
-// =====================================================
 
 router.get(
     "/edit",
@@ -29,18 +22,11 @@ router.get(
 );
 
 
-// =====================================================
-// UPDATE PERSONAL DETAILS
-// =====================================================
-
 router.post(
     "/edit",
     requireAuth,
     profileController.updateProfile
 );
-// =====================================================
-// CHANGE PASSWORD PAGE
-// =====================================================
 
 router.get(
     "/change-password",
@@ -48,30 +34,20 @@ router.get(
     profileController.loadChangePassword
 );
 
-
-
-// =====================================================
-// CHANGE PASSWORD
-// =====================================================
-
 router.post(
     "/change-password",
     requireAuth,
     profileController.changePassword
 );
 
-// =====================================================
-// UPDATE EMAIL
-// =====================================================
+
 
 router.post(
     "/edit/email",
     requireAuth,
     profileController.updateEmail
 );
-// =====================================================
-// EMAIL CHANGE OTP PAGE
-// =====================================================
+
 
 router.get(
     "/change-email/otp",
@@ -80,10 +56,6 @@ router.get(
 );
 
 
-// =====================================================
-// VERIFY EMAIL CHANGE OTP
-// =====================================================
-
 router.post(
     "/change-email/otp",
     requireAuth,
@@ -91,9 +63,6 @@ router.post(
 );
 
 
-// =====================================================
-// RESEND EMAIL CHANGE OTP
-// =====================================================
 
 router.post(
     "/change-email/resend",
@@ -102,9 +71,6 @@ router.post(
 );
 
 
-// =====================================================
-// UPLOAD / CHANGE PROFILE IMAGE
-// =====================================================
 
 router.post(
     "/image",
@@ -114,9 +80,7 @@ router.post(
 );
 
 
-// =====================================================
-// DELETE PROFILE IMAGE
-// =====================================================
+
 
 router.post(
     "/image/delete",

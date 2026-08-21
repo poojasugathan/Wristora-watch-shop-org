@@ -12,49 +12,27 @@ const {
 
 const validate = require("../middlewares/validationMiddleware");
 
-
-// =====================================================
-// LOGIN PAGE
-// =====================================================
-
 router.get(
     "/login",
     authController.loadLogin
 );
 
 
-// =====================================================
-// NORMAL LOGIN
-// =====================================================
-
 router.post(
     "/login",
     authController.login
 );
 
-// =====================================================
-// FORGOT PASSWORD PAGE
-// =====================================================
 
 router.get(
     "/forgot-password",
     authController.loadForgotPassword
 );
 
-
-// =====================================================
-// SEND FORGOT PASSWORD OTP
-// =====================================================
-
 router.post(
     "/forgot-password",
     authController.forgotPassword
 );
-
-
-// =====================================================
-// FORGOT PASSWORD OTP PAGE
-// =====================================================
 
 router.get(
     "/forgot-password/otp",
@@ -62,19 +40,11 @@ router.get(
 );
 
 
-// =====================================================
-// VERIFY FORGOT PASSWORD OTP
-// =====================================================
-
 router.post(
     "/forgot-password/verify-otp",
     authController.verifyForgotPasswordOtp
 );
 
-
-// =====================================================
-// RESEND FORGOT PASSWORD OTP
-// =====================================================
 
 router.post(
     "/forgot-password/resend-otp",
@@ -82,28 +52,16 @@ router.post(
 );
 
 
-// =====================================================
-// RESET PASSWORD PAGE
-// =====================================================
-
 router.get(
     "/reset-password",
     authController.loadResetPassword
 );
-
-
-// =====================================================
-// UPDATE PASSWORD
-// =====================================================
 
 router.post(
     "/reset-password",
     authController.resetPassword
 );
 
-// =====================================================
-// GOOGLE LOGIN
-// =====================================================
 
 router.get(
     "/google",
@@ -111,11 +69,6 @@ router.get(
         scope: ["profile", "email"]
     })
 );
-
-
-// =====================================================
-// GOOGLE CALLBACK
-// =====================================================
 
 router.get(
     "/google/callback",
@@ -128,20 +81,10 @@ router.get(
     authController.googleCallback
 );
 
-
-// =====================================================
-// SIGNUP PAGE
-// =====================================================
-
 router.get(
     "/signup",
     authController.loadSignup
 );
-
-
-// =====================================================
-// SIGNUP FORM
-// =====================================================
 
 router.post(
     "/signup",
@@ -150,30 +93,18 @@ router.post(
     authController.signup
 );
 
-
-// =====================================================
-// OTP PAGE
-// =====================================================
-
 router.get(
     "/otp",
     authController.loadOtp
 );
 
 
-// =====================================================
-// VERIFY OTP
-// =====================================================
 
 router.post(
     "/verify-otp",
     authController.verifyOtpController
 );
 
-
-// =====================================================
-// RESEND OTP
-// =====================================================
 
 router.post(
     "/resend-otp",

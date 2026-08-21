@@ -1,16 +1,9 @@
 const mongoose = require("mongoose");
 
 
-// =====================================================
-// ADDRESS SCHEMA
-// =====================================================
 
 const addressSchema = new mongoose.Schema(
     {
-
-        // =================================================
-        // USER
-        // =================================================
 
         userId: {
             type: mongoose.Schema.Types.ObjectId,
@@ -20,9 +13,6 @@ const addressSchema = new mongoose.Schema(
         },
 
 
-        // =================================================
-        // NAME
-        // =================================================
 
         firstName: {
             type: String,
@@ -37,9 +27,6 @@ const addressSchema = new mongoose.Schema(
         },
 
 
-        // =================================================
-        // ADDRESS
-        // =================================================
 
         pinCode: {
             type: String,
@@ -79,10 +66,6 @@ const addressSchema = new mongoose.Schema(
         },
 
 
-        // =================================================
-        // CONTACT
-        // =================================================
-
         phone: {
             type: String,
             required: true,
@@ -90,10 +73,6 @@ const addressSchema = new mongoose.Schema(
         },
 
 
-        // =================================================
-        // ADDRESS LABEL
-        // Example: Home / Work
-        // =================================================
 
         addressName: {
             type: String,
@@ -101,10 +80,6 @@ const addressSchema = new mongoose.Schema(
             trim: true
         },
 
-
-        // =================================================
-        // DEFAULT ADDRESS
-        // =================================================
 
         isDefault: {
             type: Boolean,

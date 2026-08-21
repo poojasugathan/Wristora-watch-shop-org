@@ -808,10 +808,7 @@ const verifyEmailChangeOtp = async (req, res) => {
 
     try {
 
-        // =================================================
-        // CHECK AUTHENTICATION
-        // =================================================
-
+        
         if (
             !req.session ||
             !req.session.user ||
@@ -828,9 +825,6 @@ const verifyEmailChangeOtp = async (req, res) => {
         }
 
 
-        // =================================================
-        // CHECK EMAIL CHANGE SESSION
-        // =================================================
 
         if (
             !req.session.emailChange ||
@@ -847,9 +841,6 @@ const verifyEmailChangeOtp = async (req, res) => {
         }
 
 
-        // =================================================
-        // GET OTP
-        // =================================================
 
         const otp =
             req.body.otp
@@ -857,9 +848,6 @@ const verifyEmailChangeOtp = async (req, res) => {
                 : "";
 
 
-        // =================================================
-        // OTP FORMAT
-        // =================================================
 
         if (!/^\d{6}$/.test(otp)) {
 
@@ -873,18 +861,11 @@ const verifyEmailChangeOtp = async (req, res) => {
         }
 
 
-        // =================================================
-        // GET PENDING EMAIL FROM SESSION
-        // =================================================
-
         const newEmail =
             req.session.emailChange.newEmail;
 
 
-        // =================================================
-        // VERIFY OTP
-        // =================================================
-
+        
         const otpResult =
             await verifyOtp(
                 newEmail,
@@ -893,9 +874,7 @@ const verifyEmailChangeOtp = async (req, res) => {
             );
 
 
-        // =================================================
-        // OTP ERROR
-        // =================================================
+        
 
         if (!otpResult.success) {
 
@@ -921,10 +900,7 @@ const verifyEmailChangeOtp = async (req, res) => {
         }
 
 
-        // =================================================
-        // SECOND DUPLICATE CHECK
-        // =================================================
-
+      
         const existingUser =
             await User.findOne({
                 email: newEmail,
@@ -936,7 +912,7 @@ const verifyEmailChangeOtp = async (req, res) => {
 
         if (existingUser) {
 
-            // Remove pending session
+           
             delete req.session.emailChange;
 
 
@@ -950,9 +926,7 @@ const verifyEmailChangeOtp = async (req, res) => {
         }
 
 
-        // =================================================
-        // FIND AUTHENTICATED USER
-        // =================================================
+       
 
         const user =
             await User.findById(
@@ -975,9 +949,6 @@ const verifyEmailChangeOtp = async (req, res) => {
         }
 
 
-        // =================================================
-        // UPDATE EMAIL
-        // =================================================
 
         user.email = newEmail;
 
@@ -1004,25 +975,16 @@ const verifyEmailChangeOtp = async (req, res) => {
         }
 
 
-        // =================================================
-        // UPDATE SESSION EMAIL
-        // =================================================
 
         req.session.user.email =
             user.email;
 
 
-        // =================================================
-        // CLEAR TEMPORARY EMAIL CHANGE SESSION
-        // =================================================
-
+       
         delete req.session.emailChange;
 
 
-        // =================================================
-        // SAVE SESSION
-        // =================================================
-
+       
         req.session.save((sessionError) => {
 
             if (sessionError) {
@@ -1042,9 +1004,7 @@ const verifyEmailChangeOtp = async (req, res) => {
             }
 
 
-            // =================================================
-            // SUCCESS
-            // =================================================
+            
 
             return res.json({
 
@@ -1081,9 +1041,7 @@ const resendEmailChangeOtp = async (req, res) => {
 
     try {
 
-        // =================================================
-        // CHECK AUTHENTICATION
-        // =================================================
+       
 
         if (
             !req.session ||
@@ -1101,9 +1059,6 @@ const resendEmailChangeOtp = async (req, res) => {
         }
 
 
-        // =================================================
-        // CHECK EMAIL CHANGE SESSION
-        // =================================================
 
         if (
             !req.session.emailChange ||
@@ -1124,9 +1079,7 @@ const resendEmailChangeOtp = async (req, res) => {
             req.session.emailChange.newEmail;
 
 
-        // =================================================
-        // CREATE NEW OTP
-        // =================================================
+        
 
         const otpResult =
             await createOtp(
@@ -1135,10 +1088,7 @@ const resendEmailChangeOtp = async (req, res) => {
             );
 
 
-        // =================================================
-        // COOLDOWN
-        // =================================================
-
+       
         if (!otpResult.success) {
 
             if (otpResult.cooldown) {
@@ -1161,10 +1111,6 @@ const resendEmailChangeOtp = async (req, res) => {
 
         }
 
-
-        // =================================================
-        // SEND OTP
-        // =================================================
 
         try {
 
@@ -1201,9 +1147,7 @@ const resendEmailChangeOtp = async (req, res) => {
         }
 
 
-        // =================================================
-        // SUCCESS
-        // =================================================
+       
 
         return res.json({
 
@@ -1249,10 +1193,6 @@ const uploadProfileImage = async (req, res) => {
         const userId = req.session.user.id;
 
 
-        // =================================================
-        // CHECK FILE
-        // =================================================
-
         if (!req.file) {
 
             return res.redirect(
@@ -1261,18 +1201,13 @@ const uploadProfileImage = async (req, res) => {
 
         }
 
-
-        // =================================================
-        // GET USER
-        // =================================================
-
         const user =
             await User.findById(userId);
 
 
         if (!user) {
 
-            // Clean up uploaded Cloudinary image
+           
             if (req.file.public_id) {
 
                 try {
@@ -1299,9 +1234,6 @@ const uploadProfileImage = async (req, res) => {
         }
 
 
-        // =================================================
-        // GET NEW CLOUDINARY IMAGE
-        // =================================================
 
         const newUrl = req.file.path;
 
@@ -1319,20 +1251,13 @@ const uploadProfileImage = async (req, res) => {
         }
 
 
-        // =================================================
-        // GET OLD IMAGE PUBLIC ID
-        // =================================================
-
         const oldPublicId =
             user.profileImage
                 ? user.profileImage.publicId
                 : "";
 
 
-        // =================================================
-        // SAVE NEW IMAGE TO MONGODB
-        // =================================================
-
+       
         user.profileImage = {
             url: newUrl,
             publicId: newPublicId
@@ -1351,7 +1276,7 @@ const uploadProfileImage = async (req, res) => {
             );
 
 
-            // Remove newly uploaded image
+            
             try {
 
                 await cloudinary.uploader.destroy(
@@ -1372,10 +1297,6 @@ const uploadProfileImage = async (req, res) => {
             );
         }
 
-
-        // =================================================
-        // DELETE OLD IMAGE
-        // =================================================
 
         if (
             oldPublicId &&
@@ -1399,9 +1320,6 @@ const uploadProfileImage = async (req, res) => {
         }
 
 
-        // =================================================
-        // SUCCESS
-        // =================================================
 
         return res.redirect(
             "/profile/edit?imageUpdated=1"
@@ -1415,10 +1333,6 @@ const uploadProfileImage = async (req, res) => {
             error
         );
 
-
-        // =================================================
-        // CLEAN UP NEW IMAGE
-        // =================================================
 
         if (newPublicId) {
 
@@ -1455,10 +1369,6 @@ const deleteProfileImage = async (req, res) => {
         const userId = req.session.user.id;
 
 
-        // =================================================
-        // GET USER
-        // =================================================
-
         const user =
             await User.findById(userId);
 
@@ -1472,19 +1382,12 @@ const deleteProfileImage = async (req, res) => {
         }
 
 
-        // =================================================
-        // GET PUBLIC ID
-        // =================================================
-
         const publicId =
             user.profileImage
                 ? user.profileImage.publicId
                 : "";
 
 
-        // =================================================
-        // DELETE FROM CLOUDINARY
-        // =================================================
 
         if (publicId) {
 
@@ -1508,9 +1411,6 @@ const deleteProfileImage = async (req, res) => {
         }
 
 
-        // =================================================
-        // RESET MONGODB IMAGE DATA
-        // =================================================
 
         user.profileImage = {
             url: "",
@@ -1520,9 +1420,6 @@ const deleteProfileImage = async (req, res) => {
         await user.save();
 
 
-        // =================================================
-        // SUCCESS
-        // =================================================
 
         return res.redirect(
             "/profile/edit?imageDeleted=1"
@@ -1549,10 +1446,6 @@ const loadChangePassword = async (req, res) => {
         const userId = req.session.user.id;
 
 
-        // =================================================
-        // FIND AUTHENTICATED USER
-        // =================================================
-
         const user = await User.findById(userId)
             .select("-password -googleId")
             .lean();
@@ -1565,17 +1458,12 @@ const loadChangePassword = async (req, res) => {
         }
 
 
-        // =================================================
-        // SUCCESS MESSAGE
-        // =================================================
 
         const passwordUpdated =
             req.query.updated === "1";
 
 
-        // =================================================
-        // RENDER CHANGE PASSWORD PAGE
-        // =================================================
+      
 
         return res.render(
             "user/changePassword",
@@ -1625,9 +1513,6 @@ const changePassword = async (req, res) => {
 
     try {
 
-        // =================================================
-        // AUTHENTICATION CHECK
-        // =================================================
 
         if (
             !req.session ||
@@ -1644,10 +1529,7 @@ const changePassword = async (req, res) => {
             req.session.user.id;
 
 
-        // =================================================
-        // GET FORM VALUES
-        // =================================================
-
+        
         const currentPassword =
             req.body.currentPassword
                 ? req.body.currentPassword
@@ -1664,10 +1546,7 @@ const changePassword = async (req, res) => {
                 : "";
 
 
-        // =================================================
-        // FIND AUTHENTICATED USER
-        // =================================================
-
+       
         const user =
             await User.findById(userId);
 
@@ -1679,9 +1558,7 @@ const changePassword = async (req, res) => {
         }
 
 
-        // =================================================
-        // CHECK CURRENT PASSWORD
-        // =================================================
+       
 
         if (!currentPassword) {
 
@@ -1702,9 +1579,6 @@ const changePassword = async (req, res) => {
         }
 
 
-        // =================================================
-        // GOOGLE-ONLY ACCOUNT CHECK
-        // =================================================
 
         if (!user.password) {
 
@@ -1725,9 +1599,6 @@ const changePassword = async (req, res) => {
         }
 
 
-        // =================================================
-        // VERIFY CURRENT PASSWORD
-        // =================================================
 
         const passwordMatch =
             await bcrypt.compare(
@@ -1755,9 +1626,6 @@ const changePassword = async (req, res) => {
         }
 
 
-        // =================================================
-        // CHECK NEW PASSWORD
-        // =================================================
 
         if (!newPassword) {
 
@@ -1776,11 +1644,6 @@ const changePassword = async (req, res) => {
             );
 
         }
-
-
-        // =================================================
-        // PASSWORD VALIDATION
-        // =================================================
 
         const passwordRegex =
             /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
@@ -1805,10 +1668,6 @@ const changePassword = async (req, res) => {
         }
 
 
-        // =================================================
-        // CONFIRM PASSWORD
-        // =================================================
-
         if (!confirmPassword) {
 
             return res.status(400).render(
@@ -1828,9 +1687,7 @@ const changePassword = async (req, res) => {
         }
 
 
-        // =================================================
-        // PASSWORD MATCH CHECK
-        // =================================================
+       
 
         if (newPassword !== confirmPassword) {
 
@@ -1851,9 +1708,6 @@ const changePassword = async (req, res) => {
         }
 
 
-        // =================================================
-        // SAME PASSWORD CHECK
-        // =================================================
 
         const samePassword =
             await bcrypt.compare(
@@ -1881,9 +1735,6 @@ const changePassword = async (req, res) => {
         }
 
 
-        // =================================================
-        // HASH NEW PASSWORD
-        // =================================================
 
         const hashedPassword =
             await bcrypt.hash(
@@ -1892,20 +1743,13 @@ const changePassword = async (req, res) => {
             );
 
 
-        // =================================================
-        // UPDATE PASSWORD
-        // =================================================
-
+       
         user.password =
             hashedPassword;
 
 
         await user.save();
 
-
-        // =================================================
-        // SUCCESS
-        // =================================================
 
         return res.redirect(
             "/profile/change-password?updated=1"

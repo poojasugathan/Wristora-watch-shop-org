@@ -23,7 +23,7 @@ const createOtp = async (email, purpose) => {
 
     email = email.toLowerCase();
 
-    // Check whether a recently generated OTP exists
+    
     const existingOtp = await OTP.findOne({
         email,
         purpose
@@ -57,7 +57,7 @@ const createOtp = async (email, purpose) => {
         }
 
 
-        // Remove old OTP before creating a new one
+        
         await OTP.deleteMany({
             email,
             purpose
@@ -66,12 +66,12 @@ const createOtp = async (email, purpose) => {
     }
 
 
-    // Generate new OTP
+    
     const otp = generateOtp();
     console.log("otp:",otp)
 
 
-    // Hash OTP before storing
+   
     const otpHash = await bcrypt.hash(
         otp,
         10
@@ -118,7 +118,7 @@ const verifyOtp = async (email, enteredOtp, purpose) => {
     email = email.toLowerCase();
 
 
-    // Find latest OTP
+    
     const otpRecord = await OTP.findOne({
         email,
         purpose
@@ -127,7 +127,7 @@ const verifyOtp = async (email, enteredOtp, purpose) => {
     });
 
 
-    // No OTP found
+    
     if (!otpRecord) {
 
         return {
@@ -138,7 +138,7 @@ const verifyOtp = async (email, enteredOtp, purpose) => {
     }
 
 
-    // Check expiry
+    
     if (
         new Date() >
         otpRecord.expiresAt
@@ -157,7 +157,7 @@ const verifyOtp = async (email, enteredOtp, purpose) => {
     }
 
 
-    // Check maximum attempts
+    
     if (
         otpRecord.attempts >= MAX_ATTEMPTS
     ) {
@@ -175,14 +175,14 @@ const verifyOtp = async (email, enteredOtp, purpose) => {
     }
 
 
-    // Compare entered OTP with stored hash
+    
     const isMatch = await bcrypt.compare(
         enteredOtp,
         otpRecord.otpHash
     );
 
 
-    // Invalid OTP
+    
     if (!isMatch) {
 
         otpRecord.attempts += 1;
@@ -223,7 +223,7 @@ const verifyOtp = async (email, enteredOtp, purpose) => {
     }
 
 
-    // OTP is valid
+   
     await OTP.deleteOne({
         _id: otpRecord._id
     });

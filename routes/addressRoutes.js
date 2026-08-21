@@ -7,10 +7,6 @@ const addressController = require("../controllers/addressController");
 const requireAuth = require("../middlewares/authMiddleware");
 
 
-// =====================================================
-// ADDRESS LIST PAGE
-// =====================================================
-
 router.get(
     "/",
     requireAuth,
@@ -18,9 +14,6 @@ router.get(
 );
 
 
-// =====================================================
-// ADD NEW ADDRESS PAGE
-// =====================================================
 
 router.get(
     "/add",
@@ -29,20 +22,12 @@ router.get(
 );
 
 
-// =====================================================
-// ADD NEW ADDRESS
-// =====================================================
-
 router.post(
     "/add",
     requireAuth,
     addressController.addAddress
 );
 
-
-// // =====================================================
-// // EDIT ADDRESS PAGE
-// // =====================================================
 
 router.get(
     "/edit/:id",
@@ -51,10 +36,6 @@ router.get(
 );
 
 
-// // =====================================================
-// // UPDATE ADDRESS
-// // =====================================================
-
 router.post(
     "/edit/:id",
     requireAuth,
@@ -62,9 +43,6 @@ router.post(
 );
 
 
-// =====================================================
-// DELETE ADDRESS
-// =====================================================
 
 router.post(
     "/delete/:id",
@@ -72,10 +50,6 @@ router.post(
     addressController.deleteAddress
 );
 
-
-// =====================================================
-// SET DEFAULT ADDRESS
-// =====================================================
 
 router.post(
     "/default/:id",

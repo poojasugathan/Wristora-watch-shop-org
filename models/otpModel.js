@@ -43,7 +43,7 @@ const otpSchema = new mongoose.Schema(
     }
 );
 
-// Automatically remove expired OTP documents
+
 otpSchema.index(
     { expiresAt: 1 },
     { expireAfterSeconds: 0 }

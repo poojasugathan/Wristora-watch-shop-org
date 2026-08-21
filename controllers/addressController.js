@@ -110,9 +110,7 @@ const loadAddresses = async (req, res) => {
 };
 
 
-// =====================================================
-// LOAD ADD ADDRESS PAGE
-// =====================================================
+
 
 const loadAddAddress = async (req, res) => {
 
@@ -175,9 +173,6 @@ const loadAddAddress = async (req, res) => {
 };
 
 
-// =====================================================
-// ADD NEW ADDRESS
-// =====================================================
 
 const addAddress = async (req, res) => {
 
@@ -386,9 +381,6 @@ const addAddress = async (req, res) => {
         }
 
 
-        // =================================================
-        // LAST NAME
-        // =================================================
 
         if (!lastName) {
 
@@ -456,9 +448,6 @@ const addAddress = async (req, res) => {
         }
 
 
-        // =================================================
-        // PIN CODE
-        // =================================================
 
         if (!pinCode) {
 
@@ -502,9 +491,7 @@ const addAddress = async (req, res) => {
         }
 
 
-        // =================================================
-        // ADDRESS LINE 1
-        // =================================================
+       
 
         if (!addressLine1) {
 
@@ -551,9 +538,6 @@ const addAddress = async (req, res) => {
         }
 
 
-        // =================================================
-        // CITY
-        // =================================================
 
         if (!city) {
 
@@ -600,9 +584,7 @@ const addAddress = async (req, res) => {
         }
 
 
-        // =================================================
-        // STATE
-        // =================================================
+        
 
         if (!state) {
 
@@ -625,10 +607,7 @@ const addAddress = async (req, res) => {
         }
 
 
-        // =================================================
-        // PHONE
-        // =================================================
-
+        
         if (!phone) {
 
             return res.status(400).render(
@@ -671,9 +650,6 @@ const addAddress = async (req, res) => {
         }
 
 
-        // =================================================
-        // ADDRESS NAME
-        // =================================================
 
         if (addressName.length > 30) {
 
@@ -696,9 +672,7 @@ const addAddress = async (req, res) => {
         }
 
 
-        // =================================================
-        // CHECK EXISTING ADDRESS
-        // =================================================
+        
 
         const existingAddress =
             await Address.findOne({
@@ -706,9 +680,6 @@ const addAddress = async (req, res) => {
             });
 
 
-        // =================================================
-        // FIRST ADDRESS = DEFAULT
-        // =================================================
 
         if (!existingAddress) {
 
@@ -717,9 +688,7 @@ const addAddress = async (req, res) => {
         }
 
 
-        // =================================================
-        // REMOVE OLD DEFAULT
-        // =================================================
+        
 
         if (
             formData.isDefault &&
@@ -843,9 +812,7 @@ const addAddress = async (req, res) => {
 
 };
 
-// =====================================================
-// LOAD EDIT ADDRESS PAGE
-// =====================================================
+
 
 const loadEditAddress = async (req, res) => {
 
@@ -1068,10 +1035,6 @@ const updateAddress = async (req, res) => {
         };
 
 
-        // =================================================
-        // REGEX
-        // =================================================
-
         const nameRegex =
             /^[A-Za-z]+(?:[ '-][A-Za-z]+)*$/;
 
@@ -1082,9 +1045,7 @@ const updateAddress = async (req, res) => {
             /^\+?[0-9\s-]{7,15}$/;
 
 
-        // =================================================
-        // CHECK ADDRESS OWNERSHIP
-        // =================================================
+        
 
         const existingAddress =
             await Address.findOne({
@@ -1102,9 +1063,6 @@ const updateAddress = async (req, res) => {
         }
 
 
-        // =================================================
-        // FIRST NAME
-        // =================================================
 
         if (!firstName) {
 
@@ -1163,9 +1121,6 @@ const updateAddress = async (req, res) => {
         }
 
 
-        // =================================================
-        // LAST NAME
-        // =================================================
 
         if (!lastName) {
 
@@ -1224,9 +1179,6 @@ const updateAddress = async (req, res) => {
         }
 
 
-        // =================================================
-        // PIN CODE
-        // =================================================
 
         if (!pinCode) {
 
@@ -1263,10 +1215,6 @@ const updateAddress = async (req, res) => {
 
         }
 
-
-        // =================================================
-        // ADDRESS LINE 1
-        // =================================================
 
         if (!addressLine1) {
 
@@ -1307,9 +1255,6 @@ const updateAddress = async (req, res) => {
         }
 
 
-        // =================================================
-        // CITY
-        // =================================================
 
         if (!city) {
 
@@ -1350,10 +1295,7 @@ const updateAddress = async (req, res) => {
         }
 
 
-        // =================================================
-        // STATE
-        // =================================================
-
+        
         if (!state) {
 
             return res.status(400).render(
@@ -1372,9 +1314,6 @@ const updateAddress = async (req, res) => {
         }
 
 
-        // =================================================
-        // PHONE
-        // =================================================
 
         if (!phone) {
 
@@ -1412,9 +1351,6 @@ const updateAddress = async (req, res) => {
         }
 
 
-        // =================================================
-        // ADDRESS NAME
-        // =================================================
 
         if (addressName.length > 30) {
 
@@ -1434,9 +1370,7 @@ const updateAddress = async (req, res) => {
         }
 
 
-        // =================================================
-        // DEFAULT ADDRESS
-        // =================================================
+        
 
         if (formData.isDefault) {
 
@@ -1458,9 +1392,6 @@ const updateAddress = async (req, res) => {
         }
 
 
-        // =================================================
-        // UPDATE ADDRESS
-        // =================================================
 
         existingAddress.firstName =
             firstName;
@@ -1499,9 +1430,6 @@ const updateAddress = async (req, res) => {
         await existingAddress.save();
 
 
-        // =================================================
-        // SUCCESS
-        // =================================================
 
         return res.redirect(
             "/addresses?updated=1"
@@ -1573,9 +1501,6 @@ const updateAddress = async (req, res) => {
 
 };
 
-// =====================================================
-// DELETE ADDRESS
-// =====================================================
 
 const deleteAddress = async (req, res) => {
 
@@ -1614,9 +1539,7 @@ const deleteAddress = async (req, res) => {
         });
 
 
-        // =================================================
-        // ASSIGN NEW DEFAULT
-        // =================================================
+        
 
         if (wasDefault) {
 
@@ -1661,11 +1584,6 @@ const deleteAddress = async (req, res) => {
 
 };
 
-
-// =====================================================
-// SET DEFAULT ADDRESS
-// =====================================================
-
 const setDefaultAddress = async (req, res) => {
 
     try {
@@ -1677,9 +1595,7 @@ const setDefaultAddress = async (req, res) => {
             req.params.id;
 
 
-        // =================================================
-        // CHECK OWNERSHIP
-        // =================================================
+        
 
         const address =
             await Address.findOne({
@@ -1697,9 +1613,7 @@ const setDefaultAddress = async (req, res) => {
         }
 
 
-        // =================================================
-        // REMOVE OLD DEFAULT
-        // =================================================
+       
 
         await Address.updateMany(
             {
@@ -1715,10 +1629,7 @@ const setDefaultAddress = async (req, res) => {
         );
 
 
-        // =================================================
-        // SET NEW DEFAULT
-        // =================================================
-
+       
         address.isDefault = true;
 
         await address.save();
@@ -1746,9 +1657,7 @@ const setDefaultAddress = async (req, res) => {
 };
 
 
-// =====================================================
-// EXPORT
-// =====================================================
+
 
 module.exports = {
 

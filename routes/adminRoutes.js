@@ -8,22 +8,11 @@ const adminController =
 const requireAdmin =
     require("../middlewares/adminMiddleware");
 
-
-
-// =====================================================
-// ADMIN LOGIN PAGE
-// =====================================================
-
 router.get(
     "/login",
     adminController.loadAdminLogin
 );
 
-
-
-// =====================================================
-// ADMIN LOGIN
-// =====================================================
 
 router.post(
     "/login",
@@ -31,22 +20,11 @@ router.post(
 );
 
 
-
-// =====================================================
-// ADMIN LOGOUT
-// =====================================================
-
 router.post(
     "/logout",
     requireAdmin,
     adminController.adminLogout
 );
-
-
-
-// =====================================================
-// ADMIN DASHBOARD
-// =====================================================
 
 router.get(
     "/dashboard",
@@ -55,22 +33,12 @@ router.get(
 );
 
 
-
-// =====================================================
-// ADMIN USER MANAGEMENT
-// =====================================================
-
-// CUSTOMER LIST
-
 router.get(
     "/users",
     requireAdmin,
     adminController.loadUsers
 );
 
-
-
-// CUSTOMER DETAILS
 
 router.get(
     "/users/:id",
@@ -79,8 +47,6 @@ router.get(
 );
 
 
-
-// BLOCK CUSTOMER
 
 router.post(
     "/users/:id/block",
