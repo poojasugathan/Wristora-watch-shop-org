@@ -3,15 +3,9 @@ const bcrypt = require("bcrypt");
 const User = require("../models/userModel");
 
 
-// =====================================================
-// LOAD ADMIN LOGIN PAGE
-// =====================================================
-
 const loadAdminLogin = (req, res) => {
 
-    // =================================================
-    // IF ADMIN IS ALREADY LOGGED IN
-    // =================================================
+    
 
     if (
         req.session &&
@@ -28,10 +22,6 @@ const loadAdminLogin = (req, res) => {
     let error = null;
 
 
-    // =================================================
-    // HANDLE ERROR MESSAGES
-    // =================================================
-
     if (req.query.error === "server") {
 
         error =
@@ -39,10 +29,6 @@ const loadAdminLogin = (req, res) => {
 
     }
 
-
-    // =================================================
-    // RENDER ADMIN LOGIN
-    // =================================================
 
     return res.render("admin/adminLogin", {
 
@@ -59,17 +45,10 @@ const loadAdminLogin = (req, res) => {
 };
 
 
-// =====================================================
-// ADMIN LOGIN
-// =====================================================
-
 const adminLogin = async (req, res) => {
 
     try {
 
-        // =================================================
-        // GET FORM DATA
-        // =================================================
 
         const email = req.body.email
             ? req.body.email.trim().toLowerCase()
@@ -79,10 +58,6 @@ const adminLogin = async (req, res) => {
             ? req.body.password
             : "";
 
-
-        // =================================================
-        // EMAIL VALIDATION
-        // =================================================
 
         if (!email) {
 
@@ -103,11 +78,6 @@ const adminLogin = async (req, res) => {
             );
 
         }
-
-
-        // =================================================
-        // EMAIL FORMAT VALIDATION
-        // =================================================
 
         if (
             !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
@@ -132,10 +102,6 @@ const adminLogin = async (req, res) => {
         }
 
 
-        // =================================================
-        // PASSWORD VALIDATION
-        // =================================================
-
         if (!password) {
 
             return res.status(400).render(
@@ -157,14 +123,6 @@ const adminLogin = async (req, res) => {
         }
 
 
-        // =================================================
-        // FIND ADMIN
-        // =================================================
-        // IMPORTANT:
-        // We search for role: "admin" here.
-        // Normal users cannot authenticate through
-        // the admin login even if they know their password.
-        // =================================================
 
         const admin = await User.findOne({
 
@@ -174,10 +132,6 @@ const adminLogin = async (req, res) => {
 
         });
 
-
-        // =================================================
-        // INVALID ADMIN CREDENTIALS
-        // =================================================
 
         if (!admin) {
 
@@ -200,10 +154,6 @@ const adminLogin = async (req, res) => {
         }
 
 
-        // =================================================
-        // BLOCKED ADMIN CHECK
-        // =================================================
-
         if (admin.isBlocked === true) {
 
             return res.status(403).render(
@@ -223,11 +173,6 @@ const adminLogin = async (req, res) => {
             );
 
         }
-
-
-        // =================================================
-        // PASSWORD EXISTENCE CHECK
-        // =================================================
 
         if (!admin.password) {
 
@@ -249,10 +194,6 @@ const adminLogin = async (req, res) => {
 
         }
 
-
-        // =================================================
-        // BCRYPT PASSWORD CHECK
-        // =================================================
 
         const passwordMatch =
             await bcrypt.compare(
@@ -282,9 +223,6 @@ const adminLogin = async (req, res) => {
         }
 
 
-        // =================================================
-        // REGENERATE SESSION
-        // =================================================
 
         req.session.regenerate((sessionError) => {
 
@@ -314,9 +252,6 @@ const adminLogin = async (req, res) => {
             }
 
 
-            // =================================================
-            // CREATE ADMIN SESSION
-            // =================================================
 
             req.session.admin = {
 
@@ -332,9 +267,6 @@ const adminLogin = async (req, res) => {
             };
 
 
-            // =================================================
-            // SAVE SESSION
-            // =================================================
 
             req.session.save((saveError) => {
 
@@ -363,10 +295,6 @@ const adminLogin = async (req, res) => {
 
                 }
 
-
-                // =================================================
-                // LOGIN SUCCESS
-                // =================================================
 
                 return res.redirect(
                     "/admin/dashboard"
@@ -409,15 +337,8 @@ const adminLogin = async (req, res) => {
 };
 
 
-// =====================================================
-// ADMIN LOGOUT
-// =====================================================
-
 const adminLogout = (req, res) => {
 
-    // =================================================
-    // DESTROY CURRENT SESSION
-    // =================================================
 
     req.session.destroy((error) => {
 
@@ -435,16 +356,9 @@ const adminLogout = (req, res) => {
         }
 
 
-        // =================================================
-        // CLEAR SESSION COOKIE
-        // =================================================
 
         res.clearCookie("connect.sid");
 
-
-        // =================================================
-        // REDIRECT TO ADMIN LOGIN
-        // =================================================
 
         return res.redirect(
             "/admin/login"
@@ -455,21 +369,11 @@ const adminLogout = (req, res) => {
 };
 
 
-// =====================================================
-// LOAD ADMIN DASHBOARD
-// =====================================================
+
 
 const loadDashboard = async (req, res) => {
 
     try {
-
-        // =================================================
-        // DASHBOARD DATA
-        // =================================================
-        // Temporary values matching the Figma design.
-        // These will be connected to real database data
-        // in later phases.
-        // =================================================
 
         const dashboardData = {
 
@@ -497,10 +401,6 @@ const loadDashboard = async (req, res) => {
 
         };
 
-
-        // =================================================
-        // BEST SELLING PRODUCTS
-        // =================================================
 
         const bestSellingProducts = [
 
@@ -535,10 +435,6 @@ const loadDashboard = async (req, res) => {
         ];
 
 
-        // =================================================
-        // SALES PROGRESS
-        // =================================================
-
         const salesProgress = {
 
             percentage: 65.55,
@@ -553,10 +449,6 @@ const loadDashboard = async (req, res) => {
 
         };
 
-
-        // =================================================
-        // RENDER DASHBOARD
-        // =================================================
 
         return res.render(
             "admin/dashboard",
@@ -589,26 +481,16 @@ const loadDashboard = async (req, res) => {
     }
 
 };
-// =====================================================
-// LOAD ADMIN USER MANAGEMENT
-// =====================================================
+
 
 const loadUsers = async (req, res) => {
 
     try {
 
-        // =================================================
-        // GET SEARCH VALUE
-        // =================================================
-
         const search = req.query.search
             ? req.query.search.trim()
             : "";
 
-
-        // =================================================
-        // GET PAGE NUMBER
-        // =================================================
 
         let page = parseInt(req.query.page, 10);
 
@@ -619,30 +501,13 @@ const loadUsers = async (req, res) => {
             page = 1;
         }
 
-
-        // =================================================
-        // USERS PER PAGE
-        // =================================================
-
         const usersPerPage = 10;
-
-
-        // =================================================
-        // BUILD MONGODB QUERY
-        // =================================================
 
         const query = {
             role: "user"
         };
 
-
-        // =================================================
-        // BACKEND USER SEARCH
-        // =================================================
-
         if (search) {
-
-            // Escape special regex characters.
 
             const escapedSearch =
                 search.replace(
@@ -685,31 +550,13 @@ const loadUsers = async (req, res) => {
 
         }
 
-
-        // =================================================
-        // COUNT TOTAL MATCHING USERS
-        // =================================================
-        // This counts users matching the search query.
-        // It does NOT load all users.
-        // =================================================
-
         const totalUsers =
             await User.countDocuments(query);
-
-
-        // =================================================
-        // CALCULATE TOTAL PAGES
-        // =================================================
 
         const totalPages =
             Math.ceil(
                 totalUsers / usersPerPage
             );
-
-
-        // =================================================
-        // HANDLE PAGE OUT OF RANGE
-        // =================================================
 
         if (
             totalPages > 0 &&
@@ -720,18 +567,9 @@ const loadUsers = async (req, res) => {
 
         }
 
-
-        // =================================================
-        // CALCULATE SKIP
-        // =================================================
-
         const skip =
             (page - 1) * usersPerPage;
 
-
-        // =================================================
-        // GET ONLY USERS FOR CURRENT PAGE
-        // =================================================
 
         const users = await User.find(query)
             .select("-password")
@@ -741,16 +579,7 @@ const loadUsers = async (req, res) => {
             .lean();
 
 
-        // =================================================
-        // TOTAL CUSTOMERS
-        // =================================================
-
         const totalCustomers = totalUsers;
-
-
-        // =================================================
-        // NEW CUSTOMERS
-        // =================================================
 
         const sevenDaysAgo = new Date();
 
@@ -759,12 +588,6 @@ const loadUsers = async (req, res) => {
         );
 
 
-        // =================================================
-        // COUNT NEW CUSTOMERS
-        // =================================================
-        // We calculate this from the current page only
-        // for now. Later phases can improve reporting.
-        // =================================================
 
         const newCustomers =
             users.filter(
@@ -772,11 +595,6 @@ const loadUsers = async (req, res) => {
                     user.createdAt &&
                     new Date(user.createdAt) >= sevenDaysAgo
             ).length;
-
-
-        // =================================================
-        // RENDER USER MANAGEMENT PAGE
-        // =================================================
 
         return res.render(
             "admin/users",
@@ -804,19 +622,12 @@ const loadUsers = async (req, res) => {
 
     } catch (error) {
 
-        // =================================================
-        // SERVER-SIDE ERROR LOG
-        // =================================================
-
         console.error(
             "Admin user management error:",
             error
         );
 
 
-        // =================================================
-        // USER-FRIENDLY ERROR PAGE
-        // =================================================
 
         return res.status(500).render(
             "admin/users",
@@ -850,9 +661,7 @@ const loadUsers = async (req, res) => {
     }
 
 };
-// =====================================================
-// LOAD CUSTOMER DETAILS
-// =====================================================
+
 
 const loadUserDetails = async (req, res) => {
 
@@ -861,21 +670,12 @@ const loadUserDetails = async (req, res) => {
         const userId = req.params.id;
 
 
-        // =================================================
-        // FIND CUSTOMER
-        // =================================================
-
         const user = await User.findOne({
             _id: userId,
             role: "user"
         })
             .select("-password -googleId")
             .lean();
-
-
-        // =================================================
-        // CUSTOMER NOT FOUND
-        // =================================================
 
         if (!user) {
 
@@ -886,11 +686,7 @@ const loadUserDetails = async (req, res) => {
         }
 
 
-        // =================================================
-        // FORMAT CREATED DATE
-        // =================================================
-
-        const createdDate = user.createdAt
+               const createdDate = user.createdAt
             ? new Date(
                 user.createdAt
             ).toLocaleDateString(

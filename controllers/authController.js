@@ -15,9 +15,6 @@ const {
 } = require("../services/emailService");
 
 
-// =====================================================
-// LOAD SIGNUP PAGE
-// =====================================================
 
 const loadSignup = (req, res) => {
 
@@ -32,11 +29,6 @@ const loadSignup = (req, res) => {
     });
 
 };
-
-
-// =====================================================
-// SIGNUP
-// =====================================================
 
 const signup = async (req, res) => {
 
@@ -55,10 +47,6 @@ const signup = async (req, res) => {
         const normalizedEmail =
             email.toLowerCase().trim();
 
-
-        // =================================================
-        // CHECK DUPLICATE EMAIL
-        // =================================================
 
         const existingUser =
             await User.findOne({
@@ -88,22 +76,8 @@ const signup = async (req, res) => {
 
         }
 
-
-        // =================================================
-        // HASH PASSWORD
-        // =================================================
-
-        const hashedPassword =
-            await bcrypt.hash(
-                password,
-                10
-            );
-
-
-        // =================================================
-        // STORE SIGNUP DATA TEMPORARILY IN SESSION
-        // =================================================
-
+        const hashedPassword = await bcrypt.hash( password,10 );
+              
         req.session.signupData = {
 
             firstName,
@@ -121,18 +95,8 @@ const signup = async (req, res) => {
 
         };
 
-
-        // =================================================
-        // GENERATE OTP
-        // =================================================
-
-        const otpResult =
-            await createOtp(
-                normalizedEmail,
-                "signup"
-            );
-
-
+        const otpResult = await createOtp( normalizedEmail, "signup" );
+        
         if (!otpResult.success) {
 
             delete req.session.signupData;
@@ -157,12 +121,6 @@ const signup = async (req, res) => {
             );
 
         }
-
-
-        // =================================================
-        // SEND OTP EMAIL
-        // =================================================
-
         try {
 
             await sendOtpEmail(
@@ -207,10 +165,6 @@ const signup = async (req, res) => {
 
         }
 
-
-        // =================================================
-        // SAVE SESSION BEFORE REDIRECT
-        // =================================================
 
         req.session.save((sessionError) => {
 
@@ -278,11 +232,6 @@ const signup = async (req, res) => {
 
 };
 
-
-// =====================================================
-// LOAD OTP PAGE
-// =====================================================
-
 const loadOtp = (req, res) => {
 
     if (
@@ -308,18 +257,9 @@ const loadOtp = (req, res) => {
 
 };
 
-
-// =====================================================
-// VERIFY OTP
-// =====================================================
-
 const verifyOtpController = async (req, res) => {
 
     try {
-
-        // =================================================
-        // CHECK SIGNUP SESSION
-        // =================================================
 
         if (
             !req.session.signupData ||
@@ -340,14 +280,7 @@ const verifyOtpController = async (req, res) => {
         }
 
 
-        const {
-            otp
-        } = req.body;
-
-
-        // =================================================
-        // CHECK OTP FORMAT
-        // =================================================
+        const { otp } = req.body;
 
         if (
             !otp ||
@@ -372,21 +305,12 @@ const verifyOtpController = async (req, res) => {
             req.session.signupData.email;
 
 
-        // =================================================
-        // VERIFY OTP
-        // =================================================
-
         const result =
             await verifyOtp(
                 email,
                 otp,
                 "signup"
             );
-
-
-        // =================================================
-        // INVALID OTP
-        // =================================================
 
         if (!result.success) {
 
@@ -442,11 +366,6 @@ const verifyOtpController = async (req, res) => {
 
         }
 
-
-        // =================================================
-        // CREATE USER AFTER SUCCESSFUL OTP
-        // =================================================
-
         const signupData =
             req.session.signupData;
 
@@ -456,8 +375,6 @@ const verifyOtpController = async (req, res) => {
                 email: signupData.email
             });
 
-
-        // Extra duplicate protection
 
         if (existingUser) {
 
@@ -476,11 +393,6 @@ const verifyOtpController = async (req, res) => {
             });
 
         }
-
-
-        // =================================================
-        // CREATE USER
-        // =================================================
 
         const user = new User({
 
@@ -509,24 +421,15 @@ const verifyOtpController = async (req, res) => {
 
         await user.save();
 
-
-        // =================================================
-        // CLEAR TEMPORARY SIGNUP SESSION
-        // =================================================
-
         delete req.session.signupData;
-
-
-        // =================================================
-        // RESPONSE
-        // =================================================
 
         return res.json({
 
             success: true,
 
             message:
-                "Email verified successfully. Your account has been created."
+                "Email verified successfully. Your account has been created.",
+
 
         });
 
@@ -555,10 +458,6 @@ const verifyOtpController = async (req, res) => {
 };
 
 
-// =====================================================
-// RESEND OTP
-// =====================================================
-
 const resendOtp = async (req, res) => {
 
     try {
@@ -583,11 +482,6 @@ const resendOtp = async (req, res) => {
         const email =
             req.session.signupData.email;
 
-
-        // =================================================
-        // GENERATE NEW OTP
-        // =================================================
-
         const otpResult =
             await createOtp(
                 email,
@@ -611,10 +505,6 @@ const resendOtp = async (req, res) => {
 
         }
 
-
-        // =================================================
-        // SEND NEW OTP
-        // =================================================
 
         try {
 
@@ -657,7 +547,7 @@ const resendOtp = async (req, res) => {
                 "New OTP sent successfully",
 
             remainingSeconds:
-                60
+                30
 
         });
 
@@ -682,11 +572,6 @@ const resendOtp = async (req, res) => {
     }
 
 };
-
-
-// =====================================================
-// LOAD LOGIN PAGE
-// =====================================================
 
 const loadLogin = (req, res) => {
 
@@ -731,10 +616,6 @@ const loadLogin = (req, res) => {
 };
 
 
-// =====================================================
-// NORMAL LOGIN
-// =====================================================
-
 const login = async (req, res) => {
 
     try {
@@ -747,11 +628,6 @@ const login = async (req, res) => {
         const password = req.body.password
             ? req.body.password
             : "";
-
-
-        // =================================================
-        // BACKEND VALIDATION
-        // =================================================
 
         if (!email) {
 
@@ -817,19 +693,9 @@ const login = async (req, res) => {
 
         }
 
-
-        // =================================================
-        // FIND USER
-        // =================================================
-
         const user = await User.findOne({
             email: email
         });
-
-
-        // =================================================
-        // USER NOT FOUND
-        // =================================================
 
         if (!user) {
 
@@ -851,11 +717,6 @@ const login = async (req, res) => {
 
         }
 
-
-        // =================================================
-        // BLOCKED USER CHECK
-        // =================================================
-
         if (user.isBlocked === true) {
 
             return res.status(403).render(
@@ -875,11 +736,6 @@ const login = async (req, res) => {
             );
 
         }
-
-
-        // =================================================
-        // PASSWORD CHECK
-        // =================================================
 
         if (!user.password) {
 
@@ -929,11 +785,6 @@ const login = async (req, res) => {
 
         }
 
-
-        // =================================================
-        // REGENERATE SESSION
-        // =================================================
-
         req.session.regenerate((sessionError) => {
 
             if (sessionError) {
@@ -963,10 +814,6 @@ const login = async (req, res) => {
             }
 
 
-            // =================================================
-            // STORE USER INFORMATION IN SESSION
-            // =================================================
-
             req.session.user = {
 
                 id:
@@ -979,11 +826,6 @@ const login = async (req, res) => {
                     user.role
 
             };
-
-
-            // =================================================
-            // SAVE SESSION
-            // =================================================
 
             req.session.save((saveError) => {
 
@@ -1012,11 +854,6 @@ const login = async (req, res) => {
                     );
 
                 }
-
-
-                // =================================================
-                // SUCCESSFUL LOGIN
-                // =================================================
 
                 return res.redirect("/");
 
@@ -1054,9 +891,6 @@ const login = async (req, res) => {
 
 };
 
-// =====================================================
-// LOGOUT
-// =====================================================
 
 const logout = (req, res) => {
 
@@ -1082,18 +916,12 @@ const logout = (req, res) => {
     });
 };
 
-// =====================================================
-// GOOGLE LOGIN CALLBACK
-// =====================================================
 
 const googleCallback = (req, res) => {
 
     try {
 
-        // =================================================
-        // CHECK GOOGLE USER
-        // =================================================
-
+       
         if (!req.user) {
 
             return res.redirect(
@@ -1106,10 +934,6 @@ const googleCallback = (req, res) => {
         const user = req.user;
 
 
-        // =================================================
-        // BLOCKED USER CHECK
-        // =================================================
-
         if (user.isBlocked === true) {
 
             return res.redirect(
@@ -1118,10 +942,6 @@ const googleCallback = (req, res) => {
 
         }
 
-
-        // =================================================
-        // REGENERATE SESSION
-        // =================================================
 
         req.session.regenerate((sessionError) => {
 
@@ -1140,10 +960,6 @@ const googleCallback = (req, res) => {
             }
 
 
-            // =================================================
-            // STORE USER IN APPLICATION SESSION
-            // =================================================
-
             req.session.user = {
 
                 id:
@@ -1157,10 +973,6 @@ const googleCallback = (req, res) => {
 
             };
 
-
-            // =================================================
-            // SAVE SESSION
-            // =================================================
 
             req.session.save((saveError) => {
 
@@ -1178,10 +990,6 @@ const googleCallback = (req, res) => {
 
                 }
 
-
-                // =================================================
-                // GOOGLE LOGIN SUCCESS
-                // =================================================
 
                 return res.redirect("/");
 
@@ -1206,9 +1014,6 @@ const googleCallback = (req, res) => {
 
 };
 
-// =====================================================
-// LOAD FORGOT PASSWORD PAGE
-// =====================================================
 
 const loadForgotPassword = (req, res) => {
 
@@ -1222,11 +1027,6 @@ const loadForgotPassword = (req, res) => {
 
 };
 
-
-// =====================================================
-// SEND FORGOT PASSWORD OTP
-// =====================================================
-
 const forgotPassword = async (req, res) => {
 
     try {
@@ -1236,9 +1036,6 @@ const forgotPassword = async (req, res) => {
             : "";
 
 
-        // =================================================
-        // VALIDATE EMAIL
-        // =================================================
 
         if (!email) {
 
@@ -1275,19 +1072,10 @@ const forgotPassword = async (req, res) => {
 
         }
 
-
-        // =================================================
-        // FIND USER
-        // =================================================
-
         const user = await User.findOne({
             email
         });
 
-
-        // =================================================
-        // EMAIL NOT FOUND
-        // =================================================
 
         if (!user) {
 
@@ -1306,10 +1094,6 @@ const forgotPassword = async (req, res) => {
 
         }
 
-
-        // =================================================
-        // BLOCKED USER
-        // =================================================
 
         if (user.isBlocked === true) {
 
@@ -1330,16 +1114,9 @@ const forgotPassword = async (req, res) => {
         }
 
 
-        // =================================================
-        // STORE EMAIL IN SESSION
-        // =================================================
-
         req.session.forgotPasswordEmail = email;
 
 
-        // =================================================
-        // CREATE OTP
-        // =================================================
 
         const otpResult = await createOtp(
             email,
@@ -1367,10 +1144,6 @@ const forgotPassword = async (req, res) => {
 
         }
 
-
-        // =================================================
-        // SEND OTP EMAIL
-        // =================================================
 
         try {
 
@@ -1411,11 +1184,6 @@ const forgotPassword = async (req, res) => {
             );
 
         }
-
-
-        // =================================================
-        // SAVE SESSION
-        // =================================================
 
         req.session.save((sessionError) => {
 
@@ -1477,9 +1245,6 @@ const forgotPassword = async (req, res) => {
 };
 
 
-// =====================================================
-// LOAD FORGOT PASSWORD OTP PAGE
-// =====================================================
 
 const loadForgotPasswordOtp = (req, res) => {
 
@@ -1524,17 +1289,9 @@ const loadForgotPasswordOtp = (req, res) => {
 };
 
 
-// =====================================================
-// VERIFY FORGOT PASSWORD OTP
-// =====================================================
-
 const verifyForgotPasswordOtp = async (req, res) => {
 
     try {
-
-        // =================================================
-        // CHECK SESSION
-        // =================================================
 
         if (!req.session.forgotPasswordEmail) {
 
@@ -1555,9 +1312,6 @@ const verifyForgotPasswordOtp = async (req, res) => {
         const { otp } = req.body;
 
 
-        // =================================================
-        // OTP FORMAT
-        // =================================================
 
         if (!otp || !/^\d{6}$/.test(otp)) {
 
@@ -1579,9 +1333,6 @@ const verifyForgotPasswordOtp = async (req, res) => {
             req.session.forgotPasswordEmail;
 
 
-        // =================================================
-        // VERIFY OTP
-        // =================================================
 
         const result = await verifyOtp(
             email,
@@ -1589,10 +1340,6 @@ const verifyForgotPasswordOtp = async (req, res) => {
             "forgot-password"
         );
 
-
-        // =================================================
-        // INVALID OTP
-        // =================================================
 
         if (!result.success) {
 
@@ -1644,10 +1391,6 @@ const verifyForgotPasswordOtp = async (req, res) => {
 
         }
 
-
-        // =================================================
-        // OTP VERIFIED
-        // =================================================
 
         req.session.passwordResetVerified = true;
 
@@ -1712,10 +1455,6 @@ const verifyForgotPasswordOtp = async (req, res) => {
 
 };
 
-
-// =====================================================
-// RESEND FORGOT PASSWORD OTP
-// =====================================================
 
 const resendForgotPasswordOtp = async (req, res) => {
 
@@ -1829,10 +1568,6 @@ const resendForgotPasswordOtp = async (req, res) => {
 };
 
 
-// =====================================================
-// LOAD RESET PASSWORD PAGE
-// =====================================================
-
 const loadResetPassword = (req, res) => {
 
     if (
@@ -1860,17 +1595,12 @@ const loadResetPassword = (req, res) => {
 };
 
 
-// =====================================================
-// RESET PASSWORD
-// =====================================================
 
 const resetPassword = async (req, res) => {
 
     try {
 
-        // =================================================
-        // CHECK RESET SESSION
-        // =================================================
+       
 
         if (
             !req.session.forgotPasswordEmail ||
@@ -1890,9 +1620,6 @@ const resetPassword = async (req, res) => {
         } = req.body;
 
 
-        // =================================================
-        // PASSWORD VALIDATION
-        // =================================================
 
         if (!password) {
 
@@ -1958,10 +1685,6 @@ const resetPassword = async (req, res) => {
         }
 
 
-        // =================================================
-        // FIND USER
-        // =================================================
-
         const email =
             req.session.forgotPasswordEmail;
 
@@ -1984,21 +1707,12 @@ const resetPassword = async (req, res) => {
 
         }
 
-
-        // =================================================
-        // HASH NEW PASSWORD
-        // =================================================
-
         const hashedPassword =
             await bcrypt.hash(
                 password,
                 10
             );
 
-
-        // =================================================
-        // UPDATE PASSWORD
-        // =================================================
 
         user.password =
             hashedPassword;
@@ -2010,18 +1724,12 @@ const resetPassword = async (req, res) => {
         await user.save();
 
 
-        // =================================================
-        // CLEAR RESET SESSION
-        // =================================================
 
         delete req.session.forgotPasswordEmail;
 
         delete req.session.passwordResetVerified;
 
 
-        // =================================================
-        // SUCCESS
-        // =================================================
 
         return res.redirect(
             "/auth/login?reset=success"
@@ -2050,9 +1758,7 @@ const resetPassword = async (req, res) => {
 
 };
 
-// =====================================================
-// EXPORT
-// =====================================================
+
 
 module.exports = {
 

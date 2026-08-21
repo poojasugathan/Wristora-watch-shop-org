@@ -1,8 +1,6 @@
 const nodemailer = require("nodemailer");
 
-// =====================================================
-// CREATE NODEMAILER TRANSPORTER
-// =====================================================
+
 
 const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -14,9 +12,7 @@ const transporter = nodemailer.createTransport({
 });
 
 
-// =====================================================
-// SEND OTP EMAIL
-// =====================================================
+
 
 const sendOtpEmail = async (email, otp) => {
     const mailOptions = {

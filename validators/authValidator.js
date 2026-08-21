@@ -5,14 +5,18 @@ const signupValidator = [
         .trim()
         .notEmpty()
         .withMessage("First name is required")
-        .isLength({ min: 2, max: 30 })
+        .isAlpha()
+        .withMessage("First name must contain only letters")
+        .isLength({ min: 2, max: 15 })
         .withMessage("First name must be between 2 and 30 characters"),
 
     body("lastName")
         .trim()
         .notEmpty()
         .withMessage("Last name is required")
-        .isLength({ min: 1, max: 30 })
+        .isAlpha()
+        .withMessage("Last name must contain only letters")
+        .isLength({ min: 1, max: 15 })
         .withMessage("Last name must be between 1 and 30 characters"),
 
     body("email")
@@ -62,7 +66,7 @@ const signupValidator = [
     body("referralCode")
         .optional({ checkFalsy: true })
         .trim()
-        .isLength({ max: 30 })
+        .isLength({ max: 15 })
         .withMessage("Invalid referral code"),    
 ];
 

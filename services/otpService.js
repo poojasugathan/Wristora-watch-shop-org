@@ -3,18 +3,11 @@ const bcrypt = require("bcrypt");
 
 const OTP = require("../models/otpModel");
 
-// =====================================================
-// OTP SETTINGS
-// =====================================================
-
 const OTP_EXPIRY_MINUTES = 5;
 const RESEND_COOLDOWN_SECONDS = 30;
 const MAX_ATTEMPTS = 5;
 
 
-// =====================================================
-// GENERATE 6 DIGIT OTP
-// =====================================================
 
 const generateOtp = () => {
 
@@ -25,9 +18,6 @@ const generateOtp = () => {
 };
 
 
-// =====================================================
-// CREATE AND STORE OTP
-// =====================================================
 
 const createOtp = async (email, purpose) => {
 
@@ -122,9 +112,6 @@ const createOtp = async (email, purpose) => {
 };
 
 
-// =====================================================
-// VERIFY OTP
-// =====================================================
 
 const verifyOtp = async (email, enteredOtp, purpose) => {
 
@@ -249,9 +236,7 @@ const verifyOtp = async (email, enteredOtp, purpose) => {
 };
 
 
-// =====================================================
-// DELETE OTP
-// =====================================================
+
 
 const deleteOtp = async (email, purpose) => {
 
@@ -263,9 +248,6 @@ const deleteOtp = async (email, purpose) => {
 };
 
 
-// =====================================================
-// EXPORT
-// =====================================================
 
 module.exports = {
 

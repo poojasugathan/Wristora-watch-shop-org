@@ -15,10 +15,6 @@ const {
     sendOtpEmail
 } = require("../services/emailService");
 
-// =====================================================
-// LOAD PROFILE PAGE
-// =====================================================
-
 const loadProfile = async (req, res) => {
     try {
         const userId = req.session.user.id;
@@ -63,9 +59,7 @@ const loadProfile = async (req, res) => {
 };
 
 
-// =====================================================
-// LOAD EDIT PROFILE PAGE
-// =====================================================
+
 
 const loadEditProfile = async (req, res) => {
     try {
@@ -80,9 +74,6 @@ const loadEditProfile = async (req, res) => {
         }
 
 
-        // =================================================
-        // PROFILE IMAGE MESSAGES
-        // =================================================
 
         const imageUpdated =
             req.query.imageUpdated === "1";
@@ -97,13 +88,10 @@ const loadEditProfile = async (req, res) => {
             req.query.imageDeleteError === "1";
 
 
-        // =================================================
-        // LOAD EDIT PROFILE PAGE
-        // =================================================
-
+        
         return res.render("user/editProfile", {
 
-            title: "Account Settings",
+            title: "Edit Profile",
 
             user,
 
@@ -131,7 +119,7 @@ const loadEditProfile = async (req, res) => {
         return res.status(500).render(
             "user/editProfile",
             {
-                title: "Account Settings",
+                title: "Edit Profile",
 
                 user: null,
 
@@ -153,9 +141,7 @@ const loadEditProfile = async (req, res) => {
 };
 
 
-// =====================================================
-// UPDATE PERSONAL DETAILS
-// =====================================================
+
 
 const updateProfile = async (req, res) => {
 
@@ -183,9 +169,7 @@ const updateProfile = async (req, res) => {
             : "";
 
 
-        // =================================================
-        // VALIDATION
-        // =================================================
+        
 
         const nameRegex =
             /^[A-Za-z]+(?:[ '-][A-Za-z]+)*$/;
@@ -194,16 +178,14 @@ const updateProfile = async (req, res) => {
             /^\+?[0-9\s-]{7,15}$/;
 
 
-        // =================================================
-        // FIRST NAME
-        // =================================================
+       
 
         if (!firstName) {
 
             return res.status(400).render(
                 "user/editProfile",
                 {
-                    title: "Account Settings",
+                    title: "Edit Profile",
 
                     user: {
                         firstName,
@@ -227,13 +209,13 @@ const updateProfile = async (req, res) => {
 
         if (
             firstName.length < 2 ||
-            firstName.length > 30
+            firstName.length > 15
         ) {
 
             return res.status(400).render(
                 "user/editProfile",
                 {
-                    title: "Account Settings",
+                    title: "Edit Profile",
 
                     user: {
                         firstName,
@@ -242,7 +224,7 @@ const updateProfile = async (req, res) => {
                     },
 
                     errorMessage:
-                        "First name must be between 2 and 30 characters.",
+                        "First name must be between 2 and 15 characters.",
 
                     successMessage: null,
 
@@ -260,7 +242,7 @@ const updateProfile = async (req, res) => {
             return res.status(400).render(
                 "user/editProfile",
                 {
-                    title: "Account Settings",
+                    title: "Edit Profile",
 
                     user: {
                         firstName,
@@ -282,16 +264,12 @@ const updateProfile = async (req, res) => {
         }
 
 
-        // =================================================
-        // LAST NAME
-        // =================================================
-
         if (!lastName) {
 
             return res.status(400).render(
                 "user/editProfile",
                 {
-                    title: "Account Settings",
+                    title: "Edit Profile",
 
                     user: {
                         firstName,
@@ -370,9 +348,7 @@ const updateProfile = async (req, res) => {
         }
 
 
-        // =================================================
-        // PHONE
-        // =================================================
+       
 
         if (
             phone &&
@@ -382,7 +358,7 @@ const updateProfile = async (req, res) => {
             return res.status(400).render(
                 "user/editProfile",
                 {
-                    title: "Account Settings",
+                    title: "Edit Profile",
 
                     user: {
                         firstName,
@@ -404,20 +380,12 @@ const updateProfile = async (req, res) => {
         }
 
 
-        // =================================================
-        // FIND USER
-        // =================================================
-
         const user = await User.findById(userId);
 
         if (!user) {
             return res.redirect("/auth/login");
         }
 
-
-        // =================================================
-        // UPDATE PERSONAL DETAILS
-        // =================================================
 
         user.firstName = firstName;
         user.lastName = lastName;
@@ -426,10 +394,7 @@ const updateProfile = async (req, res) => {
         await user.save();
 
 
-        // =================================================
-        // REDIRECT
-        // =================================================
-
+        
         return res.redirect("/profile?updated=1");
 
 
@@ -443,7 +408,7 @@ const updateProfile = async (req, res) => {
         return res.status(500).render(
             "user/editProfile",
             {
-                title: "Account Settings",
+                title: "Edit Profile",
 
                 user: {
                     firstName:
@@ -471,13 +436,6 @@ const updateProfile = async (req, res) => {
 };
 
 
-// =====================================================
-// UPDATE EMAIL
-// =====================================================
-
-// =====================================================
-// REQUEST EMAIL CHANGE
-// =====================================================
 
 const updateEmail = async (req, res) => {
 
@@ -486,18 +444,12 @@ const updateEmail = async (req, res) => {
         const userId = req.session.user.id;
 
 
-        // =================================================
-        // GET NEW EMAIL
-        // =================================================
-
+        
         let newEmail = req.body.email
             ? req.body.email.trim().toLowerCase()
             : "";
 
 
-        // =================================================
-        // EMAIL REQUIRED
-        // =================================================
 
         if (!newEmail) {
 
