@@ -511,11 +511,6 @@ const updateEmail = async (req, res) => {
             );
         }
 
-
-        // =================================================
-        // GET CURRENT USER FROM DATABASE
-        // =================================================
-
         const user =
             await User.findById(userId);
 
@@ -525,11 +520,6 @@ const updateEmail = async (req, res) => {
             return res.redirect("/auth/login");
 
         }
-
-
-        // =================================================
-        // SAME EMAIL CHECK
-        // =================================================
 
         if (
             user.email.toLowerCase() === newEmail
@@ -560,10 +550,6 @@ const updateEmail = async (req, res) => {
             );
         }
 
-
-        // =================================================
-        // DUPLICATE EMAIL CHECK
-        // =================================================
 
         const existingUser =
             await User.findOne({
@@ -600,20 +586,12 @@ const updateEmail = async (req, res) => {
 
 
 
-        // =================================================
-        // CREATE OTP
-        // =================================================
-
         const otpResult =
             await createOtp(
                 newEmail,
                 "email-change"
             );
 
-
-        // =================================================
-        // COOLDOWN
-        // =================================================
 
         if (!otpResult.success) {
 
@@ -647,10 +625,6 @@ const updateEmail = async (req, res) => {
 
         }
 
-
-        // =================================================
-        // SEND OTP TO NEW EMAIL
-        // =================================================
 
         try {
 
@@ -702,11 +676,9 @@ const updateEmail = async (req, res) => {
         }
 
 
-        // =================================================
-        // STORE PENDING EMAIL IN SESSION
-        // =================================================
+        
 
-        req.session.emailChange = {
+        req.session.emailChange = { 
 
             newEmail,
 
@@ -715,9 +687,6 @@ const updateEmail = async (req, res) => {
         };
 
 
-        // =================================================
-        // SAVE SESSION
-        // =================================================
 
         req.session.save((sessionError) => {
 
@@ -750,9 +719,7 @@ const updateEmail = async (req, res) => {
             }
 
 
-            // =================================================
-            // REDIRECT TO OTP PAGE
-            // =================================================
+           
 
             return res.redirect(
                 "/profile/change-email/otp"
@@ -790,17 +757,11 @@ const updateEmail = async (req, res) => {
     }
 };
 
-// =====================================================
-// LOAD EMAIL CHANGE OTP PAGE
-// =====================================================
-
 const loadEmailChangeOtp = async (req, res) => {
 
     try {
 
-        // =================================================
-        // CHECK SESSION
-        // =================================================
+       
 
         if (
             !req.session.emailChange ||
@@ -818,9 +779,7 @@ const loadEmailChangeOtp = async (req, res) => {
             req.session.emailChange.newEmail;
 
 
-        // =================================================
-        // LOAD OTP PAGE
-        // =================================================
+        
 
         return res.render(
             "user/emailChangeOtp",
@@ -843,9 +802,7 @@ const loadEmailChangeOtp = async (req, res) => {
 
     }
 };
-// =====================================================
-// VERIFY EMAIL CHANGE OTP
-// =====================================================
+
 
 const verifyEmailChangeOtp = async (req, res) => {
 
@@ -1118,9 +1075,7 @@ const verifyEmailChangeOtp = async (req, res) => {
     }
 };
 
-// =====================================================
-// RESEND EMAIL CHANGE OTP
-// =====================================================
+
 
 const resendEmailChangeOtp = async (req, res) => {
 
@@ -1283,9 +1238,7 @@ const resendEmailChangeOtp = async (req, res) => {
 
     }
 };
-// =====================================================
-// UPLOAD / CHANGE PROFILE IMAGE
-// =====================================================
+
 
 const uploadProfileImage = async (req, res) => {
 
@@ -1494,9 +1447,6 @@ const uploadProfileImage = async (req, res) => {
 };
 
 
-// =====================================================
-// DELETE PROFILE IMAGE
-// =====================================================
 
 const deleteProfileImage = async (req, res) => {
 
@@ -1591,9 +1541,6 @@ const deleteProfileImage = async (req, res) => {
         );
     }
 };
-// =====================================================
-// LOAD CHANGE PASSWORD PAGE
-// =====================================================
 
 const loadChangePassword = async (req, res) => {
 
@@ -1673,9 +1620,6 @@ const loadChangePassword = async (req, res) => {
 
 
 
-// =====================================================
-// CHANGE PASSWORD
-// =====================================================
 
 const changePassword = async (req, res) => {
 
@@ -1992,9 +1936,6 @@ const changePassword = async (req, res) => {
     }
 };
 
-// =====================================================
-// EXPORT
-// =====================================================
 
 module.exports = {
 

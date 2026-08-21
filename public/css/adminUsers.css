@@ -1005,3 +1005,45 @@
     cursor: not-allowed;
 
 }
+
+.sort-container {
+    position: relative;
+}
+
+.sort-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 180px;
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 8px 0;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    z-index: 1000;
+}
+
+.sort-menu.show {
+    display: block;
+}
+
+.sort-menu-title {
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #777;
+    text-transform: uppercase;
+}
+
+.sort-menu a {
+    display: block;
+    padding: 10px 14px;
+    text-decoration: none;
+    color: #222;
+    font-size: 14px;
+}
+
+.sort-menu a:hover {
+    background: #f5f5f5;
+}

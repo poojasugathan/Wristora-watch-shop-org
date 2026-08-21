@@ -1,13 +1,7 @@
-// =====================================================
-// ADMIN AUTHENTICATION MIDDLEWARE
-// =====================================================
 
 const requireAdmin = (req, res, next) => {
 
-    // =================================================
-    // CHECK ADMIN SESSION
-    // =================================================
-
+    
     if (
         req.session &&
         req.session.admin &&
@@ -19,10 +13,6 @@ const requireAdmin = (req, res, next) => {
 
     }
 
-
-    // =================================================
-    // NOT AUTHENTICATED AS ADMIN
-    // =================================================
 
     return res.redirect("/admin/login");
 

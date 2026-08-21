@@ -491,6 +491,20 @@ const loadUsers = async (req, res) => {
             ? req.query.search.trim()
             : "";
 
+        
+
+            const sortOption = req.query.sort || "created_desc";
+
+             let sort = {
+                createdAt: -1
+               };
+
+            if (sortOption === "name_desc") {
+            sort = {
+              firstName: -1,
+             lastName: -1
+               };
+             }
 
         let page = parseInt(req.query.page, 10);
 
@@ -569,11 +583,13 @@ const loadUsers = async (req, res) => {
 
         const skip =
             (page - 1) * usersPerPage;
+        
 
+            
 
         const users = await User.find(query)
             .select("-password")
-            .sort({ createdAt: -1 })
+            .sort(sort)
             .skip(skip)
             .limit(usersPerPage)
             .lean();
@@ -609,6 +625,8 @@ const loadUsers = async (req, res) => {
                 newCustomers,
 
                 search,
+                
+                sort: sortOption,
 
                 currentPage: page,
 
@@ -700,10 +718,7 @@ const loadUserDetails = async (req, res) => {
             : "—";
 
 
-        // =================================================
-        // FORMAT UPDATED DATE
-        // =================================================
-
+        
         const updatedDate = user.updatedAt
             ? new Date(
                 user.updatedAt
@@ -718,9 +733,7 @@ const loadUserDetails = async (req, res) => {
             : "—";
 
 
-        // =================================================
-        // RENDER CUSTOMER DETAILS
-        // =================================================
+       
 
         return res.render(
             "admin/userDetails",
@@ -765,9 +778,7 @@ const loadUserDetails = async (req, res) => {
     }
 
 };
-// =====================================================
-// BLOCK / UNBLOCK CUSTOMER
-// =====================================================
+
 
 const blockUser = async (req, res) => {
 
@@ -775,20 +786,11 @@ const blockUser = async (req, res) => {
 
         const userId = req.params.id;
 
-
-        // =================================================
-        // FIND NORMAL CUSTOMER
-        // =================================================
-
         const user = await User.findOne({
             _id: userId,
             role: "user"
         });
 
-
-        // =================================================
-        // CUSTOMER NOT FOUND
-        // =================================================
 
         if (!user) {
 
@@ -798,19 +800,10 @@ const blockUser = async (req, res) => {
 
         }
 
-
-        // =================================================
-        // TOGGLE BLOCK STATUS
-        // =================================================
-
         user.isBlocked = !user.isBlocked;
 
         await user.save();
 
-
-        // =================================================
-        // REDIRECT BACK TO CUSTOMER DETAILS
-        // =================================================
 
         return res.redirect(
             `/admin/users/${userId}`
@@ -834,9 +827,7 @@ const blockUser = async (req, res) => {
 };
 
 
-// =====================================================
-// EXPORT
-// =====================================================
+
 
 module.exports = {
 

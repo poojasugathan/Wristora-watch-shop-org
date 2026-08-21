@@ -1,10 +1,6 @@
 const Address = require("../models/addressModel");
 
 
-// =====================================================
-// LOAD ADDRESSES PAGE
-// =====================================================
-
 const loadAddresses = async (req, res) => {
 
     try {
@@ -184,19 +180,13 @@ const loadAddAddress = async (req, res) => {
 // =====================================================
 
 const addAddress = async (req, res) => {
-console.log("========== ADD ADDRESS CONTROLLER HIT ==========");
-    console.log("BODY:", req.body);
-    
+
 
     try {
 
         const userId =
             req.session.user.id;
 
-
-        // =================================================
-        // GET FORM VALUES
-        // =================================================
 
         let {
 
@@ -225,9 +215,6 @@ console.log("========== ADD ADDRESS CONTROLLER HIT ==========");
         } = req.body;
 
 
-        // =================================================
-        // TRIM VALUES
-        // =================================================
 
         firstName =
             firstName
@@ -289,10 +276,7 @@ console.log("========== ADD ADDRESS CONTROLLER HIT ==========");
                 : "";
 
 
-        // =================================================
-        // FORM DATA
-        // =================================================
-
+       
         const formData = {
 
             firstName,
@@ -322,10 +306,7 @@ console.log("========== ADD ADDRESS CONTROLLER HIT ==========");
         };
 
 
-        // =================================================
-        // REGEX
-        // =================================================
-
+       
         const nameRegex =
             /^[A-Za-z]+(?:[ '-][A-Za-z]+)*$/;
 
@@ -338,9 +319,6 @@ console.log("========== ADD ADDRESS CONTROLLER HIT ==========");
             /^\+?[0-9\s-]{7,15}$/;
 
 
-        // =================================================
-        // FIRST NAME
-        // =================================================
 
         if (!firstName) {
 
@@ -764,12 +742,7 @@ console.log("========== ADD ADDRESS CONTROLLER HIT ==========");
         }
 
 
-        // =================================================
-        // CREATE ADDRESS
-        // =================================================
-        console.log("ABOUT TO CREATE ADDRESS");
-
-        await Address.create({
+           await Address.create({
 
             userId,
 
@@ -800,9 +773,6 @@ console.log("========== ADD ADDRESS CONTROLLER HIT ==========");
         console.log("ADDRESS CREATED SUCCESSFULLY");
 
 
-        // =================================================
-        // SUCCESS
-        // =================================================
 
         return res.redirect(
             "/addresses?added=1"
@@ -888,10 +858,6 @@ const loadEditAddress = async (req, res) => {
             req.params.id;
 
 
-        // =================================================
-        // FIND ADDRESS
-        // =================================================
-
         const address =
             await Address.findOne({
                 _id: addressId,
@@ -899,9 +865,6 @@ const loadEditAddress = async (req, res) => {
             }).lean();
 
 
-        // =================================================
-        // ADDRESS NOT FOUND
-        // =================================================
 
         if (!address) {
 
@@ -912,9 +875,7 @@ const loadEditAddress = async (req, res) => {
         }
 
 
-        // =================================================
-        // RENDER EDIT PAGE
-        // =================================================
+       
 
         return res.render(
             "user/editAddress",
@@ -986,9 +947,6 @@ const loadEditAddress = async (req, res) => {
     }
 
 };
-// =====================================================
-// UPDATE ADDRESS
-// =====================================================
 
 const updateAddress = async (req, res) => {
 
@@ -1001,10 +959,7 @@ const updateAddress = async (req, res) => {
             req.params.id;
 
 
-        // =================================================
-        // GET FORM VALUES
-        // =================================================
-
+        
         let {
 
             firstName,
@@ -1032,9 +987,6 @@ const updateAddress = async (req, res) => {
         } = req.body;
 
 
-        // =================================================
-        // TRIM VALUES
-        // =================================================
 
         firstName =
             firstName

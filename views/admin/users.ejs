@@ -281,26 +281,37 @@
 
                     <% } %>
 
-                <!-- FILTER UI -->
-
-                <button
-                    type="button"
-                    class="customer-tool-button"
-                    title="Filter"
-                >
-                    ♢
-                </button>
-
-
+            
                 <!-- SORT UI -->
 
-                <button
-                    type="button"
-                    class="customer-tool-button"
-                    title="Sort"
+           <div class="sort-container">
+
+                 <button
+                 type="button"
+                 class="customer-tool-button"
+                 title="Sort"
+                 onclick="toggleSortMenu()"
                 >
-                    ☷
+                 ☷
                 </button>
+
+            <div id="sortMenu" class="sort-menu">
+
+               <div class="sort-menu-title">
+                Sort By
+               </div>
+
+               <a href="/admin/users?sort=newest<%= search ? '&search=' + encodeURIComponent(search) : '' %>">
+                  Newest First
+               </a>
+
+               <a href="/admin/users?sort=name_desc<%= search ? '&search=' + encodeURIComponent(search) : '' %>">
+                Name Z–A
+               </a>
+
+            </div>
+
+        </div>
 
             </div>
 
@@ -471,13 +482,7 @@
 
 
 
-                            <!-- =================================================
-                                 ACTION
-
-                                 CHANGED:
-                                 No BLOCK / UNBLOCK here.
-                                 Only VIEW CUSTOMER.
-                            ================================================== -->
+                            
 
                             <div class="customer-action">
 
@@ -614,6 +619,28 @@
 
 </div>
 
+<script>
+function toggleSortMenu() {
+    const menu = document.getElementById("sortMenu");
+
+    menu.classList.toggle("show");
+}
+
+document.addEventListener("click", function(event) {
+
+    const container = document.querySelector(".sort-container");
+    const menu = document.getElementById("sortMenu");
+
+    if (
+        container &&
+        menu &&
+        !container.contains(event.target)
+    ) {
+        menu.classList.remove("show");
+    }
+
+});
+</script>
 </body>
 
 </html>

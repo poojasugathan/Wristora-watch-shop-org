@@ -421,17 +421,77 @@ const verifyOtpController = async (req, res) => {
 
         await user.save();
 
-        delete req.session.signupData;
+delete req.session.signupData;
+
+req.session.regenerate((sessionError) => {
+
+    if (sessionError) {
+
+        console.error(
+            "Signup session regeneration error:",
+            sessionError
+        );
+
+        return res.status(500).json({
+
+            success: false,
+
+            reason: "server_error",
+
+            message:
+                "Account created, but something went wrong while creating your session. Please login."
+
+        });
+
+    }
+
+    req.session.user = {
+
+        id:
+            user._id.toString(),
+
+        email:
+            user.email,
+
+        role:
+            user.role
+
+    };
+
+    req.session.save((saveError) => {
+
+        if (saveError) {
+
+            console.error(
+                "Signup session save error:",
+                saveError
+            );
+
+            return res.status(500).json({
+
+                success: false,
+
+                reason: "server_error",
+
+                message:
+                    "Account created, but something went wrong while creating your session. Please login."
+
+            });
+
+        }
 
         return res.json({
 
             success: true,
 
             message:
-                "Email verified successfully. Your account has been created.",
-
+                "Email verified successfully. Your account has been created."
 
         });
+
+    });
+
+});
 
 
     } catch (error) {
