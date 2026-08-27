@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title><%= title %> | Wristora</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/adminDashboard.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/adminProducts.css"
+    >
+
+</head>
+
+
+<body>
+
+<div class="admin-layout">
+
+
+    <%- include("partials/sidebar", { currentPage: "products" }) %>
+
+
+    <main class="admin-main product-main">
+
+
+        <div class="product-header">
+
+            <div>
+
+                <h1>
+                    Edit Product
+                </h1>
+
+                <h2>
+                    Update the product details below
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <% if (typeof error !== "undefined" && error) { %>
+
+            <div class="product-error">
+                <%= error %>
+            </div>
+
+        <% } %>
+
+
+        <!-- =================================================
+             EXISTING IMAGES (READ-ONLY FOR NOW)
+             Full image add/remove/replace comes in a later
+             image-management phase.
+        ================================================== -->
+
+        <% if (product.images && product.images.length > 0) { %>
+
+            <div class="product-existing-images">
+
+                <label>Current Images</label>
+
+                <div class="product-existing-images-row">
+
+                    <% product.images.forEach(image => { %>
+
+                        <img
+                            src="<%= image.url %>"
+                            alt="<%= product.productName %>"
+                        >
+
+                    <% }) %>
+
+                </div>
+
+                <p class="product-form-hint">
+                    Image editing is not available yet — this will be added in a future update.
+                </p>
+
+            </div>
+
+        <% } %>
+
+
+        <form
+            action="/admin/products/edit/<%= product._id %>"
+            method="POST"
+            class="product-form-card"
+        >
+
+            <div class="product-form-group">
+
+                <label>Product Name</label>
+
+                <input
+                    type="text"
+                    name="productName"
+                    value="<%= formData.productName %>"
+                >
+
+            </div>
+
+
+            <div class="product-form-group">
+
+                <label>Description</label>
+
+                <textarea
+                    name="description"
+                    rows="4"
+                ><%= formData.description %></textarea>
+
+            </div>
+
+
+            <div class="product-form-row">
+
+                <div class="product-form-group">
+
+                    <label>Brand</label>
+
+                    <input
+                        type="text"
+                        name="brand"
+                        value="<%= formData.brand %>"
+                    >
+
+                </div>
+
+
+                <div class="product-form-group">
+
+                    <label>Category</label>
+
+                    <select name="category">
+
+                        <option value="">
+                            Select a category
+                        </option>
+
+                        <% categories.forEach(cat => { %>
+
+                            <option
+                                value="<%= cat._id %>"
+                                <%= formData.category === String(cat._id) ? "selected" : "" %>
+                            >
+                                <%= cat.name %>
+                            </option>
+
+                        <% }) %>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="product-form-row">
+
+                <div class="product-form-group">
+
+                    <label>Price (₹)</label>
+
+                    <input
+                        type="number"
+                        name="price"
+                        step="0.01"
+                        min="0"
+                        value="<%= formData.price %>"
+                    >
+
+                </div>
+
+
+                <div class="product-form-group">
+
+                    <label>Discount (%)</label>
+
+                    <input
+                        type="number"
+                        name="discount"
+                        step="0.01"
+                        min="0"
+                        max="100"
+                        value="<%= formData.discount %>"
+                    >
+
+                </div>
+
+
+                <div class="product-form-group">
+
+                    <label>Stock</label>
+
+                    <input
+                        type="number"
+                        name="stock"
+                        min="0"
+                        value="<%= formData.stock %>"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="product-form-group checkbox-group">
+
+                <label>
+
+                    <input
+                        type="checkbox"
+                        name="isListed"
+                        <%= formData.isListed ? "checked" : "" %>
+                    >
+
+                    List this product for customers
+
+                </label>
+
+            </div>
+
+
+            <div class="product-form-actions">
+
+                <a
+                    href="/admin/products"
+                    class="product-cancel-button"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="product-submit-button"
+                >
+                    Save Changes
+                </button>
+
+            </div>
+
+        </form>
+
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

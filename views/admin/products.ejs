@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title><%= title %> | Wristora</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/adminDashboard.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/adminProducts.css"
+    >
+
+</head>
+
+
+<body>
+
+<div class="admin-layout">
+
+
+    <%- include("partials/sidebar", { currentPage: "products" }) %>
+
+
+    <main class="admin-main product-main">
+
+
+        <!-- =================================================
+             PAGE HEADER
+        ================================================== -->
+
+        <div class="product-header">
+
+            <div>
+
+                <h1>
+                    Products
+                </h1>
+
+                <h2>
+                    Manage your product catalog
+                </h2>
+
+            </div>
+
+
+            <a
+                href="/admin/products/add"
+                class="product-add-button"
+            >
+                + Add Product
+            
+            </a>
+
+        </div>
+
+
+
+        <!-- =================================================
+             SUCCESS / ERROR MESSAGE
+        ================================================== -->
+
+        <% if (typeof error !== "undefined" && error) { %>
+
+            <div class="product-error">
+                <%= error %>
+            </div>
+
+        <% } %>
+
+
+
+        <!-- =================================================
+             LIST HEADER: SEARCH
+        ================================================== -->
+
+        <div class="product-list-header">
+
+            <h2>
+                Product List
+            </h2>
+
+
+            <div class="product-tools">
+
+                <form
+                    class="product-search"
+                    action="/admin/products"
+                    method="GET"
+                >
+
+                    <span class="search-icon">
+                        ⌕
+                    </span>
+
+                    <input
+                        type="text"
+                        name="search"
+                        placeholder="Search product"
+                        value="<%= typeof search !== 'undefined' ? search : '' %>"
+                        autocomplete="off"
+                    >
+
+                </form>
+
+
+                <% if (typeof search !== "undefined" && search) { %>
+
+                    <a
+                        href="/admin/products"
+                        class="product-tool-button"
+                        title="Clear search"
+                    >
+                        X
+                    </a>
+
+                <% } %>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             PRODUCT TABLE
+        ================================================== -->
+
+        <section class="product-table-card">
+
+            <% if (products && products.length > 0) { %>
+
+
+                <div class="product-table">
+
+
+                    <div class="product-table-header">
+
+                        <span>IMAGE</span>
+
+                        <span>PRODUCT NAME</span>
+
+                        <span>CATEGORY</span>
+
+                        <span>PRICE</span>
+
+                        <span>STOCK</span>
+
+                        <span>LIST</span>
+
+                        <span>ACTION</span>
+
+                    </div>
+
+
+                    <% products.forEach(product => { %>
+
+                        <div class="product-row">
+
+
+                            <span class="product-image-cell">
+
+                                <% if (product.images && product.images.length > 0) { %>
+
+                                    <img
+                                        src="<%= product.images[0].url %>"
+                                        alt="<%= product.productName %>"
+                                    >
+
+                                <% } else { %>
+
+                                    <span class="product-image-placeholder">
+                                        No image
+                                    </span>
+
+                                <% } %>
+
+                            </span>
+
+
+                            <span>
+
+                                <strong>
+                                    <%= product.productName %>
+                                </strong>
+
+                            </span>
+
+
+                            <span>
+
+                                <%= product.category && product.category.name
+                                    ? product.category.name
+                                    : "—"
+                                %>
+
+                            </span>
+
+
+                            <span>
+                                ₹<%= product.sellingPrice.toLocaleString("en-IN") %>
+                            </span>
+
+
+                            <span>
+                                <%= product.stock %>
+                            </span>
+
+
+                            <span>
+
+                                <form
+                                    action="/admin/products/toggle-list/<%= product._id %>"
+                                    method="POST"
+                                    onsubmit="return confirm(product.isListed ? 'Unlist this product?' : 'List this product?');"
+                                >
+
+                                    <% if (product.isListed === true) { %>
+
+                                        <button
+                                            type="submit"
+                                            class="product-status-toggle listed"
+                                        >
+                                            Listed
+                                        </button>
+
+                                    <% } else { %>
+
+                                        <button
+                                            type="submit"
+                                            class="product-status-toggle unlisted"
+                                        >
+                                            Unlisted
+                                        </button>
+
+                                    <% } %>
+
+                                </form>
+
+                            </span>
+
+
+                            <div class="product-action">
+
+                                <a
+                                    href="/admin/products/edit/<%= product._id %>"
+                                    class="product-action-button edit"
+                                >
+                                    EDIT
+                                </a>
+
+
+                                <form
+                                    action="/admin/products/delete/<%= product._id %>"
+                                    method="POST"
+                                    onsubmit="return confirm('Are you sure you want to delete this product?');"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="product-action-button delete"
+                                    >
+                                        DELETE
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+
+                        </div>
+
+                    <% }) %>
+
+
+                </div>
+
+
+            <% } else { %>
+
+
+                <div class="product-empty">
+
+                    <h3>
+                        No products found
+                    </h3>
+
+                    <p>
+                        Start by adding your first product.
+                    </p>
+
+                </div>
+
+
+            <% } %>
+
+        </section>
+
+
+
+        <!-- =================================================
+             PAGINATION
+        ================================================== -->
+
+        <% if (totalPages > 1) { %>
+
+            <div class="product-pagination">
+
+                <% if (currentPage > 1) { %>
+
+                    
+                        href="/admin/products?page=<%= currentPage - 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"
+                        class="pagination-button"
+                    >
+                        Previous
+                    </a>
+
+                <% } else { %>
+
+                    <span class="pagination-button disabled">
+                        Previous
+                    </span>
+
+                <% } %>
+
+
+                <div class="pagination-pages">
+
+                    <% for (
+                        let pageNumber = 1;
+                        pageNumber <= totalPages;
+                        pageNumber++
+                    ) { %>
+
+                        <% if (pageNumber === currentPage) { %>
+
+                            <span class="pagination-page active">
+                                <%= pageNumber %>
+                            </span>
+
+                        <% } else { %>
+
+                            
+                                href="/admin/products?page=<%= pageNumber %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"
+                                class="pagination-page"
+                            >
+                                <%= pageNumber %>
+                            </a>
+
+                        <% } %>
+
+                    <% } %>
+
+                </div>
+
+
+                <% if (currentPage < totalPages) { %>
+
+                    
+                        href="/admin/products?page=<%= currentPage + 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"
+                        class="pagination-button"
+                    >
+                        Next
+                    </a>
+
+                <% } else { %>
+
+                    <span class="pagination-button disabled">
+                        Next
+                    </span>
+
+                <% } %>
+
+            </div>
+
+        <% } %>
+
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title><%= title %> | Wristora</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/adminDashboard.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/adminCategories.css"
+    >
+
+</head>
+
+
+<body>
+
+<div class="admin-layout">
+
+
+    <%- include("partials/sidebar", { currentPage: "categories" }) %>
+
+
+    <main class="admin-main category-form-main">
+
+
+        <div class="category-form-header">
+
+            <h1>
+                Edit Category
+            </h1>
+
+            <a href="/admin/categories" class="category-back-link">
+                ← Back to Categories
+            </a>
+
+        </div>
+
+
+        <% if (typeof error !== "undefined" && error) { %>
+
+            <div class="category-error">
+                <%= error %>
+            </div>
+
+        <% } %>
+
+
+        <form
+            class="category-form"
+            action="/admin/categories/edit/<%= category._id %>"
+            method="POST"
+        >
+
+            <div class="category-form-group">
+
+                <label for="name">
+                    Category Name
+                </label>
+
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value="<%= category.name %>"
+                    required
+                >
+
+            </div>
+
+
+            <div class="category-form-group">
+
+                <label for="description">
+                    Description
+                </label>
+
+                <textarea
+                    id="description"
+                    name="description"
+                    rows="4"
+                ><%= category.description || "" %></textarea>
+
+            </div>
+
+
+            <div class="category-form-checkbox">
+
+                <input
+                    type="checkbox"
+                    id="isListed"
+                    name="isListed"
+                    <%= category.isListed ? "checked" : "" %>
+                >
+
+                <label for="isListed">
+                    List this category (visible to customers)
+                </label>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="category-submit-button"
+            >
+                Update Category
+            </button>
+
+        </form>
+
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,247 @@
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+.category-add-button {
+    background: #c6a16f;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.category-error {
+    background: #fdecea;
+    color: #b3261e;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+
+.category-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.category-tools {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.category-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.category-search input {
+    padding: 8px 12px 8px 32px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    width: 220px;
+}
+
+.category-search .search-icon {
+    position: absolute;
+    left: 10px;
+    color: #999;
+}
+
+.category-tool-button {
+    background: #f2f2f2;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    color: #333;
+    font-size: 13px;
+}
+
+.category-table-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.category-table-header,
+.category-row {
+    display: grid;
+    grid-template-columns: 1.2fr 2fr 1fr 1fr 1.2fr;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 8px;
+}
+
+.category-table-header {
+    font-size: 12px;
+    font-weight: 600;
+    color: #888;
+    border-bottom: 1px solid #eee;
+}
+
+.category-row {
+    border-bottom: 1px solid #f2f2f2;
+    font-size: 14px;
+}
+
+.category-description {
+    color: #666;
+    font-size: 13px;
+}
+
+.category-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.category-status.active {
+    color: #1e8e3e;
+}
+
+.category-status.blocked {
+    color: #b3261e;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    display: inline-block;
+}
+
+.category-action {
+    display: flex;
+    gap: 8px;
+}
+
+.category-action-button {
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.category-action-button.edit {
+    background: #eef2ff;
+    color: #3b4cca;
+}
+
+.category-action-button.delete {
+    background: #fdecea;
+    color: #b3261e;
+}
+
+.category-empty {
+    text-align: center;
+    padding: 40px 0;
+    color: #888;
+}
+
+.category-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.pagination-button,
+.pagination-page {
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: #f2f2f2;
+    color: #333;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.pagination-button.disabled {
+    color: #bbb;
+    pointer-events: none;
+}
+
+.pagination-page.active {
+    background: #c6a16f;
+    color: #fff;
+}
+
+.category-form-main {
+    max-width: 600px;
+}
+
+.category-form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.category-back-link {
+    color: #666;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.category-form {
+    background: #fff;
+    padding: 24px;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.category-form-group {
+    margin-bottom: 18px;
+}
+
+.category-form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.category-form-group input,
+.category-form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.category-form-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.category-submit-button {
+    background: #c6a16f;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
