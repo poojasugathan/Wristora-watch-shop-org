@@ -1,0 +1,704 @@
+/* =====================================================
+   PRODUCTS PAGE (PHASE 38)
+===================================================== */
+
+.products-page {
+    background: #faf9f6;
+    min-height: 700px;
+    padding: 45px 40px 80px;
+    font-family: "Montserrat", sans-serif;
+}
+
+.products-container {
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+
+/* =====================================================
+   BREADCRUMB
+===================================================== */
+
+.products-breadcrumb {
+    margin: 0 0 20px;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: #77736d;
+}
+
+.products-breadcrumb a {
+    color: #77736d;
+    text-decoration: none;
+}
+
+.products-breadcrumb a:hover {
+    color: #292929;
+}
+
+
+/* =====================================================
+   PAGE HEADER
+===================================================== */
+
+.products-page-header {
+    margin-bottom: 30px;
+}
+
+.products-title {
+    margin: 0 0 8px;
+    font-family: "Cormorant Garamond", serif;
+    font-size: 42px;
+    font-weight: 500;
+    color: #202020;
+    letter-spacing: 1px;
+}
+
+.products-count {
+    margin: 0;
+    font-size: 11px;
+    color: #77736d;
+    letter-spacing: 0.5px;
+}
+
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+.products-error {
+    margin-bottom: 22px;
+    padding: 13px 16px;
+    background: #f7eaea;
+    border: 1px solid #e0caca;
+    color: #8a3f3f;
+    font-size: 12px;
+}
+
+
+/* =====================================================
+   TOOLBAR — SEARCH + SORT
+===================================================== */
+
+.products-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+
+    margin-bottom: 35px;
+    padding: 18px 20px;
+
+    background: #ffffff;
+    border: 1px solid #e4e4e4;
+}
+
+.products-search-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    flex: 1;
+    min-width: 220px;
+
+    padding: 0 14px;
+    height: 44px;
+
+    background: #faf9f6;
+    border: 1px solid #d9d9d9;
+}
+
+.products-search-field i {
+    color: #999;
+    font-size: 13px;
+}
+
+.products-search-field input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+
+    font-family: "Montserrat", sans-serif;
+    font-size: 12px;
+    color: #222;
+}
+
+.products-search-field input::placeholder {
+    color: #aaa;
+}
+
+.products-sort-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.products-sort-field label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #77736d;
+    white-space: nowrap;
+}
+
+.products-sort-field select {
+    height: 44px;
+    padding: 0 12px;
+
+    border: 1px solid #d9d9d9;
+    background: #faf9f6;
+
+    font-family: "Montserrat", sans-serif;
+    font-size: 12px;
+    color: #222;
+
+    cursor: pointer;
+}
+
+.products-search-btn {
+    height: 44px;
+    padding: 0 24px;
+
+    border: 1px solid #292929;
+    background: #292929;
+    color: #fff;
+
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+    transition: background 0.2s ease;
+}
+
+.products-search-btn:hover {
+    background: #111;
+}
+
+.products-clear-btn {
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+
+    padding: 0 18px;
+
+    border: 1px solid #d5d5d5;
+    color: #555;
+
+    text-decoration: none;
+
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+
+    transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.products-clear-btn:hover {
+    border-color: #111;
+    color: #111;
+}
+
+
+/* =====================================================
+   PRODUCT GRID
+===================================================== */
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px;
+
+    margin-bottom: 40px;
+}
+
+.product-tile {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.product-tile-image {
+    position: relative;
+    width: 100%;
+    height: 220px;
+
+    background: #f2f0e9;
+    overflow: hidden;
+}
+
+.product-tile-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+    transition: transform 0.3s ease;
+}
+
+.product-tile:hover .product-tile-image img {
+    transform: scale(1.04);
+}
+
+.product-tile-image .image-missing {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #efede8;
+}
+
+.product-tile-image .image-missing::after {
+    content: "\F1C5";
+    font-family: "bootstrap-icons";
+    font-size: 32px;
+    color: #b7b2a8;
+}
+
+.product-tile-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+
+    padding: 4px 8px;
+
+    background: #292929;
+    color: #fff;
+
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.product-tile-info {
+    padding-top: 12px;
+}
+
+.product-tile-category {
+    margin: 0 0 3px;
+    font-size: 9px;
+    font-style: italic;
+    letter-spacing: 0.5px;
+    color: #999;
+}
+
+.product-tile-name {
+    margin: 0 0 3px;
+    font-family: "Cormorant Garamond", serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #222;
+    line-height: 1.25;
+}
+
+.product-tile-brand {
+    margin: 0 0 6px;
+    font-size: 10px;
+    color: #77736d;
+}
+
+.product-tile-price {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #222;
+}
+
+.product-tile-price del {
+    margin-left: 8px;
+    font-size: 11px;
+    font-weight: 400;
+    color: #a5a5a5;
+}
+
+.product-tile-stock {
+    margin: 4px 0 0;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #b3261e;
+}
+
+
+/* =====================================================
+   EMPTY STATE
+===================================================== */
+
+.products-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 320px;
+    padding: 50px 25px;
+
+    background: #fff;
+    border: 1px solid #dedbd5;
+
+    text-align: center;
+}
+
+.products-empty-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 55px;
+    height: 55px;
+    margin-bottom: 18px;
+
+    background: #efede8;
+    border-radius: 50%;
+
+    color: #77736d;
+    font-size: 22px;
+}
+
+.products-empty-state h2 {
+    margin: 0 0 8px;
+    font-family: "Cormorant Garamond", serif;
+    font-size: 27px;
+    font-weight: 600;
+    color: #292929;
+}
+
+.products-empty-state p {
+    max-width: 420px;
+    margin: 0 0 22px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #77736d;
+}
+
+.products-empty-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 44px;
+    padding: 0 22px;
+
+    background: #292929;
+    border: 1px solid #292929;
+    color: #fff;
+
+    text-decoration: none;
+
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+
+    transition: background 0.2s ease;
+}
+
+.products-empty-btn:hover {
+    background: #111;
+}
+
+
+/* =====================================================
+   PAGINATION
+===================================================== */
+
+.products-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+
+    flex-wrap: wrap;
+}
+
+.pagination-pages {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.pagination-btn,
+.pagination-page {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 38px;
+    padding: 0 14px;
+
+    border: 1px solid #d9d9d9;
+    background: #fff;
+    color: #292929;
+
+    text-decoration: none;
+
+    font-size: 11px;
+    font-weight: 500;
+
+    transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.pagination-page {
+    min-width: 38px;
+    padding: 0;
+}
+
+.pagination-btn:hover,
+.pagination-page:hover {
+    border-color: #292929;
+}
+
+.pagination-page.active {
+    background: #292929;
+    border-color: #292929;
+    color: #fff;
+}
+
+.pagination-btn.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.pagination-ellipsis {
+    padding: 0 6px;
+    color: #999;
+    font-size: 12px;
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 991px) {
+
+    .products-page {
+        padding: 35px 25px 60px;
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+    }
+
+    .products-title {
+        font-size: 36px;
+    }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 767px) {
+
+    .products-page {
+        padding: 25px 15px 50px;
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+    }
+
+    .products-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .products-sort-field {
+        justify-content: space-between;
+    }
+
+    .products-sort-field select {
+        flex: 1;
+    }
+
+    .products-title {
+        font-size: 30px;
+    }
+
+    .product-tile-image {
+        height: 160px;
+    }
+
+    .products-pagination {
+        justify-content: center;
+    }
+
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width: 480px) {
+
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .product-tile-name {
+        font-size: 15px;
+    }
+
+    .product-tile-image {
+        height: 130px;
+    }
+
+}
+
+/* =====================================================
+   TOOLBAR — now wraps search/sort AND filters
+   (PHASE 39)
+===================================================== */
+
+.products-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+
+    margin-bottom: 35px;
+    padding: 18px 20px;
+
+    background: #ffffff;
+    border: 1px solid #e4e4e4;
+}
+
+
+/* =====================================================
+   FILTERS ROW (PHASE 39)
+===================================================== */
+
+.products-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 14px;
+
+    width: 100%;
+    margin-top: 4px;
+    padding-top: 14px;
+
+    border-top: 1px solid #ececec;
+}
+
+.products-filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.products-filter-field label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #77736d;
+    text-transform: uppercase;
+}
+
+.products-filter-field select {
+    height: 44px;
+    min-width: 160px;
+    padding: 0 12px;
+
+    border: 1px solid #d9d9d9;
+    background: #faf9f6;
+
+    font-family: "Montserrat", sans-serif;
+    font-size: 12px;
+    color: #222;
+
+    cursor: pointer;
+}
+
+.products-price-inputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.products-price-inputs input {
+    width: 90px;
+    height: 44px;
+    padding: 0 12px;
+
+    border: 1px solid #d9d9d9;
+    background: #faf9f6;
+
+    font-family: "Montserrat", sans-serif;
+    font-size: 12px;
+    color: #222;
+}
+
+.products-price-inputs input::-webkit-outer-spin-button,
+.products-price-inputs input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.products-price-separator {
+    color: #999;
+    font-size: 12px;
+}
+
+.products-apply-btn {
+    height: 44px;
+    padding: 0 22px;
+
+    border: 1px solid #292929;
+    background: #292929;
+    color: #fff;
+
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+    transition: background 0.2s ease;
+}
+
+.products-apply-btn:hover {
+    background: #111;
+}
+
+
+/* =====================================================
+   MOBILE — filters stack cleanly (PHASE 39)
+===================================================== */
+
+@media (max-width: 767px) {
+
+    .products-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .products-filter-field select {
+        width: 100%;
+    }
+
+    .products-price-inputs {
+        justify-content: space-between;
+    }
+
+    .products-price-inputs input {
+        flex: 1;
+        width: auto;
+    }
+
+    .products-apply-btn,
+    .products-clear-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+}

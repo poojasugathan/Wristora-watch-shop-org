@@ -821,3 +821,43 @@ textarea {
     }
 
 }
+
+.wristora-nav-dropdown {
+    position: relative;
+}
+
+.wristora-nav-link {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+
+    cursor: pointer;
+}
+
+.wristora-brands-menu {
+    min-width: 180px;
+    padding: 6px 0;
+
+    border: 1px solid #e4e4e4;
+    border-radius: 0;
+
+    font-family: "Montserrat", sans-serif;
+}
+
+.wristora-brands-menu .dropdown-item {
+    padding: 8px 18px;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    color: #292929;
+}
+
+.wristora-brands-menu .dropdown-item:hover {
+    background: #f5f4f0;
+}

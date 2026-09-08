@@ -22,6 +22,18 @@
         href="/css/adminProducts.css"
     >
 
+    <!-- =====================================================
+         PHASE 37 — Cropper.js (CDN)
+         This project has no frontend bundler / no frontend npm
+         packages, so Cropper.js is loaded the same way the rest
+         of the frontend styling is assumed to be — via CDN,
+         directly on this page only (Add Product), not globally.
+    ===================================================== -->
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css"
+>
+
 </head>
 
 
@@ -55,7 +67,7 @@
 
         <% if (typeof error !== "undefined" && error) { %>
 
-            <div class="product-error">
+            <div class="product-error" id="productFormError">
                 <%= error %>
             </div>
 
@@ -67,6 +79,7 @@
             method="POST"
             enctype="multipart/form-data"
             class="product-form-card"
+            id="addProductForm"
         >
 
             <div class="product-form-group">
@@ -199,13 +212,26 @@
                 <input
                     type="file"
                     name="images"
+                    id="productImagesInput"
                     accept="image/jpeg,image/png,image/webp"
                     multiple
                 >
 
                 <p class="product-form-hint">
-                    Select at least 3 images. Allowed formats: JPG, PNG, WEBP. Max 5MB each.
+                    Select at least 3 images. Allowed formats: JPG, PNG, WEBP. Max 5MB each, up to 8 images.
+                    Cropping each image to a square is optional but recommended for a consistent look.
                 </p>
+
+                <!-- PHASE 36/37: image previews + crop buttons render here -->
+                <div
+                    class="product-image-preview-grid"
+                    id="productImagePreviewGrid"
+                ></div>
+
+                <p
+                    class="product-image-preview-count"
+                    id="productImagePreviewCount"
+                ></p>
 
             </div>
 
@@ -251,6 +277,585 @@
     </main>
 
 </div>
+
+
+<!-- =====================================================
+     PHASE 37 — CROP MODAL (plain HTML/CSS, no Bootstrap JS
+     assumed to be loaded on this page)
+===================================================== -->
+
+<div class="crop-modal-overlay" id="cropModalOverlay">
+
+    <div class="crop-modal">
+
+        <div class="crop-modal-header">
+
+            <h3>Crop Product Image</h3>
+
+            <button
+                type="button"
+                class="crop-modal-close"
+                id="cropModalCloseBtn"
+            >&times;</button>
+
+        </div>
+
+        <div class="crop-modal-body">
+
+            <div class="crop-image-container">
+
+                <img id="cropTargetImage" src="" alt="Image to crop">
+
+            </div>
+
+        </div>
+
+        <div class="crop-modal-tools">
+
+            <button type="button" id="cropZoomInBtn">Zoom In</button>
+            <button type="button" id="cropZoomOutBtn">Zoom Out</button>
+            <button type="button" id="cropRotateLeftBtn">Rotate Left</button>
+            <button type="button" id="cropRotateRightBtn">Rotate Right</button>
+            <button type="button" id="cropResetBtn">Reset</button>
+
+        </div>
+
+        <p class="crop-modal-error" id="cropModalError"></p>
+
+        <div class="crop-modal-footer">
+
+            <button
+                type="button"
+                class="product-cancel-button"
+                id="cropCancelBtn"
+            >Cancel</button>
+
+            <button
+                type="button"
+                class="product-submit-button"
+                id="cropConfirmBtn"
+            >Confirm Crop</button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Cropper.js library (CDN) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+
+<script>
+
+    // =====================================================
+    // PHASE 36 + 37 — IMAGE PREVIEW, CROP & FORM SUBMISSION
+    // =====================================================
+    //
+    // How this works, in plain terms:
+    //
+    // 1. When the admin picks files, we keep our OWN array
+    //    called `currentFiles` (a normal JS array of File
+    //    objects) — this is what we actually control and
+    //    edit, unlike the browser's built-in file input list,
+    //    which cannot be edited directly.
+    //
+    // 2. Each file gets a preview thumbnail with a "Crop"
+    //    button. Clicking it opens the crop modal with
+    //    Cropper.js locked to a 1:1 (square) box, matching
+    //    the square thumbnails used everywhere else on the
+    //    site (product table, existing-images row).
+    //
+    // 3. Confirming a crop draws the selected square onto a
+    //    canvas, turns that canvas into a real image File,
+    //    and replaces that image's entry in `currentFiles`.
+    //
+    // 4. Because a real <input type="file"> can't have its
+    //    file list edited directly, we rebuild it using the
+    //    browser's DataTransfer object every time
+    //    `currentFiles` changes. This keeps the native form
+    //    submission (multipart/form-data, same field name
+    //    "images") working exactly as it did in Phase 36 —
+    //    no fetch(), no JSON, no change needed on the backend.
+    //
+    // Cropping is OPTIONAL per image: an admin can submit
+    // some images cropped and some not.
+
+    (function () {
+
+        const input = document.getElementById(
+            "productImagesInput"
+        );
+
+        const previewGrid = document.getElementById(
+            "productImagePreviewGrid"
+        );
+
+        const countLabel = document.getElementById(
+            "productImagePreviewCount"
+        );
+
+        const form = document.getElementById(
+            "addProductForm"
+        );
+
+
+        // Our own editable list of files. Index in this array
+        // matches the data-index attribute on each preview item.
+        let currentFiles = [];
+
+        // Object URLs we create for previews, so we can revoke
+        // them later and avoid memory leaks.
+        let objectUrls = [];
+
+
+        // ---------------------------------------------
+        // CROP MODAL STATE
+        // ---------------------------------------------
+
+        const cropModalOverlay = document.getElementById(
+            "cropModalOverlay"
+        );
+
+        const cropTargetImage = document.getElementById(
+            "cropTargetImage"
+        );
+
+        const cropModalError = document.getElementById(
+            "cropModalError"
+        );
+
+        let cropperInstance = null;
+
+        let cropIndexInProgress = null;
+
+        let cropSourceUrl = null;
+
+
+        // ---------------------------------------------
+        // SYNC currentFiles BACK INTO THE REAL FILE INPUT
+        // ---------------------------------------------
+
+        const syncInputFiles = () => {
+
+            try {
+
+                const dataTransfer = new DataTransfer();
+
+                currentFiles.forEach((file) => {
+                    dataTransfer.items.add(file);
+                });
+
+                input.files = dataTransfer.files;
+
+            } catch (syncError) {
+
+                // DataTransfer is supported in all modern
+                // browsers, but if something unexpected
+                // happens we fail safely rather than crash
+                // the whole page.
+
+                console.error(
+                    "Unable to sync file input:",
+                    syncError
+                );
+
+            }
+
+        };
+
+
+        // ---------------------------------------------
+        // PREVIEW RENDERING
+        // ---------------------------------------------
+
+        const clearPreview = () => {
+
+            objectUrls.forEach((url) => {
+                URL.revokeObjectURL(url);
+            });
+
+            objectUrls = [];
+
+            previewGrid.innerHTML = "";
+
+        };
+
+
+        const renderPreview = () => {
+
+            clearPreview();
+
+            currentFiles.forEach((file, index) => {
+
+                const url = URL.createObjectURL(file);
+
+                objectUrls.push(url);
+
+                const item = document.createElement("div");
+                item.className = "product-image-preview-item";
+                item.setAttribute("data-index", index);
+
+                const img = document.createElement("img");
+                img.src = url;
+                img.alt = file.name;
+
+                const cropBtn = document.createElement("button");
+                cropBtn.type = "button";
+                cropBtn.className = "product-image-crop-btn";
+                cropBtn.textContent = "Crop";
+                cropBtn.setAttribute("data-index", index);
+
+                item.appendChild(img);
+                item.appendChild(cropBtn);
+
+                if (file.wasCropped) {
+
+                    const badge = document.createElement("span");
+                    badge.className = "product-image-cropped-badge";
+                    badge.textContent = "Cropped";
+                    item.appendChild(badge);
+
+                }
+
+                previewGrid.appendChild(item);
+
+            });
+
+
+            if (currentFiles.length === 0) {
+
+                countLabel.textContent = "";
+
+                countLabel.className =
+                    "product-image-preview-count";
+
+            } else if (currentFiles.length < 3) {
+
+                countLabel.textContent =
+                    currentFiles.length +
+                    " image(s) selected — at least 3 are required.";
+
+                countLabel.className =
+                    "product-image-preview-count is-invalid";
+
+            } else {
+
+                countLabel.textContent =
+                    currentFiles.length + " image(s) selected.";
+
+                countLabel.className =
+                    "product-image-preview-count is-valid";
+
+            }
+
+        };
+
+
+        if (input) {
+
+            input.addEventListener("change", () => {
+
+                // A fresh file selection replaces our working
+                // list entirely (any previous crops on images
+                // no longer selected are simply discarded).
+
+                currentFiles = Array.from(input.files || []);
+
+                renderPreview();
+
+            });
+
+        }
+
+
+        // ---------------------------------------------
+        // OPENING THE CROP MODAL
+        // ---------------------------------------------
+
+        const openCropModal = (index) => {
+
+            const file = currentFiles[index];
+
+            if (!file) {
+                return;
+            }
+
+            cropIndexInProgress = index;
+
+            cropModalError.textContent = "";
+
+            cropSourceUrl = URL.createObjectURL(file);
+
+            cropTargetImage.src = cropSourceUrl;
+
+            cropModalOverlay.classList.add("is-open");
+
+
+            // Cropper.js needs the image to actually be loaded
+            // in the DOM before it can measure it, so we wait
+            // for the "load" event.
+
+            cropTargetImage.onload = () => {
+
+                if (cropperInstance) {
+                    cropperInstance.destroy();
+                    cropperInstance = null;
+                }
+
+                try {
+
+                    cropperInstance = new Cropper(
+                        cropTargetImage,
+                        {
+                            aspectRatio: 1,
+                            viewMode: 1,
+                            autoCropArea: 1,
+                            responsive: true,
+                            background: false
+                        }
+                    );
+
+                } catch (cropperError) {
+
+                    console.error(
+                        "Cropper initialization error:",
+                        cropperError
+                    );
+
+                    cropModalError.textContent =
+                        "This image could not be opened for cropping. You can still upload it uncropped.";
+
+                }
+
+            };
+
+            cropTargetImage.onerror = () => {
+
+                cropModalError.textContent =
+                    "This image appears to be invalid or corrupted and cannot be cropped.";
+
+            };
+
+        };
+
+
+        const closeCropModal = () => {
+
+            cropModalOverlay.classList.remove("is-open");
+
+            if (cropperInstance) {
+                cropperInstance.destroy();
+                cropperInstance = null;
+            }
+
+            if (cropSourceUrl) {
+                URL.revokeObjectURL(cropSourceUrl);
+                cropSourceUrl = null;
+            }
+
+            cropIndexInProgress = null;
+
+            cropModalError.textContent = "";
+
+        };
+
+
+        previewGrid.addEventListener("click", (event) => {
+
+            const target = event.target;
+
+            if (
+                target &&
+                target.classList.contains(
+                    "product-image-crop-btn"
+                )
+            ) {
+
+                const index = parseInt(
+                    target.getAttribute("data-index"),
+                    10
+                );
+
+                openCropModal(index);
+
+            }
+
+        });
+
+
+        // ---------------------------------------------
+        // CROP MODAL CONTROLS
+        // ---------------------------------------------
+
+        document.getElementById(
+            "cropZoomInBtn"
+        ).addEventListener("click", () => {
+            if (cropperInstance) cropperInstance.zoom(0.1);
+        });
+
+        document.getElementById(
+            "cropZoomOutBtn"
+        ).addEventListener("click", () => {
+            if (cropperInstance) cropperInstance.zoom(-0.1);
+        });
+
+        document.getElementById(
+            "cropRotateLeftBtn"
+        ).addEventListener("click", () => {
+            if (cropperInstance) cropperInstance.rotate(-90);
+        });
+
+        document.getElementById(
+            "cropRotateRightBtn"
+        ).addEventListener("click", () => {
+            if (cropperInstance) cropperInstance.rotate(90);
+        });
+
+        document.getElementById(
+            "cropResetBtn"
+        ).addEventListener("click", () => {
+            if (cropperInstance) cropperInstance.reset();
+        });
+
+        document.getElementById(
+            "cropModalCloseBtn"
+        ).addEventListener("click", closeCropModal);
+
+        document.getElementById(
+            "cropCancelBtn"
+        ).addEventListener("click", closeCropModal);
+
+
+        // ---------------------------------------------
+        // CONFIRMING A CROP
+        // ---------------------------------------------
+        //
+        // Output size: 800x800. This matches the square
+        // display convention used across the site (product
+        // table thumbnails, preview grid, existing-images row
+        // all use object-fit: cover on square boxes) and stays
+        // safely under the existing Cloudinary transformation
+        // cap of 1000x1000, so Cloudinary won't need to shrink
+        // it further.
+
+        document.getElementById(
+            "cropConfirmBtn"
+        ).addEventListener("click", () => {
+
+            if (
+                !cropperInstance ||
+                cropIndexInProgress === null
+            ) {
+                closeCropModal();
+                return;
+            }
+
+            let canvas;
+
+            try {
+
+                canvas = cropperInstance.getCroppedCanvas({
+                    width: 800,
+                    height: 800,
+                    imageSmoothingQuality: "high"
+                });
+
+            } catch (canvasError) {
+
+                console.error(
+                    "Canvas processing error:",
+                    canvasError
+                );
+
+                cropModalError.textContent =
+                    "Cropping failed. Please try again or upload this image uncropped.";
+
+                return;
+
+            }
+
+            if (!canvas) {
+
+                cropModalError.textContent =
+                    "Cropping failed. Please try again or upload this image uncropped.";
+
+                return;
+
+            }
+
+            const originalFile = currentFiles[cropIndexInProgress];
+
+            canvas.toBlob(
+
+                (blob) => {
+
+                    if (!blob) {
+
+                        cropModalError.textContent =
+                            "Cropping failed while preparing the image. Please try again.";
+
+                        return;
+
+                    }
+
+                    const croppedFile = new File(
+                        [blob],
+                        originalFile.name,
+                        { type: "image/jpeg" }
+                    );
+
+                    // A small flag purely for our own UI, so we
+                    // can show a "Cropped" badge. This has no
+                    // effect on the file itself or the backend.
+                    croppedFile.wasCropped = true;
+
+                    currentFiles[cropIndexInProgress] = croppedFile;
+
+                    syncInputFiles();
+                    renderPreview();
+                    closeCropModal();
+
+                },
+                "image/jpeg",
+                0.9
+
+            );
+
+        });
+
+
+        // ---------------------------------------------
+        // FORM SUBMISSION GUARD
+        // ---------------------------------------------
+        //
+        // Light client-side guard only. The backend still
+        // checks this independently — this just saves the
+        // admin a round trip.
+
+        if (form) {
+
+            form.addEventListener("submit", (event) => {
+
+                if (currentFiles.length < 3) {
+
+                    event.preventDefault();
+
+                    countLabel.textContent =
+                        "Please select at least 3 images before submitting.";
+
+                    countLabel.className =
+                        "product-image-preview-count is-invalid";
+
+                }
+
+            });
+
+        }
+
+    })();
+
+</script>
 
 </body>
 

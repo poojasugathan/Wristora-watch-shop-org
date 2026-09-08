@@ -1,0 +1,477 @@
+<%- include("../partials/header", { title: title, user: user }) %>
+
+<link rel="stylesheet" href="/css/products.css">
+
+<main class="products-page">
+
+    <div class="products-container">
+
+        <!-- =====================================================
+             BREADCRUMB
+        ====================================================== -->
+
+        <p class="products-breadcrumb">
+            <a href="/">HOME</a> &gt; PRODUCTS
+        </p>
+
+
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
+
+        <div class="products-page-header">
+
+            <h1 class="products-title">
+            <%= pageHeading %>
+            </h1>
+
+            <p class="products-count">
+
+                <% if (totalProducts > 0) { %>
+
+                    <% const rangeStart = ((currentPage - 1) * productsPerPage) + 1; %>
+                    <% const rangeEnd = Math.min(currentPage * productsPerPage, totalProducts); %>
+
+                    Showing <%= rangeStart %>&ndash;<%= rangeEnd %> of <%= totalProducts %> timepieces
+
+                <% } else { %>
+
+                    No timepieces to show
+
+                <% } %>
+
+            </p>
+
+        </div>
+
+
+        <!-- =====================================================
+             ERROR (backend/database failure)
+        ====================================================== -->
+
+        <% if (typeof error !== "undefined" && error) { %>
+
+            <div class="products-error">
+                <%= error %>
+            </div>
+
+        <% } %>
+
+
+        <!-- =====================================================
+             SEARCH + SORT + FILTERS
+             One form so "Apply Filters" also carries the
+             current search text and sort choice along with it,
+             and vice versa.
+        ====================================================== -->
+
+        <form
+            action="/products"
+            method="GET"
+            class="products-toolbar"
+            id="productsToolbarForm"
+        >
+
+            <div class="products-search-field">
+
+                <i class="bi bi-search"></i>
+
+                <input
+                    type="text"
+                    name="search"
+                    value="<%= search %>"
+                    placeholder="Search our collection..."
+                    aria-label="Search products"
+                >
+
+            </div>
+
+            <button type="submit" class="products-search-btn">
+                Search
+            </button>
+
+            <% if (search) { %>
+
+                <a
+                    href="/products<%= (function () {
+                        const p = new URLSearchParams();
+                        if (sortOption) p.set("sort", sortOption);
+                        if (selectedCategory) p.set("category", selectedCategory);
+                        if (selectedBrand) p.set("brand", selectedBrand);
+                        if (minPriceValue !== "") p.set("minPrice", minPriceValue);
+                        if (maxPriceValue !== "") p.set("maxPrice", maxPriceValue);
+                        const qs = p.toString();
+                        return qs ? ("?" + qs) : "";
+                    })() %>"
+                    class="products-clear-btn"
+                >
+                    Clear Search
+                </a>
+
+            <% } %>
+
+
+            <div class="products-sort-field">
+
+                <label for="productsSortSelect">Sort By</label>
+
+                <select
+                    name="sort"
+                    id="productsSortSelect"
+                    onchange="document.getElementById('productsToolbarForm').submit()"
+                >
+
+                    <option value="" <%= sortOption === "" ? "selected" : "" %>>
+                        Newest
+                    </option>
+
+                    <option value="price-low" <%= sortOption === "price-low" ? "selected" : "" %>>
+                        Price: Low to High
+                    </option>
+
+                    <option value="price-high" <%= sortOption === "price-high" ? "selected" : "" %>>
+                        Price: High to Low
+                    </option>
+
+                    <option value="az" <%= sortOption === "az" ? "selected" : "" %>>
+                        Name: A to Z
+                    </option>
+
+                    <option value="za" <%= sortOption === "za" ? "selected" : "" %>>
+                        Name: Z to A
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- =============================================
+                 FILTERS
+            ============================================== -->
+
+            <div class="products-filters">
+
+                <div class="products-filter-field">
+
+                    <label for="productsCategorySelect">Category</label>
+
+                    <select
+                        name="category"
+                        id="productsCategorySelect"
+                    >
+
+                        <option value="" <%= selectedCategory === "" ? "selected" : "" %>>
+                            All Categories
+                        </option>
+
+                        <% categories.forEach((cat) => { %>
+
+                            <option
+                                value="<%= cat._id %>"
+                                <%= selectedCategory === String(cat._id) ? "selected" : "" %>
+                            >
+                                <%= cat.name %>
+                            </option>
+
+                        <% }) %>
+
+                    </select>
+
+                </div>
+
+
+                <div class="products-filter-field">
+
+                    <label for="productsBrandSelect">Brand</label>
+
+                    <select
+                        name="brand"
+                        id="productsBrandSelect"
+                    >
+
+                        <option value="" <%= selectedBrand === "" ? "selected" : "" %>>
+                            All Brands
+                        </option>
+
+                        <% brands.forEach((brandName) => { %>
+
+                            <option
+                                value="<%= brandName %>"
+                                <%= selectedBrand === brandName ? "selected" : "" %>
+                            >
+                                <%= brandName %>
+                            </option>
+
+                        <% }) %>
+
+                    </select>
+
+                </div>
+
+
+                <div class="products-filter-field products-filter-price">
+
+                    <label>Price</label>
+
+                    <div class="products-price-inputs">
+
+                        <input
+                            type="number"
+                            name="minPrice"
+                            value="<%= minPriceValue %>"
+                            placeholder="Min"
+                            min="0"
+                            aria-label="Minimum price"
+                        >
+
+                        <span class="products-price-separator">&ndash;</span>
+
+                        <input
+                            type="number"
+                            name="maxPrice"
+                            value="<%= maxPriceValue %>"
+                            placeholder="Max"
+                            min="0"
+                            aria-label="Maximum price"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <button type="submit" class="products-apply-btn">
+                    Apply Filters
+                </button>
+
+
+               <% if (selectedCategory || selectedBrand || minPriceValue !== "" || maxPriceValue !== "" || isLimitedView) { %>
+
+                    <a
+                        href="/products<%= clearFiltersQueryString ? ('?' + clearFiltersQueryString) : '' %>"
+                        class="products-clear-btn"
+                    >
+                        Clear Filters
+                    </a>
+
+                <% } %>
+
+            </div>
+
+        </form>
+
+
+        <!-- =====================================================
+             PRODUCT GRID
+        ====================================================== -->
+
+        <% if (products && products.length > 0) { %>
+
+            <div class="products-grid">
+
+                <% products.forEach((product) => { %>
+
+                    <a
+                        href="/products/<%= product._id %>"
+                        class="product-tile"
+                    >
+
+                        <div class="product-tile-image">
+
+                            <% if (product.images && product.images.length > 0) { %>
+
+                                <img
+                                    src="<%= product.images[0].url %>"
+                                    alt="<%= product.productName %>"
+                                    onerror="this.style.display='none'; this.parentElement.classList.add('image-missing');"
+                                >
+
+                            <% } else { %>
+
+                                <div class="image-missing"></div>
+
+                            <% } %>
+
+                            <% if (product.discount && product.discount > 0) { %>
+
+                                <span class="product-tile-badge">
+                                    -<%= product.discount %>%
+                                </span>
+
+                            <% } %>
+
+                        </div>
+
+
+                        <div class="product-tile-info">
+
+                            <% if (product.category && product.category.name) { %>
+
+                                <p class="product-tile-category">
+                                    <%= product.category.name %>
+                                </p>
+
+                            <% } %>
+
+                            <h3 class="product-tile-name">
+                                <%= product.productName %>
+                            </h3>
+
+                            <% if (product.brand) { %>
+
+                                <p class="product-tile-brand">
+                                    <%= product.brand %>
+                                </p>
+
+                            <% } %>
+
+                            <p class="product-tile-price">
+
+                                &#8377;<%= product.sellingPrice.toLocaleString("en-IN") %>
+
+                                <% if (product.discount && product.discount > 0) { %>
+
+                                    <del>&#8377;<%= product.price.toLocaleString("en-IN") %></del>
+
+                                <% } %>
+
+                            </p>
+
+                            <% if (product.stock <= 0) { %>
+
+                                <p class="product-tile-stock">
+                                    Out of Stock
+                                </p>
+
+                            <% } %>
+
+                        </div>
+
+                    </a>
+
+                <% }) %>
+
+            </div>
+
+
+            <!-- =================================================
+                 PAGINATION
+            ================================================== -->
+
+            <% if (totalPages > 1) { %>
+
+                <nav class="products-pagination" aria-label="Product pages">
+
+                    <% if (currentPage > 1) { %>
+
+                        <a
+                            href="/products?<%= baseQueryString ? baseQueryString + '&' : '' %>page=<%= currentPage - 1 %>"
+                            class="pagination-btn"
+                        >
+                            &laquo; Previous
+                        </a>
+
+                    <% } else { %>
+
+                        <span class="pagination-btn disabled">
+                            &laquo; Previous
+                        </span>
+
+                    <% } %>
+
+
+                    <div class="pagination-pages">
+
+                        <% pageNumbers.forEach((pageItem) => { %>
+
+                            <% if (pageItem === "...") { %>
+
+                                <span class="pagination-ellipsis">&hellip;</span>
+
+                            <% } else { %>
+
+                                <a
+                                    href="/products?<%= baseQueryString ? baseQueryString + '&' : '' %>page=<%= pageItem %>"
+                                    class="pagination-page <%= pageItem === currentPage ? 'active' : '' %>"
+                                >
+                                    <%= pageItem %>
+                                </a>
+
+                            <% } %>
+
+                        <% }) %>
+
+                    </div>
+
+
+                    <% if (currentPage < totalPages) { %>
+
+                        <a
+                            href="/products?<%= baseQueryString ? baseQueryString + '&' : '' %>page=<%= currentPage + 1 %>"
+                            class="pagination-btn"
+                        >
+                            Next &raquo;
+                        </a>
+
+                    <% } else { %>
+
+                        <span class="pagination-btn disabled">
+                            Next &raquo;
+                        </span>
+
+                    <% } %>
+
+                </nav>
+
+            <% } %>
+
+
+        <% } else { %>
+
+            <!-- =================================================
+                 EMPTY STATE
+            ================================================== -->
+
+            <div class="products-empty-state">
+
+                <div class="products-empty-icon">
+                    <i class="bi bi-search"></i>
+                </div>
+
+                <% if (search || selectedCategory || selectedBrand || minPriceValue !== "" || maxPriceValue !== "" || isLimitedView) { %>
+
+                    <h2>No products found</h2>
+
+                    <p>
+                        No timepieces matched your search or filters.
+                        Try adjusting or clearing them.
+                    </p>
+
+                    <a
+                        href="/products"
+                        class="products-empty-btn"
+                    >
+                        Clear All
+                    </a>
+
+                <% } else { %>
+
+                    <h2>No products available</h2>
+
+                    <p>
+                        There are no timepieces available right now.
+                        Please check back soon.
+                    </p>
+
+                <% } %>
+
+            </div>
+
+        <% } %>
+
+    </div>
+
+</main>
+
+<%- include("../partials/footer2") %>

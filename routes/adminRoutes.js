@@ -11,6 +11,9 @@ const requireAdmin =
 const productUpload =
     require("../middlewares/productUploadMiddleware");
 
+const handleProductImageUpload =
+    require("../middlewares/handleMulterError");    
+
 router.get(
     "/login",
     adminController.loadAdminLogin
@@ -125,7 +128,9 @@ router.get(
 router.post(
     "/products/add",
     requireAdmin,
-    productUpload.array("images", 8),
+    handleProductImageUpload(
+        productUpload.array("images", 8)
+    ),
     adminController.addProduct
 );
 

@@ -76,20 +76,58 @@
             <!-- NAVIGATION -->
             <nav class="wristora-nav">
 
-                <a href="/collections">
-                    COLLECTIONS
+                <a href="/products">
+                 COLLECTIONS
                 </a>
 
-                <a href="/brands">
-                    BRANDS
+                <div class="dropdown wristora-nav-dropdown">
+
+    <button
+        class="wristora-nav-link dropdown-toggle"
+        type="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+    >
+        BRANDS
+    </button>
+
+    <ul class="dropdown-menu wristora-brands-menu">
+
+        <% if (typeof headerBrands !== "undefined" && headerBrands.length > 0) { %>
+
+            <% headerBrands.forEach((brandName) => { %>
+
+                <li>
+                    <a
+                        class="dropdown-item"
+                        href="/products?brand=<%= encodeURIComponent(brandName) %>"
+                    >
+                        <%= brandName %>
+                    </a>
+                </li>
+
+            <% }) %>
+
+        <% } else { %>
+
+            <li>
+                <span class="dropdown-item disabled">
+                    No brands available
+                </span>
+            </li>
+
+        <% } %>
+
+    </ul>
+
+</div>
+
+                <a href="/products">
+                 NEW ARRIVALS
                 </a>
 
-                <a href="/new-arrivals">
-                    NEW ARRIVALS
-                </a>
-
-                <a href="/limited-edition">
-                    LIMITED EDITION
+                <a href="/products?limited=true">
+                LIMITED EDITION
                 </a>
 
             </nav>

@@ -9,9 +9,7 @@ const Product = require("../models/productModel");
 const cloudinary = require("../config/cloudinary");
 
 
-// =====================================================
-// SHARED HELPER
-// =====================================================
+
 
 const escapeRegex = (text) =>
     text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -1473,28 +1471,61 @@ const loadProducts = async (req, res) => {
 
 
 const loadAddProduct = async (req, res) => {
-
+ 
     try {
-
+ 
         const categories = await Category.find({
             isDeleted: false,
             isListed: true
         })
             .sort({ name: 1 })
             .lean();
-
+ 
+ 
+        // ---------------------------------------------
+        // PHASE 36 — friendly messages for image-upload
+        // errors caught by handleMulterError middleware
+        // (see routes/adminRoutes.js) before this page is
+        // reloaded via redirect.
+        // ---------------------------------------------
+ 
+        let error = null;
+ 
+        if (req.query.error === "size") {
+ 
+            error =
+                "Each image must be smaller than 5MB.";
+ 
+        } else if (req.query.error === "count") {
+ 
+            error =
+                "You can upload a maximum of 8 images.";
+ 
+        } else if (req.query.error === "type") {
+ 
+            error =
+                "Only JPG, JPEG, PNG and WEBP images are allowed.";
+ 
+        } else if (req.query.error === "upload") {
+ 
+            error =
+                "Something went wrong while uploading images. Please try again.";
+ 
+        }
+ 
+ 
         return res.render(
             "admin/addProduct",
             {
-
+ 
                 title: "Add Product",
-
+ 
                 currentPage: "addProduct",
-
+ 
                 categories,
-
-                error: null,
-
+ 
+                error,
+ 
                 formData: {
                     productName: "",
                     description: "",
@@ -1505,24 +1536,25 @@ const loadAddProduct = async (req, res) => {
                     stock: "",
                     isListed: true
                 }
-
+ 
             }
         );
-
+ 
     } catch (error) {
-
+ 
         console.error(
             "Load add product error:",
             error
         );
-
+ 
         return res.status(500).send(
             "Unable to load add product page. Please try again."
         );
-
+ 
     }
-
+ 
 };
+ 
 
 
 const addProduct = async (req, res) => {
