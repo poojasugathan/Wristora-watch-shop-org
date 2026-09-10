@@ -1,0 +1,192 @@
+<%- include("../partials/header", { title: title, user: user }) %>
+
+<link rel="stylesheet" href="/css/products.css">
+<link rel="stylesheet" href="/css/cart.css">
+
+<main class="cart-page">
+
+    <div class="cart-container">
+
+        <!-- =====================================================
+             BREADCRUMB
+        ====================================================== -->
+
+        <p class="products-breadcrumb">
+            <a href="/">HOME</a> &gt;
+            <a href="/products">PRODUCTS</a> &gt; CART
+        </p>
+
+
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
+
+        <div class="cart-page-header">
+
+            <h1 class="products-title">
+                Your Cart
+            </h1>
+
+        </div>
+
+
+        <!-- =====================================================
+             ERROR (backend/database failure)
+        ====================================================== -->
+
+        <% if (typeof error !== "undefined" && error) { %>
+
+            <div class="products-error">
+                <%= error %>
+            </div>
+
+        <% } %>
+
+
+        <% if (cartItems && cartItems.length > 0) { %>
+
+            <div class="cart-layout">
+
+                <!-- =============================================
+                     CART ITEMS
+                ============================================== -->
+
+                <div class="cart-items">
+
+                    <% cartItems.forEach((item) => { %>
+
+                        <div class="cart-item">
+
+                            <div class="cart-item-image">
+
+                                <% if (item.image) { %>
+
+                                    <img
+                                        src="<%= item.image %>"
+                                        alt="<%= item.productName %>"
+                                        onerror="this.style.display='none'; this.parentElement.classList.add('image-missing');"
+                                    >
+
+                                <% } else { %>
+
+                                    <div class="image-missing"></div>
+
+                                <% } %>
+
+                            </div>
+
+
+                            <div class="cart-item-info">
+
+                                <h3 class="cart-item-name">
+                                    <%= item.productName %>
+                                </h3>
+
+                                <% if (item.brand) { %>
+
+                                    <p class="cart-item-brand">
+                                        <%= item.brand %>
+                                    </p>
+
+                                <% } %>
+
+                                <p class="cart-item-price">
+                                    &#8377;<%= item.sellingPrice.toLocaleString("en-IN") %>
+                                </p>
+
+                            </div>
+
+
+                            <div class="cart-item-qty">
+                                Qty: <%= item.quantity %>
+                            </div>
+
+
+                            <div class="cart-item-subtotal">
+                                &#8377;<%= item.subtotal.toLocaleString("en-IN") %>
+                            </div>
+
+
+                            <form
+                                action="/cart/remove/<%= item.productId %>"
+                                method="POST"
+                                class="cart-item-remove-form"
+                                onsubmit="return confirm('Remove this item from your cart?');"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="cart-item-remove-btn"
+                                    aria-label="Remove item"
+                                >
+                                    <i class="bi bi-trash"></i>
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    <% }) %>
+
+                </div>
+
+
+                <!-- =============================================
+                     SUMMARY
+                ============================================== -->
+
+                <div class="cart-summary">
+
+                    <h2>Summary</h2>
+
+                    <div class="cart-summary-row">
+                        <span>Subtotal</span>
+                        <span>&#8377;<%= cartTotal.toLocaleString("en-IN") %></span>
+                    </div>
+
+                    <div class="cart-summary-divider"></div>
+
+                    <div class="cart-summary-row cart-summary-total">
+                        <span>Total</span>
+                        <span>&#8377;<%= cartTotal.toLocaleString("en-IN") %></span>
+                    </div>
+
+                    <a href="/products" class="cart-continue-btn">
+                        Continue Shopping
+                    </a>
+
+                </div>
+
+            </div>
+
+        <% } else { %>
+
+            <!-- =================================================
+                 EMPTY CART STATE
+            ================================================== -->
+
+            <div class="products-empty-state">
+
+                <div class="products-empty-icon">
+                    <i class="bi bi-cart3"></i>
+                </div>
+
+                <h2>Your cart is empty</h2>
+
+                <p>
+                    Looks like you haven't added any timepieces yet.
+                </p>
+
+                <a href="/products" class="products-empty-btn">
+                    Continue Shopping
+                </a>
+
+            </div>
+
+        <% } %>
+
+    </div>
+
+</main>
+
+<%- include("../partials/footer2") %>

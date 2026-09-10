@@ -1,0 +1,454 @@
+<%- include("../partials/header", { title: title, user: user }) %>
+
+<link rel="stylesheet" href="/css/products.css">
+<link rel="stylesheet" href="/css/productDetails.css">
+
+<main class="product-details-page">
+
+    <div class="product-details-container">
+
+        <% if (typeof error !== "undefined" && error) { %>
+
+            <!-- =================================================
+                 NOT FOUND / UNAVAILABLE STATE
+                 Same shape as the listing's empty state, so an
+                 invalid id, a missing product, and a product that
+                 became unlisted/blocked/deleted all land here.
+            ================================================== -->
+
+            <div class="products-empty-state product-details-error-state">
+
+                <div class="products-empty-icon">
+                    <i class="bi bi-exclamation-circle"></i>
+                </div>
+
+                <h2>Product not found</h2>
+
+                <p><%= error %></p>
+
+                <a href="/products" class="products-empty-btn">
+                    Back to Shop
+                </a>
+
+            </div>
+
+        <% } else { %>
+
+            <!-- =================================================
+                 BREADCRUMB
+            ================================================== -->
+
+            <p class="products-breadcrumb product-details-breadcrumb">
+                <a href="/">HOME</a> &gt;
+                <a href="/products">PRODUCTS</a>
+
+                <% if (product.category && product.category.name) { %>
+                    &gt;
+                    <a href="/products?category=<%= product.category._id %>">
+                        <%= product.category.name.toUpperCase() %>
+                    </a>
+                <% } %>
+
+                &gt; <%= product.productName.toUpperCase() %>
+            </p>
+
+
+            <!-- =================================================
+                 TOP SECTION — GALLERY + INFO
+            ================================================== -->
+
+            <div class="product-details-top">
+
+                <!-- ============================
+                     IMAGE GALLERY
+                ============================= -->
+
+                <div class="product-gallery" id="productGallery">
+
+                    <% if (product.images && product.images.length > 0) { %>
+
+                        <div class="product-gallery-thumbs">
+
+                            <% product.images.forEach((image, index) => { %>
+
+                                <button
+                                    type="button"
+                                    class="product-gallery-thumb <%= index === 0 ? 'active' : '' %>"
+                                    data-full-src="<%= image.url %>"
+                                >
+                                    <img
+                                        src="<%= image.url %>"
+                                        alt="<%= product.productName %> thumbnail <%= index + 1 %>"
+                                    >
+                                </button>
+
+                            <% }) %>
+
+                        </div>
+
+                        <div class="product-gallery-main">
+
+                            <img
+                                id="productMainImage"
+                                src="<%= product.images[0].url %>"
+                                alt="<%= product.productName %>"
+                            >
+
+                            <button
+                                type="button"
+                                class="product-gallery-zoom-btn"
+                                id="productZoomBtn"
+                                aria-label="Zoom image"
+                            >
+                                <i class="bi bi-zoom-in"></i>
+                            </button>
+
+                        </div>
+
+                    <% } else { %>
+
+                        <div class="product-gallery-main">
+                            <div class="image-missing product-gallery-missing"></div>
+                        </div>
+
+                    <% } %>
+
+                </div>
+
+
+                <!-- ============================
+                     PRODUCT INFO
+                ============================= -->
+
+                <div class="product-info">
+
+                    <% if (product.brand) { %>
+                        <p class="product-info-brand"><%= product.brand %></p>
+                    <% } %>
+
+                    <h1 class="product-info-name"><%= product.productName %></h1>
+
+                    <div class="product-info-price">
+
+                        &#8377;<%= product.sellingPrice.toLocaleString("en-IN") %>
+
+                        <% if (product.discount && product.discount > 0) { %>
+
+                            <del>&#8377;<%= product.price.toLocaleString("en-IN") %></del>
+
+                            <span class="product-info-discount-badge">
+                                <%= product.discount %>% OFF
+                            </span>
+
+                        <% } %>
+
+                    </div>
+
+
+                    <!-- ============================
+                         STOCK
+                    ============================= -->
+
+                    <% if (product.stock <= 0) { %>
+
+                        <p class="product-info-stock out-of-stock">
+                            Out of Stock
+                        </p>
+
+                    <% } else if (product.stock <= 5) { %>
+
+                        <p class="product-info-stock low-stock">
+                            Only <%= product.stock %> left
+                        </p>
+
+                    <% } else { %>
+
+                        <p class="product-info-stock in-stock">
+                            In Stock
+                        </p>
+
+                    <% } %>
+
+
+                    <p class="product-info-description">
+                        <%= product.description %>
+                    </p>
+
+
+                    <!-- ============================
+                         HIGHLIGHTS
+                    ============================= -->
+
+                    <% if (product.highlights && product.highlights.length > 0) { %>
+
+                        <div class="product-info-highlights">
+
+                            <h3>Product Highlights</h3>
+
+                            <ul>
+
+                                <% product.highlights.forEach((point) => { %>
+                                    <li><%= point %></li>
+                                <% }) %>
+
+                            </ul>
+
+                        </div>
+
+                    <% } %>
+
+
+                    <!-- ============================
+                         QUANTITY + ADD TO CART
+                         No cart backend exists yet (that's a
+                         later phase) — this button is UI only
+                         for now and never claims the product is
+                         purchasable when it's out of stock.
+                    ============================= -->
+
+                    <div class="product-info-actions">
+
+                        <div class="product-qty-selector">
+
+                            <button
+                                type="button"
+                                class="product-qty-btn"
+                                id="productQtyMinus"
+                                <%= product.stock <= 0 ? "disabled" : "" %>
+                            >−</button>
+
+                            <span id="productQtyValue">1</span>
+
+                            <button
+                                type="button"
+                                class="product-qty-btn"
+                                id="productQtyPlus"
+                                <%= product.stock <= 0 ? "disabled" : "" %>
+                            >+</button>
+
+                        </div>
+                        <button
+                            type="button"
+                            class="product-add-to-cart-btn"
+                            id="productAddToCartBtn"
+                            data-product-id="<%= product._id %>"
+                            data-out-of-stock="<%= product.stock <= 0 ? 'true' : 'false' %>"
+                            <%= product.stock <= 0 ? "disabled" : "" %>
+                        >
+                            <%= product.stock <= 0 ? "Out of Stock" : "Add to Cart" %>
+                        </button>
+
+                        <button
+                            type="button"
+                            class="product-wishlist-btn"
+                            id="productWishlistBtn"
+                            aria-label="Add to wishlist"
+                        >
+                            <i class="bi bi-heart"></i>
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 SPECIFICATIONS
+            ================================================== -->
+
+            <% const specs = product.specifications || {}; %>
+            <% const hasSpecs =
+                specs.movementType || specs.warranty ||
+                specs.waterResistance || specs.caseDiameter; %>
+
+            <% if (hasSpecs) { %>
+
+                <section class="product-specs-section">
+
+                    <h2>Product Specifications</h2>
+
+                    <div class="product-specs-grid">
+
+                        <% if (specs.movementType) { %>
+                            <div class="product-specs-row">
+                                <span>Movement</span>
+                                <span><%= specs.movementType %></span>
+                            </div>
+                        <% } %>
+
+                        <% if (specs.caseDiameter) { %>
+                            <div class="product-specs-row">
+                                <span>Case Diameter</span>
+                                <span><%= specs.caseDiameter %></span>
+                            </div>
+                        <% } %>
+
+                        <% if (specs.waterResistance) { %>
+                            <div class="product-specs-row">
+                                <span>Water Resistance</span>
+                                <span><%= specs.waterResistance %></span>
+                            </div>
+                        <% } %>
+
+                        <% if (specs.warranty) { %>
+                            <div class="product-specs-row">
+                                <span>Warranty</span>
+                                <span><%= specs.warranty %></span>
+                            </div>
+                        <% } %>
+
+                    </div>
+
+                </section>
+
+            <% } %>
+
+
+            <!-- =================================================
+                 REVIEWS PLACEHOLDER
+                 No review system exists yet — this just reserves
+                 the section for a later phase.
+            ================================================== -->
+
+            <section class="product-reviews-section">
+
+                <h2>Ratings &amp; Reviews</h2>
+
+                <p class="product-reviews-placeholder">
+                    Reviews for this product aren't available yet.
+                </p>
+
+            </section>
+
+
+            <!-- =================================================
+                 RELATED PRODUCTS
+            ================================================== -->
+
+            <% if (relatedProducts && relatedProducts.length > 0) { %>
+
+                <section class="product-related-section">
+
+                    <h2>You May Also Like</h2>
+
+                    <div class="products-grid product-related-grid">
+
+                        <% relatedProducts.forEach((related) => { %>
+
+                            <a
+                                href="/products/<%= related._id %>"
+                                class="product-tile"
+                            >
+
+                                <div class="product-tile-image">
+
+                                    <% if (related.images && related.images.length > 0) { %>
+
+                                        <img
+                                            src="<%= related.images[0].url %>"
+                                            alt="<%= related.productName %>"
+                                            onerror="this.style.display='none'; this.parentElement.classList.add('image-missing');"
+                                        >
+
+                                    <% } else { %>
+
+                                        <div class="image-missing"></div>
+
+                                    <% } %>
+
+                                    <% if (related.discount && related.discount > 0) { %>
+
+                                        <span class="product-tile-badge">
+                                            -<%= related.discount %>%
+                                        </span>
+
+                                    <% } %>
+
+                                </div>
+
+                                <div class="product-tile-info">
+
+                                    <% if (related.category && related.category.name) { %>
+
+                                        <p class="product-tile-category">
+                                            <%= related.category.name %>
+                                        </p>
+
+                                    <% } %>
+
+                                    <h3 class="product-tile-name">
+                                        <%= related.productName %>
+                                    </h3>
+
+                                    <% if (related.brand) { %>
+
+                                        <p class="product-tile-brand">
+                                            <%= related.brand %>
+                                        </p>
+
+                                    <% } %>
+
+                                    <p class="product-tile-price">
+
+                                        &#8377;<%= related.sellingPrice.toLocaleString("en-IN") %>
+
+                                        <% if (related.discount && related.discount > 0) { %>
+
+                                            <del>&#8377;<%= related.price.toLocaleString("en-IN") %></del>
+
+                                        <% } %>
+
+                                    </p>
+
+                                    <% if (related.stock <= 0) { %>
+
+                                        <p class="product-tile-stock">
+                                            Out of Stock
+                                        </p>
+
+                                    <% } %>
+
+                                </div>
+
+                            </a>
+
+                        <% }) %>
+
+                    </div>
+
+                </section>
+
+            <% } %>
+
+        <% } %>
+
+    </div>
+
+</main>
+
+
+<!-- =====================================================
+     IMAGE ZOOM MODAL (click-to-zoom, no external library)
+===================================================== -->
+
+<div class="product-zoom-modal" id="productZoomModal">
+
+    <button
+        type="button"
+        class="product-zoom-modal-close"
+        id="productZoomModalClose"
+        aria-label="Close"
+    >
+        <i class="bi bi-x-lg"></i>
+    </button>
+
+    <img id="productZoomModalImage" src="" alt="">
+
+</div>
+
+
+<script src="/js/productDetails.js"></script>
+
+<%- include("../partials/footer2") %>

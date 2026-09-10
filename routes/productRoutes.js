@@ -15,5 +15,10 @@ router.get(
     productController.loadProductListing
 );
 
+router.get(
+    "/:id",
+    productController.loadProductDetails
+);
+
 
 module.exports = router;

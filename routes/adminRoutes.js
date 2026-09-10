@@ -163,5 +163,12 @@ router.post(
 );
 
 
+router.post(
+    "/products/toggle-block/:id",
+    requireAdmin,
+    adminController.toggleProductBlock
+);
+
+
 
 module.exports = router;

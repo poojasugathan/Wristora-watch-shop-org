@@ -12,7 +12,9 @@ const profileRoutes = require("./routes/profileRoutes");
 const addressRoutes = require("./routes/addressRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const productRoutes = require("./routes/productRoutes");
+const cartRoutes = require("./routes/cartRoutes");
 const attachHeaderData = require("./middlewares/headerDataMiddleware");
+const attachCartCount = require("./middlewares/cartCountMiddleware");
 
 const app = express();
 connectDB();
@@ -39,12 +41,14 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 app.use(attachHeaderData);
+app.use(attachCartCount);
 
 app.use("/auth", authRoutes);
 app.use("/profile", profileRoutes);
 app.use("/addresses", addressRoutes);
 app.use("/admin", adminRoutes);
 app.use("/products", productRoutes);
+app.use("/cart", cartRoutes);
 
 
 app.get("/", (req, res) => {

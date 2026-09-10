@@ -104,7 +104,7 @@
 .product-table-header,
 .product-row {
     display: grid;
-    grid-template-columns: 70px 2fr 1fr 1fr 0.6fr 1fr 1fr;
+    grid-template-columns: 70px 2fr 1fr 1fr 0.6fr 1fr 1fr 1fr;
     align-items: center;
     padding: 14px 20px;
     gap: 12px;
@@ -159,6 +159,15 @@
     color: #b3261e;
 }
 
+.product-status-toggle.active {
+    background: #dff5e1;
+    color: #1f9d3e;
+}
+
+.product-status-toggle.blocked {
+    background: #fdecea;
+    color: #b3261e;
+}
 .product-action {
     display: flex;
     gap: 8px;

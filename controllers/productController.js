@@ -17,6 +17,10 @@ const PRODUCTS_PER_PAGE = 12;
 // cutoff.
 const LIMITED_STOCK_THRESHOLD = 5;
 
+// How many related products to show on the product
+// details page (Phase 41).
+const RELATED_PRODUCTS_LIMIT = 4;
+
 
 // =====================================================
 // HELPERS (existing — unchanged)
@@ -492,6 +496,147 @@ const loadProductListing = async (req, res) => {
 };
 
 
+const loadProductDetails = async (req, res) => {
+ 
+    try {
+ 
+        const productId = req.params.id;
+ 
+ 
+        // ---------------------------------------------
+        // VALIDATE THE ID BEFORE EVER TOUCHING THE DB.
+        // An invalid id (e.g. "/products/abc") should
+        // never reach Product.findOne — Mongoose would
+        // throw a CastError and, without this check,
+        // that could crash the request.
+        // ---------------------------------------------
+ 
+        if (!mongoose.Types.ObjectId.isValid(productId)) {
+ 
+            return res.status(404).render(
+                "user/productDetails",
+                {
+ 
+                    title: "Product Not Found",
+ 
+                    product: null,
+ 
+                    relatedProducts: [],
+ 
+                    error:
+                        "This product could not be found."
+ 
+                }
+            );
+ 
+        }
+ 
+ 
+        // ---------------------------------------------
+        // MAIN PRODUCT LOOKUP — same three availability
+        // flags used everywhere else in the project.
+        // ---------------------------------------------
+ 
+        const product = await Product.findOne({
+            _id: productId,
+            isDeleted: false,
+            isListed: true,
+            isBlocked: false
+        })
+            .populate("category", "name")
+            .lean();
+ 
+ 
+        if (!product) {
+ 
+            return res.status(404).render(
+                "user/productDetails",
+                {
+ 
+                    title: "Product Not Found",
+ 
+                    product: null,
+ 
+                    relatedProducts: [],
+ 
+                    error:
+                        "This product is unavailable or no longer exists."
+ 
+                }
+            );
+ 
+        }
+ 
+ 
+        // ---------------------------------------------
+        // RELATED PRODUCTS — same category, excluding
+        // this product itself and anything unavailable.
+        // Queried directly in MongoDB, never by loading
+        // the full catalog into memory.
+        // ---------------------------------------------
+ 
+        const relatedProducts = await Product.find({
+            category: product.category
+                ? product.category._id
+                : null,
+            _id: { $ne: product._id },
+            isDeleted: false,
+            isListed: true,
+            isBlocked: false
+        })
+            .populate("category", "name")
+            .sort({ createdAt: -1 })
+            .limit(RELATED_PRODUCTS_LIMIT)
+            .lean();
+ 
+ 
+        return res.render(
+            "user/productDetails",
+            {
+ 
+                title: `${product.productName} | Wristora`,
+ 
+                product,
+ 
+                relatedProducts,
+ 
+                error: null
+ 
+            }
+        );
+ 
+ 
+    } catch (error) {
+ 
+        console.error(
+            "Product details error:",
+            error
+        );
+ 
+        return res.status(500).render(
+            "user/productDetails",
+            {
+ 
+                title: "Product Not Found",
+ 
+                product: null,
+ 
+                relatedProducts: [],
+ 
+                error:
+                    "Unable to load this product right now. Please try again."
+ 
+            }
+        );
+ 
+    }
+ 
+};
+ 
+ 
+
 module.exports = {
-    loadProductListing
+    loadProductListing,
+
+    loadProductDetails
 };

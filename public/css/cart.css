@@ -1,0 +1,217 @@
+/* =====================================================
+   CART PAGE
+===================================================== */
+
+.cart-page {
+    padding: 40px 0 60px;
+}
+
+.cart-page-header {
+    margin-bottom: 24px;
+}
+
+.cart-page-header .products-title {
+    font-family: "Cormorant Garamond", Georgia, serif;
+}
+
+
+/* =====================================================
+   LAYOUT — items + summary side by side
+===================================================== */
+
+.cart-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+
+/* =====================================================
+   CART ITEMS
+===================================================== */
+
+.cart-items {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.cart-item {
+    display: grid;
+    grid-template-columns: 100px 2fr 0.8fr 0.8fr 40px;
+    align-items: center;
+    gap: 16px;
+    background: #fff;
+    border: 1px solid #eee6d9;
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.cart-item-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f1ece0;
+}
+
+.cart-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.cart-item-image.image-missing,
+.cart-item-image .image-missing {
+    width: 100%;
+    height: 100%;
+    background: #f1ece0;
+}
+
+.cart-item-name {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 20px;
+    margin: 0 0 4px;
+}
+
+.cart-item-brand {
+    font-size: 12px;
+    color: #8a8577;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin: 0 0 6px;
+}
+
+.cart-item-price {
+    font-size: 14px;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+.cart-item-qty {
+    font-size: 14px;
+    color: #6b6656;
+    text-align: center;
+}
+
+.cart-item-subtotal {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+    text-align: right;
+}
+
+.cart-item-remove-form {
+    display: flex;
+    justify-content: center;
+}
+
+.cart-item-remove-btn {
+    background: none;
+    border: none;
+    color: #b3261e;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+}
+
+.cart-item-remove-btn:hover {
+    background: #fdecea;
+}
+
+
+/* =====================================================
+   SUMMARY
+===================================================== */
+
+.cart-summary {
+    background: #fff;
+    border: 1px solid #eee6d9;
+    border-radius: 12px;
+    padding: 24px;
+    position: sticky;
+    top: 24px;
+}
+
+.cart-summary h2 {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 22px;
+    margin: 0 0 16px;
+}
+
+.cart-summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #6b6656;
+    margin-bottom: 10px;
+}
+
+.cart-summary-divider {
+    height: 1px;
+    background: #eee6d9;
+    margin: 12px 0;
+}
+
+.cart-summary-total {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.cart-continue-btn {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    background: #1a1a1a;
+    color: #fff;
+    padding: 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.cart-continue-btn:hover {
+    background: #333;
+    color: #fff;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 900px) {
+
+    .cart-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .cart-item {
+        grid-template-columns: 80px 1fr;
+        grid-template-areas:
+            "image info"
+            "image qty"
+            "image subtotal"
+            "image remove";
+    }
+
+    .cart-item-image {
+        grid-area: image;
+        width: 80px;
+        height: 80px;
+    }
+
+    .cart-item-qty,
+    .cart-item-subtotal {
+        text-align: left;
+    }
+
+    .cart-item-remove-form {
+        justify-content: flex-start;
+    }
+
+}

@@ -54,8 +54,8 @@
 
             </div>
 
-
             <a
+            
                 href="/admin/products/add"
                 class="product-add-button"
             >
@@ -159,6 +159,8 @@
 
                         <span>LIST</span>
 
+                        <span>BLOCK</span>
+
                         <span>ACTION</span>
 
                     </div>
@@ -251,6 +253,39 @@
                             </span>
 
 
+                            <span>
+
+                                <form
+                                    action="/admin/products/toggle-block/<%= product._id %>"
+                                    method="POST"
+                                    onsubmit="return confirm(product.isBlocked ? 'Unblock this product?' : 'Block this product?');"
+                                >
+
+                                    <% if (product.isBlocked === true) { %>
+
+                                        <button
+                                            type="submit"
+                                            class="product-status-toggle blocked"
+                                        >
+                                            Blocked
+                                        </button>
+
+                                    <% } else { %>
+
+                                        <button
+                                            type="submit"
+                                            class="product-status-toggle active"
+                                        >
+                                            Active
+                                        </button>
+
+                                    <% } %>
+
+                                </form>
+
+                            </span>
+
+
                             <div class="product-action">
 
                                 <a
@@ -319,7 +354,7 @@
 
                 <% if (currentPage > 1) { %>
 
-                    
+                    <a
                         href="/admin/products?page=<%= currentPage - 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"
                         class="pagination-button"
                     >
@@ -351,7 +386,7 @@
 
                         <% } else { %>
 
-                            
+                            <a
                                 href="/admin/products?page=<%= pageNumber %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"
                                 class="pagination-page"
                             >
@@ -367,7 +402,7 @@
 
                 <% if (currentPage < totalPages) { %>
 
-                    
+                    <a
                         href="/admin/products?page=<%= currentPage + 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"
                         class="pagination-button"
                     >

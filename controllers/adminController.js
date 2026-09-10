@@ -1879,6 +1879,57 @@ const toggleProductListing = async (req, res) => {
 
 };
 
+const toggleProductBlock = async (req, res) => {
+
+    try {
+
+        const productId = req.params.id;
+
+        // Same lookup pattern as toggleProductListing —
+        // a soft-deleted product should never be reachable
+        // through either toggle.
+        const product = await Product.findOne({
+            _id: productId,
+            isDeleted: false
+        });
+
+        if (!product) {
+
+            return res.status(404).send(
+                "Product not found."
+            );
+
+        }
+
+        // Only isBlocked changes here. isListed is left
+        // completely alone — a product can be listed AND
+        // blocked at the same time, and un-blocking it must
+        // not silently re-list it.
+        product.isBlocked = !product.isBlocked;
+
+        await product.save();
+
+
+        return res.redirect(
+            "/admin/products"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Toggle product block error:",
+            error
+        );
+
+        return res.status(500).send(
+            "Unable to update product status. Please try again."
+        );
+
+    }
+
+};
+
 const loadEditProduct = async (req, res) => {
 
     try {
@@ -2247,6 +2298,8 @@ module.exports = {
     addProduct,
 
     toggleProductListing,
+
+    toggleProductBlock,
 
     loadEditProduct,
 
