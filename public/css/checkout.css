@@ -1,0 +1,221 @@
+/* =====================================================
+   CHECKOUT PAGE (PHASE 46)
+   Reuses the same look and spacing conventions as
+   cart.css / products.css — no new visual style, just
+   layout for the extra sections this page needs.
+====================================================== */
+
+.checkout-layout {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+}
+
+.checkout-main {
+    flex: 1 1 620px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* ---- Sections (address / items) ---- */
+
+.checkout-section {
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    background: #fff;
+}
+
+.checkout-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.checkout-section-header h2 {
+    font-size: 1.05rem;
+    margin: 0;
+}
+
+.checkout-section-link {
+    font-size: 0.85rem;
+    text-decoration: underline;
+    white-space: nowrap;
+}
+
+/* ---- Address cards ---- */
+
+.checkout-address-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.checkout-address-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    border: 1px solid #e2e2e2;
+    border-radius: 6px;
+    padding: 0.9rem 1rem;
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+}
+
+.checkout-address-card:has(input:checked) {
+    border-color: #222;
+    background: #fafafa;
+}
+
+.checkout-address-card input {
+    margin-top: 0.25rem;
+}
+
+.checkout-address-name-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.15rem;
+}
+
+.checkout-address-name {
+    font-weight: 600;
+}
+
+.checkout-address-default-tag {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    background: #222;
+    color: #fff;
+    border-radius: 3px;
+    padding: 0.1rem 0.4rem;
+}
+
+.checkout-address-person,
+.checkout-address-line,
+.checkout-address-phone {
+    margin: 0.1rem 0;
+    font-size: 0.9rem;
+    color: #444;
+}
+
+.checkout-empty-address {
+    text-align: center;
+    padding: 1.5rem 0;
+}
+
+/* ---- Order item rows ---- */
+
+.checkout-item-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.checkout-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.checkout-item-image img,
+.checkout-item-image .image-missing {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 6px;
+    background: #f2f2f2;
+}
+
+.checkout-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.checkout-item-name {
+    font-weight: 600;
+    margin: 0;
+}
+
+.checkout-item-brand {
+    font-size: 0.8rem;
+    color: #777;
+    margin: 0.1rem 0;
+}
+
+.checkout-item-qty {
+    font-size: 0.85rem;
+    color: #555;
+    margin: 0.1rem 0 0;
+}
+
+.checkout-item-subtotal {
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* ---- Summary sidebar ---- */
+
+.checkout-summary {
+    flex: 0 0 320px;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    padding: 1.5rem;
+    background: #fff;
+    position: sticky;
+    top: 1.5rem;
+}
+
+.checkout-summary h2 {
+    font-size: 1.05rem;
+    margin-top: 0;
+}
+
+.checkout-summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    margin: 0.5rem 0;
+    color: #444;
+}
+
+.checkout-summary-free {
+    color: #1a7f37;
+    font-weight: 600;
+}
+
+.checkout-summary-total {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #111;
+}
+
+.checkout-back-link {
+    display: block;
+    text-align: center;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    text-decoration: underline;
+}
+
+/* ---- Responsive ---- */
+
+@media (max-width: 860px) {
+
+    .checkout-layout {
+        flex-direction: column;
+    }
+
+    .checkout-summary {
+        flex: 1 1 auto;
+        width: 100%;
+        position: static;
+    }
+
+}

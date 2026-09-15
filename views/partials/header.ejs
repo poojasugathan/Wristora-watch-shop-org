@@ -160,10 +160,14 @@
                 <!-- WISHLIST -->
                 <a
                     href="/wishlist"
-                    class="wristora-icon-link"
+                    class="wristora-icon-link wristora-wishlist-icon"
                     aria-label="Wishlist"
                 >
                     <i class="bi bi-heart"></i>
+
+                    <span class="wristora-wishlist-count">
+                        <%= typeof wishlistCount !== "undefined" ? wishlistCount : 0 %>
+                    </span>
                 </a>
 
 

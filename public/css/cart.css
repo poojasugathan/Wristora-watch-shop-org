@@ -39,13 +39,20 @@
 
 .cart-item {
     display: grid;
-    grid-template-columns: 100px 2fr 0.8fr 0.8fr 40px;
+    grid-template-columns: 100px 2fr 0.9fr 0.8fr 40px;
     align-items: center;
     gap: 16px;
     background: #fff;
     border: 1px solid #eee6d9;
     border-radius: 12px;
     padding: 16px;
+}
+
+/* PHASE 44 — unavailable/out-of-stock/missing items are
+   still shown, but visually muted so it's obvious they
+   can't be purchased right now. */
+.cart-item.cart-item-disabled {
+    opacity: 0.6;
 }
 
 .cart-item-image {
@@ -94,6 +101,74 @@
     font-size: 14px;
     color: #6b6656;
     text-align: center;
+}
+
+.cart-qty-static {
+    font-size: 14px;
+    color: #6b6656;
+}
+
+/* PHASE 44 — quantity +/- controls */
+.cart-qty-controls {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 1px solid #eee6d9;
+    border-radius: 8px;
+    padding: 4px 8px;
+}
+
+.cart-qty-btn {
+    width: 26px;
+    height: 26px;
+    border: none;
+    background: #f1ece0;
+    color: #1a1a1a;
+    border-radius: 6px;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cart-qty-btn:hover:not(:disabled) {
+    background: #e4dcc9;
+}
+
+.cart-qty-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.cart-qty-value {
+    min-width: 18px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+/* PHASE 44 — state messages under the product name */
+.cart-item-message {
+    font-size: 12px;
+    margin: 4px 0 0;
+}
+
+.cart-item-message-error {
+    color: #b3261e;
+}
+
+.cart-item-message-warning {
+    color: #a3720b;
+}
+
+.cart-item-inline-message {
+    font-size: 12px;
+    margin: 4px 0 0;
+    min-height: 14px;
 }
 
 .cart-item-subtotal {
@@ -208,6 +283,10 @@
     .cart-item-qty,
     .cart-item-subtotal {
         text-align: left;
+    }
+
+    .cart-qty-controls {
+        justify-content: flex-start;
     }
 
     .cart-item-remove-form {

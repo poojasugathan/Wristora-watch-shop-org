@@ -1,12 +1,12 @@
 // =====================================================
-// PRODUCT DETAILS PAGE — FRONTEND INTERACTIONS (PHASE 41)
+// PRODUCT DETAILS PAGE — FRONTEND INTERACTIONS
 //
 // This file only handles UI interactions:
 //   - switching the main image via thumbnails
 //   - a click-to-zoom modal
 //   - a quantity stepper
-//   - Add to Cart (PHASE 43 — now wired to the real
-//     backend) / Wishlist (still UI only for now)
+//   - Add to Cart (PHASE 43 — real backend call)
+//   - Add to Wishlist (PHASE 45 — real backend call)
 //
 // No product availability or pricing decisions are made
 // here — the backend is always asked fresh whether the
@@ -150,18 +150,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // -------------------------------------------------
-    // ADD TO CART (PHASE 43 — real backend call)
-    //
-    // Note: the quantity stepper above is purely a Phase 41
-    // display feature for now. Phase 43's Add to Cart always
-    // adds 1 unit (or increments by 1 if already in the
-    // cart) — sending the stepper's value here would let the
-    // browser dictate quantity, which the backend does not
-    // yet validate against stock. That full wiring belongs to
-    // Phase 44.
+    // SHARED MESSAGE HELPER
     // -------------------------------------------------
-
-    const addToCartBtn = document.getElementById("productAddToCartBtn");
 
     const showMessage = (icon, title, text) => {
 
@@ -182,6 +172,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     };
 
+
+    // -------------------------------------------------
+    // ADD TO CART (PHASE 43 — real backend call)
+    //
+    // Note: the quantity stepper above is purely a display
+    // feature for now. Add to Cart always adds 1 unit (or
+    // increments by 1 if already in the cart) — sending the
+    // stepper's value here would let the browser dictate
+    // quantity, which isn't validated against stock at this
+    // entry point.
+    // -------------------------------------------------
+
+    const addToCartBtn = document.getElementById("productAddToCartBtn");
+
     if (addToCartBtn) {
 
         addToCartBtn.addEventListener("click", async () => {
@@ -196,7 +200,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Prevent double-submits while the request is in flight.
             addToCartBtn.disabled = true;
 
             try {
@@ -225,11 +228,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 } else {
 
-                    // Covers: product blocked/unlisted/deleted after the
-                    // page loaded, out of stock, not logged in (session
-                    // expired mid-visit), or any other backend rejection.
-                    // The message always comes from the server — this
-                    // code never guesses why it failed.
                     showMessage(
                         "error",
                         "Unable to Add",
@@ -250,9 +248,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             } finally {
 
-                // Re-enable unless the product was permanently out of
-                // stock to begin with (that disabled state was set by
-                // the server on page load and should stay as-is).
                 if (addToCartBtn.getAttribute("data-out-of-stock") !== "true") {
                     addToCartBtn.disabled = false;
                 }
@@ -265,16 +260,84 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // -------------------------------------------------
-    // WISHLIST (UI ONLY — no wishlist backend yet)
+    // ADD TO WISHLIST (PHASE 45 — real backend call)
+    //
+    // This button only ever ADDS. It does not reflect
+    // whether the product is already in the wishlist on
+    // page load — the backend already handles a repeat add
+    // gracefully (returns success with an "already in your
+    // wishlist" message instead of erroring or duplicating).
     // -------------------------------------------------
 
     const wishlistBtn = document.getElementById("productWishlistBtn");
 
     if (wishlistBtn) {
 
-        wishlistBtn.addEventListener("click", () => {
+        wishlistBtn.addEventListener("click", async () => {
 
-            wishlistBtn.classList.toggle("active");
+            if (wishlistBtn.disabled) {
+                return;
+            }
+
+            const productId = wishlistBtn.getAttribute("data-product-id");
+
+            if (!productId) {
+                return;
+            }
+
+            wishlistBtn.disabled = true;
+
+            try {
+
+                const response = await fetch("/wishlist/add", {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({ productId })
+
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+
+                    wishlistBtn.classList.add("active");
+
+                    showMessage(
+                        "success",
+                        "Added to Wishlist",
+                        data.message || "Added to your wishlist."
+                    );
+
+                } else {
+
+                    showMessage(
+                        "error",
+                        "Unable to Add",
+                        data.message || "Unable to add this product to your wishlist."
+                    );
+
+                }
+
+            } catch (error) {
+
+                console.error("Add to wishlist request failed:", error);
+
+                showMessage(
+                    "error",
+                    "Something Went Wrong",
+                    "Unable to add this product to your wishlist. Please try again."
+                );
+
+            } finally {
+
+                wishlistBtn.disabled = false;
+
+            }
 
         });
 

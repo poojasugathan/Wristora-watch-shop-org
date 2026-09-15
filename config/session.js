@@ -2,6 +2,8 @@ const session = require("express-session");
 const { MongoStore } = require("connect-mongo");
 
 const sessionConfig = session({
+    name: "connect.sid",
+
     secret: process.env.SESSION_SECRET,
 
     resave: false,
@@ -16,6 +18,7 @@ const sessionConfig = session({
     cookie: {
         httpOnly: true,
         secure: false,
+        path: "/",
         maxAge: 1000 * 60 * 60 * 24
     }
 });

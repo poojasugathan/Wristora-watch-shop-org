@@ -43,6 +43,15 @@
         <% } %>
 
 
+        <% if (typeof checkoutMessage !== "undefined" && checkoutMessage) { %>
+
+            <div class="products-error">
+                <%= checkoutMessage %>
+            </div>
+
+        <% } %>
+
+
         <% if (cartItems && cartItems.length > 0) { %>
 
             <div class="cart-layout">
@@ -55,11 +64,12 @@
 
                     <% cartItems.forEach((item) => { %>
 
-                        <div class="cart-item">
+                        <div class="cart-item <%= (item.isMissing || !item.isAvailable) ? 'cart-item-disabled' : '' %>"
+                             data-product-id="<%= item.productId %>">
 
                             <div class="cart-item-image">
 
-                                <% if (item.image) { %>
+                                <% if (!item.isMissing && item.image) { %>
 
                                     <img
                                         src="<%= item.image %>"
@@ -78,32 +88,111 @@
 
                             <div class="cart-item-info">
 
-                                <h3 class="cart-item-name">
-                                    <%= item.productName %>
-                                </h3>
+                                <% if (item.isMissing) { %>
 
-                                <% if (item.brand) { %>
+                                    <h3 class="cart-item-name">Product unavailable</h3>
 
-                                    <p class="cart-item-brand">
-                                        <%= item.brand %>
+                                <% } else { %>
+
+                                    <h3 class="cart-item-name">
+                                        <%= item.productName %>
+                                    </h3>
+
+                                    <% if (item.brand) { %>
+
+                                        <p class="cart-item-brand">
+                                            <%= item.brand %>
+                                        </p>
+
+                                    <% } %>
+
+                                    <p class="cart-item-price">
+                                        &#8377;<%= item.sellingPrice.toLocaleString("en-IN") %>
                                     </p>
 
                                 <% } %>
 
-                                <p class="cart-item-price">
-                                    &#8377;<%= item.sellingPrice.toLocaleString("en-IN") %>
-                                </p>
+
+                                <!-- =====================================
+                                     STATE MESSAGES
+                                ====================================== -->
+
+                                <% if (item.isMissing || !item.isAvailable) { %>
+
+                                    <p class="cart-item-message cart-item-message-error">
+                                        This product is no longer available.
+                                    </p>
+
+                                <% } else if (item.isOutOfStock) { %>
+
+                                    <p class="cart-item-message cart-item-message-error">
+                                        Out of Stock
+                                    </p>
+
+                                <% } else if (item.exceedsStock) { %>
+
+                                    <p class="cart-item-message cart-item-message-warning">
+                                        Only <%= item.stock %> available.
+                                    </p>
+
+                                <% } else if (item.stock <= 2) { %>
+
+                                    <p class="cart-item-message cart-item-message-warning">
+                                        Only <%= item.stock %> left.
+                                    </p>
+
+                                <% } %>
+
+                                <p class="cart-item-inline-message" data-role="inline-message"></p>
 
                             </div>
 
 
                             <div class="cart-item-qty">
-                                Qty: <%= item.quantity %>
+
+                                <% if (item.isMissing || !item.isAvailable || item.isOutOfStock) { %>
+
+                                    <span class="cart-qty-static">Qty: <%= item.quantity %></span>
+
+                                <% } else { %>
+
+                                    <div class="cart-qty-controls">
+
+                                        <button
+                                            type="button"
+                                            class="cart-qty-btn cart-qty-decrease"
+                                            aria-label="Decrease quantity"
+                                            <%= item.quantity <= 1 ? "disabled" : "" %>
+                                        >&minus;</button>
+
+                                        <span class="cart-qty-value" data-role="quantity"><%= item.quantity %></span>
+
+                                        <button
+                                            type="button"
+                                            class="cart-qty-btn cart-qty-increase"
+                                            aria-label="Increase quantity"
+                                            <%= item.atMax ? "disabled" : "" %>
+                                        >+</button>
+
+                                    </div>
+
+                                <% } %>
+
                             </div>
 
 
-                            <div class="cart-item-subtotal">
-                                &#8377;<%= item.subtotal.toLocaleString("en-IN") %>
+                            <div class="cart-item-subtotal" data-role="subtotal">
+
+                                <% if (!item.isMissing && item.isAvailable) { %>
+
+                                    &#8377;<%= item.subtotal.toLocaleString("en-IN") %>
+
+                                <% } else { %>
+
+                                    &mdash;
+
+                                <% } %>
+
                             </div>
 
 
@@ -141,15 +230,19 @@
 
                     <div class="cart-summary-row">
                         <span>Subtotal</span>
-                        <span>&#8377;<%= cartTotal.toLocaleString("en-IN") %></span>
+                        <span data-role="cart-subtotal">&#8377;<%= cartTotal.toLocaleString("en-IN") %></span>
                     </div>
 
                     <div class="cart-summary-divider"></div>
 
                     <div class="cart-summary-row cart-summary-total">
                         <span>Total</span>
-                        <span>&#8377;<%= cartTotal.toLocaleString("en-IN") %></span>
+                        <span data-role="cart-total">&#8377;<%= cartTotal.toLocaleString("en-IN") %></span>
                     </div>
+
+                    <a href="/checkout" class="cart-continue-btn">
+                        Proceed to Checkout
+                    </a>
 
                     <a href="/products" class="cart-continue-btn">
                         Continue Shopping
@@ -188,5 +281,7 @@
     </div>
 
 </main>
+
+<script src="/js/cart.js"></script>
 
 <%- include("../partials/footer2") %>

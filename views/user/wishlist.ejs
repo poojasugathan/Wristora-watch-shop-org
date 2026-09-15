@@ -1,0 +1,122 @@
+<%- include("../partials/header", { title: title, user: user }) %>
+
+<link rel="stylesheet" href="/css/products.css">
+<link rel="stylesheet" href="/css/cart.css">
+<link rel="stylesheet" href="/css/wishlist.css">
+
+<main class="wishlist-page">
+
+    <div class="wishlist-container">
+
+        <p class="products-breadcrumb">
+            <a href="/">HOME</a> &gt; My Wishlist
+        </p>
+
+        <div class="wishlist-page-header">
+            <h1 class="products-title">My Wishlist</h1>
+        </div>
+
+        <% if (typeof error !== "undefined" && error) { %>
+            <div class="products-error"><%= error %></div>
+        <% } %>
+
+        <% if (wishlistItems && wishlistItems.length > 0) { %>
+
+            <div class="wishlist-items">
+
+                <% wishlistItems.forEach((item) => { %>
+
+                    <div class="wishlist-item <%= (item.isMissing || !item.isAvailable) ? 'wishlist-item-disabled' : '' %>"
+                         data-product-id="<%= item.productId %>">
+
+                        <div class="wishlist-item-image">
+
+                            <% if (!item.isMissing && item.image) { %>
+                                <img src="<%= item.image %>" alt="<%= item.productName %>">
+                            <% } else { %>
+                                <div class="image-missing"></div>
+                            <% } %>
+
+                        </div>
+
+                        <div class="wishlist-item-info">
+
+                            <% if (item.isMissing) { %>
+
+                                <h3 class="wishlist-item-name">Product unavailable</h3>
+
+                            <% } else { %>
+
+                                <h3 class="wishlist-item-name"><%= item.productName %></h3>
+
+                                <% if (item.brand) { %>
+                                    <p class="wishlist-item-brand"><%= item.brand %></p>
+                                <% } %>
+
+                                <p class="wishlist-item-price">
+                                    &#8377;<%= item.sellingPrice.toLocaleString("en-IN") %>
+                                </p>
+
+                            <% } %>
+
+                            <% if (item.isMissing || !item.isAvailable) { %>
+                                <p class="wishlist-item-message wishlist-item-message-error">
+                                    This product is no longer available.
+                                </p>
+                            <% } else if (item.isOutOfStock) { %>
+                                <p class="wishlist-item-message wishlist-item-message-error">
+                                    Out of Stock
+                                </p>
+                            <% } %>
+
+                            <p class="wishlist-item-inline-message" data-role="inline-message"></p>
+
+                        </div>
+
+                        <div class="wishlist-item-actions">
+
+                            <form
+                                action="/wishlist/remove/<%= item.productId %>"
+                                method="POST"
+                                class="wishlist-item-remove-form"
+                                onsubmit="return confirm('Remove this item from your wishlist?');"
+                            >
+                                <button type="submit" class="wishlist-item-remove-btn" aria-label="Remove item">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+
+                            <button
+                                type="button"
+                                class="wishlist-add-to-cart-btn"
+                                <%= (item.isMissing || !item.isAvailable || item.isOutOfStock) ? "disabled" : "" %>
+                            >
+                                ADD TO CART
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                <% }) %>
+
+            </div>
+
+        <% } else { %>
+
+            <div class="products-empty-state">
+                <div class="products-empty-icon"><i class="bi bi-heart"></i></div>
+                <h2>Your wishlist is empty</h2>
+                <p>Save the timepieces you love here.</p>
+                <a href="/products" class="products-empty-btn">Continue Shopping</a>
+            </div>
+
+        <% } %>
+
+    </div>
+
+</main>
+
+<script src="/js/wishlist.js"></script>
+
+<%- include("../partials/footer2") %>

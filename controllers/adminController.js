@@ -369,7 +369,14 @@ const adminLogout = (req, res) => {
 
 
 
-        res.clearCookie("connect.sid");
+        // PHASE 45 SESSION FIX — the admin session now uses
+        // its own cookie ("admin.sid", scoped to path
+        // "/admin"), not the shared "connect.sid" used by the
+        // user session. Clearing the wrong cookie name would
+        // destroy the session server-side but leave a stale
+        // admin.sid cookie sitting in the browser, which could
+        // still get sent on the next admin request.
+        res.clearCookie("admin.sid", { path: "/admin" });
 
 
         return res.redirect(
@@ -379,9 +386,6 @@ const adminLogout = (req, res) => {
     });
 
 };
-
-
-
 
 const loadDashboard = async (req, res) => {
 
