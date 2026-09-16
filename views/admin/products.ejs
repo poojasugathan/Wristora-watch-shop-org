@@ -54,7 +54,7 @@
 
             </div>
 
-            <a
+            
             
                 href="/admin/products/add"
                 class="product-add-button"
@@ -117,7 +117,7 @@
 
                 <% if (typeof search !== "undefined" && search) { %>
 
-                    <a
+                    
                         href="/admin/products"
                         class="product-tool-button"
                         title="Clear search"
@@ -225,7 +225,8 @@
                                 <form
                                     action="/admin/products/toggle-list/<%= product._id %>"
                                     method="POST"
-                                    onsubmit="return confirm(product.isListed ? 'Unlist this product?' : 'List this product?');"
+                                    class="product-toggle-list-form"
+                                    data-is-listed="<%= product.isListed ? 'true' : 'false' %>"
                                 >
 
                                     <% if (product.isListed === true) { %>
@@ -258,7 +259,8 @@
                                 <form
                                     action="/admin/products/toggle-block/<%= product._id %>"
                                     method="POST"
-                                    onsubmit="return confirm(product.isBlocked ? 'Unblock this product?' : 'Block this product?');"
+                                    class="product-toggle-block-form"
+                                    data-is-blocked="<%= product.isBlocked ? 'true' : 'false' %>"
                                 >
 
                                     <% if (product.isBlocked === true) { %>
@@ -288,7 +290,7 @@
 
                             <div class="product-action">
 
-                                <a
+                                
                                     href="/admin/products/edit/<%= product._id %>"
                                     class="product-action-button edit"
                                 >
@@ -299,7 +301,7 @@
                                 <form
                                     action="/admin/products/delete/<%= product._id %>"
                                     method="POST"
-                                    onsubmit="return confirm('Are you sure you want to delete this product?');"
+                                    class="product-delete-form"
                                 >
 
                                     <button
@@ -354,7 +356,7 @@
 
                 <% if (currentPage > 1) { %>
 
-                    <a
+                    
                         href="/admin/products?page=<%= currentPage - 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"
                         class="pagination-button"
                     >
@@ -386,7 +388,7 @@
 
                         <% } else { %>
 
-                            <a
+                            
                                 href="/admin/products?page=<%= pageNumber %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"
                                 class="pagination-page"
                             >
@@ -402,7 +404,7 @@
 
                 <% if (currentPage < totalPages) { %>
 
-                    <a
+                    
                         href="/admin/products?page=<%= currentPage + 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"
                         class="pagination-button"
                     >
@@ -425,6 +427,96 @@
     </main>
 
 </div>
+
+
+<script>
+
+    document.addEventListener("submit", function (event) {
+
+        const form = event.target;
+
+
+        if (form.classList.contains("product-toggle-list-form")) {
+
+            event.preventDefault();
+
+            const isListed = form.getAttribute("data-is-listed") === "true";
+
+            const message = isListed
+                ? "Unlist this product?"
+                : "List this product?";
+
+            Swal.fire({
+                title: message,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes",
+                cancelButtonText: "Cancel"
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+
+            });
+
+            return;
+
+        }
+
+
+        if (form.classList.contains("product-toggle-block-form")) {
+
+            event.preventDefault();
+
+            const isBlocked = form.getAttribute("data-is-blocked") === "true";
+
+            const message = isBlocked
+                ? "Unblock this product?"
+                : "Block this product?";
+
+            Swal.fire({
+                title: message,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes",
+                cancelButtonText: "Cancel"
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+
+            });
+
+            return;
+
+        }
+
+
+        if (form.classList.contains("product-delete-form")) {
+
+            event.preventDefault();
+
+            Swal.fire({
+                title: "Are you sure you want to delete this product?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete it",
+                cancelButtonText: "Cancel"
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+
+            });
+
+        }
+
+    });
+
+</script>
 
 </body>
 

@@ -200,7 +200,7 @@
                                 action="/cart/remove/<%= item.productId %>"
                                 method="POST"
                                 class="cart-item-remove-form"
-                                onsubmit="return confirm('Remove this item from your cart?');"
+                               
                             >
 
                                 <button
@@ -283,5 +283,45 @@
 </main>
 
 <script src="/js/cart.js"></script>
+
+<script>
+
+document
+    .querySelectorAll(".cart-item-remove-form")
+    .forEach((form) => {
+
+        form.addEventListener("submit", function (event) {
+
+            event.preventDefault();
+
+            Swal.fire({
+
+                title: "Remove this item from your cart?",
+
+                icon: "warning",
+
+                showCancelButton: true,
+
+                confirmButtonText: "Yes, remove it",
+
+                cancelButtonText: "Cancel",
+
+                reverseButtons: true
+
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    form.submit();
+
+                }
+
+            });
+
+        });
+
+    });
+
+</script>
 
 <%- include("../partials/footer2") %>

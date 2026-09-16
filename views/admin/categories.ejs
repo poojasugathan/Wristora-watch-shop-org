@@ -55,7 +55,7 @@
             </div>
 
 
-            <a
+            
                 href="/admin/categories/add"
                 class="category-add-button"
             >
@@ -116,7 +116,7 @@
 
                 <% if (typeof search !== "undefined" && search) { %>
 
-                    <a
+                    
                         href="/admin/categories"
                         class="category-tool-button"
                         title="Clear search"
@@ -207,7 +207,7 @@
 
                             <div class="category-action">
 
-                                <a
+                                
                                     href="/admin/categories/edit/<%= category._id %>"
                                     class="category-action-button edit"
                                 >
@@ -218,7 +218,7 @@
                                 <form
                                     action="/admin/categories/delete/<%= category._id %>"
                                     method="POST"
-                                    onsubmit="return confirm('Are you sure you want to delete this category?');"
+                                    class="category-delete-form"
                                 >
 
                                     <button
@@ -273,7 +273,7 @@
 
                 <% if (currentPage > 1) { %>
 
-                    <a
+                    
                         href="/admin/categories?page=<%= currentPage - 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"
                         class="pagination-button"
                     >
@@ -305,7 +305,7 @@
 
                         <% } else { %>
 
-                            <a
+                            
                                 href="/admin/categories?page=<%= pageNumber %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"
                                 class="pagination-page"
                             >
@@ -320,7 +320,7 @@
 
 
                 <% if (currentPage < totalPages) { %>
-                    <a
+                    
                     
                         href="/admin/categories?page=<%= currentPage + 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"
                         class="pagination-button"
@@ -344,6 +344,37 @@
     </main>
 
 </div>
+
+
+<script>
+
+    document.addEventListener("submit", function (event) {
+
+        const form = event.target;
+
+        if (form.classList.contains("category-delete-form")) {
+
+            event.preventDefault();
+
+            Swal.fire({
+                title: "Are you sure you want to delete this category?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete it",
+                cancelButtonText: "Cancel"
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+
+            });
+
+        }
+
+    });
+
+</script>
 
 </body>
 

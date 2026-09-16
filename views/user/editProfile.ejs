@@ -799,11 +799,12 @@
         ];
 
 
-        if (!allowedTypes.includes(file.type)) {
+                if (!allowedTypes.includes(file.type)) {
 
-            alert(
-                "Only JPG, JPEG, PNG and WEBP images are allowed."
-            );
+            Swal.fire({
+                icon: "warning",
+                title: "Only JPG, JPEG, PNG and WEBP images are allowed."
+            });
 
             profilePhotoInput.value = "";
 
@@ -821,17 +822,17 @@
 
         if (file.size > maxFileSize) {
 
-            alert(
-                "Profile image must be smaller than 5 MB."
-            );
+            Swal.fire({
+                icon: "warning",
+                title: "Profile image must be smaller than 5 MB."
+            });
 
             profilePhotoInput.value = "";
 
             return;
 
         }
-
-
+        
         // =================================================
         // PREVIEW
         // =================================================
@@ -877,7 +878,6 @@
     });
 
 
-
     // =====================================================
     // DELETE PROFILE IMAGE CONFIRMATION
     // =====================================================
@@ -892,22 +892,36 @@
             "submit",
             function (event) {
 
-                const confirmed = confirm(
-                    "Are you sure you want to remove your profile photo?"
-                );
+                event.preventDefault();
 
+                Swal.fire({
 
-                if (!confirmed) {
+                    title: "Are you sure you want to remove your profile photo?",
 
-                    event.preventDefault();
+                    icon: "warning",
 
-                }
+                    showCancelButton: true,
+
+                    confirmButtonText: "Yes, remove it",
+
+                    cancelButtonText: "Cancel",
+
+                    reverseButtons: true
+
+                }).then((result) => {
+
+                    if (result.isConfirmed) {
+
+                        deleteProfileImageForm.submit();
+
+                    }
+
+                });
 
             }
         );
 
     }
-
 </script>
 
 

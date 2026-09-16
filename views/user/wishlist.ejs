@@ -79,7 +79,7 @@
                                 action="/wishlist/remove/<%= item.productId %>"
                                 method="POST"
                                 class="wishlist-item-remove-form"
-                                onsubmit="return confirm('Remove this item from your wishlist?');"
+                                
                             >
                                 <button type="submit" class="wishlist-item-remove-btn" aria-label="Remove item">
                                     <i class="bi bi-trash"></i>
@@ -119,4 +119,46 @@
 
 <script src="/js/wishlist.js"></script>
 
+
+<script>
+
+document
+    .querySelectorAll(".wishlist-item-remove-form")
+    .forEach((form) => {
+
+        form.addEventListener("submit", function (event) {
+
+            event.preventDefault();
+
+            Swal.fire({
+
+                title: "Remove this item from your wishlist?",
+
+                icon: "warning",
+
+                showCancelButton: true,
+
+                confirmButtonText: "Yes, remove it",
+
+                cancelButtonText: "Cancel",
+
+                reverseButtons: true
+
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    form.submit();
+
+                }
+
+            });
+
+        });
+
+    });
+
+</script>
+
 <%- include("../partials/footer2") %>
+

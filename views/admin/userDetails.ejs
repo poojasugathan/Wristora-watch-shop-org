@@ -85,7 +85,7 @@
             <form
                 action="/admin/users/<%= user._id %>/block"
                 method="POST"
-                onsubmit="return confirmCustomerAction();"
+                id="customerActionForm"
             >
 
                 <% if (user.isBlocked === true) { %>
@@ -519,24 +519,36 @@
 
 <script>
 
-function confirmCustomerAction() {
+document.getElementById("customerActionForm").addEventListener(
+    "submit",
+    function (event) {
 
-    const isBlocked = <%= user.isBlocked ? "true" : "false" %>;
+        event.preventDefault();
 
-    if (isBlocked) {
+        const form = event.target;
 
-        return confirm(
-            "Are you sure you want to unblock this customer?"
-        );
+        const isBlocked = <%= user.isBlocked ? "true" : "false" %>;
+
+        const message = isBlocked
+            ? "Are you sure you want to unblock this customer?"
+            : "Are you sure you want to block this customer?";
+
+        Swal.fire({
+            title: message,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            cancelButtonText: "Cancel"
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+                form.submit();
+            }
+
+        });
 
     }
-
-
-    return confirm(
-        "Are you sure you want to block this customer?"
-    );
-
-}
+);
 
 </script>
 
