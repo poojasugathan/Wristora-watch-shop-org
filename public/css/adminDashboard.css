@@ -35,6 +35,7 @@ a {
     background: #ffffff;
     border-right: 1px solid #e4e4e4;
     display: flex;
+    position:fixed;
     flex-direction: column;
     flex-shrink: 0;
     padding: 25px 11px 15px;
@@ -161,6 +162,7 @@ a {
     flex: 1;
     padding: 31px 30px;
     min-width: 0;
+    margin-left: 236px;
 }
 
 .dashboard-header {

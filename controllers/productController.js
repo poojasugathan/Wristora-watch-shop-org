@@ -4,27 +4,16 @@ const Category = require("../models/categoryModel");
 const { getActiveBrands } = require("../services/brandService");
 
 
-// =====================================================
-// CONFIG
-// =====================================================
 
-const PRODUCTS_PER_PAGE = 12;
+const PRODUCTS_PER_PAGE = 9;
 
-// A product counts as "Limited Edition" when its stock is
-// at or below this number (but still greater than 0 — a
-// product with 0 stock is just out of stock, not "limited").
-// Change this single number later if you want a different
-// cutoff.
+
 const LIMITED_STOCK_THRESHOLD = 5;
 
-// How many related products to show on the product
-// details page (Phase 41).
+
 const RELATED_PRODUCTS_LIMIT = 4;
 
 
-// =====================================================
-// HELPERS (existing — unchanged)
-// =====================================================
 
 const escapeRegex = (text) =>
     text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -91,10 +80,6 @@ const buildPageNumbers = (currentPage, totalPages) => {
 };
 
 
-// =====================================================
-// FILTER HELPERS (PHASE 39)
-// =====================================================
-
 const parseCategoryFilter = (categoryValue) => {
 
     if (!categoryValue) {
@@ -148,17 +133,10 @@ const parsePriceFilter = (minRaw, maxRaw) => {
 };
 
 
-// "limited" only turns the filter on when the value is
-// literally the string "true" — anything else (missing,
-// "false", "1", garbage) just means "not applied".
-
 const parseLimitedFilter = (limitedValue) =>
     limitedValue === "true";
 
 
-// =====================================================
-// USER PRODUCT LISTING (PHASE 38 + PHASE 39 FILTERS)
-// =====================================================
 
 const loadProductListing = async (req, res) => {
 
@@ -189,9 +167,6 @@ const loadProductListing = async (req, res) => {
         }
 
 
-        // ---------------------------------------------
-        // FILTER INPUTS
-        // ---------------------------------------------
 
         const selectedCategory =
             parseCategoryFilter(req.query.category);
@@ -206,14 +181,12 @@ const loadProductListing = async (req, res) => {
             parseLimitedFilter(req.query.limited);
 
 
-        // ---------------------------------------------
-        // AVAILABILITY FILTER — always applied, unchanged.
-        // ---------------------------------------------
-
         const query = {
             isDeleted: false,
             isListed: true,
-            isBlocked: false
+            isBlocked: false,
+            
+           
         };
 
 
@@ -264,10 +237,6 @@ const loadProductListing = async (req, res) => {
 
         }
 
-        // "Limited Edition" = low stock, but not zero.
-        // If a normal stock condition ever gets added later
-        // for other reasons, this will need merging with it
-        // instead of being overwritten — worth remembering.
         if (isLimitedView) {
 
             query.stock = {
@@ -304,9 +273,6 @@ const loadProductListing = async (req, res) => {
             .lean();
 
 
-        // ---------------------------------------------
-        // DATA FOR THE FILTER DROPDOWNS
-        // ---------------------------------------------
 
         const categories = await Category.find({
             isListed: true,
@@ -317,10 +283,6 @@ const loadProductListing = async (req, res) => {
 
         const brands = await getActiveBrands();
 
-
-        // ---------------------------------------------
-        // QUERY STRING FOR LINKS
-        // ---------------------------------------------
 
         const linkParams = new URLSearchParams();
 
@@ -354,9 +316,6 @@ const loadProductListing = async (req, res) => {
 
         const baseQueryString = linkParams.toString();
 
-
-        // "Clear Filters" drops category/brand/price/limited
-        // but keeps search + sort.
 
         const clearFiltersParams = new URLSearchParams();
 
@@ -503,13 +462,6 @@ const loadProductDetails = async (req, res) => {
         const productId = req.params.id;
  
  
-        // ---------------------------------------------
-        // VALIDATE THE ID BEFORE EVER TOUCHING THE DB.
-        // An invalid id (e.g. "/products/abc") should
-        // never reach Product.findOne — Mongoose would
-        // throw a CastError and, without this check,
-        // that could crash the request.
-        // ---------------------------------------------
  
         if (!mongoose.Types.ObjectId.isValid(productId)) {
  
@@ -532,10 +484,6 @@ const loadProductDetails = async (req, res) => {
         }
  
  
-        // ---------------------------------------------
-        // MAIN PRODUCT LOOKUP — same three availability
-        // flags used everywhere else in the project.
-        // ---------------------------------------------
  
         const product = await Product.findOne({
             _id: productId,
@@ -567,13 +515,7 @@ const loadProductDetails = async (req, res) => {
  
         }
  
- 
-        // ---------------------------------------------
-        // RELATED PRODUCTS — same category, excluding
-        // this product itself and anything unavailable.
-        // Queried directly in MongoDB, never by loading
-        // the full catalog into memory.
-        // ---------------------------------------------
+
  
         const relatedProducts = await Product.find({
             category: product.category
@@ -640,3 +582,6 @@ module.exports = {
 
     loadProductDetails
 };
+
+
+

@@ -22,13 +22,7 @@
         href="/css/adminProducts.css"
     >
 
-    <!-- =====================================================
-         PHASE 37 — Cropper.js (CDN)
-         This project has no frontend bundler / no frontend npm
-         packages, so Cropper.js is loaded the same way the rest
-         of the frontend styling is assumed to be — via CDN,
-         directly on this page only (Add Product), not globally.
-    ===================================================== -->
+   
 <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css"
@@ -222,7 +216,7 @@
                     Cropping each image to a square is optional but recommended for a consistent look.
                 </p>
 
-                <!-- PHASE 36/37: image previews + crop buttons render here -->
+               
                 <div
                     class="product-image-preview-grid"
                     id="productImagePreviewGrid"
@@ -279,10 +273,6 @@
 </div>
 
 
-<!-- =====================================================
-     PHASE 37 — CROP MODAL (plain HTML/CSS, no Bootstrap JS
-     assumed to be loaded on this page)
-===================================================== -->
 
 <div class="crop-modal-overlay" id="cropModalOverlay">
 
@@ -343,43 +333,11 @@
 </div>
 
 
-<!-- Cropper.js library (CDN) -->
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
 
 <script>
 
-    // =====================================================
-    // PHASE 36 + 37 — IMAGE PREVIEW, CROP & FORM SUBMISSION
-    // =====================================================
-    //
-    // How this works, in plain terms:
-    //
-    // 1. When the admin picks files, we keep our OWN array
-    //    called `currentFiles` (a normal JS array of File
-    //    objects) — this is what we actually control and
-    //    edit, unlike the browser's built-in file input list,
-    //    which cannot be edited directly.
-    //
-    // 2. Each file gets a preview thumbnail with a "Crop"
-    //    button. Clicking it opens the crop modal with
-    //    Cropper.js locked to a 1:1 (square) box, matching
-    //    the square thumbnails used everywhere else on the
-    //    site (product table, existing-images row).
-    //
-    // 3. Confirming a crop draws the selected square onto a
-    //    canvas, turns that canvas into a real image File,
-    //    and replaces that image's entry in `currentFiles`.
-    //
-    // 4. Because a real <input type="file"> can't have its
-    //    file list edited directly, we rebuild it using the
-    //    browser's DataTransfer object every time
-    //    `currentFiles` changes. This keeps the native form
-    //    submission (multipart/form-data, same field name
-    //    "images") working exactly as it did in Phase 36 —
-    //    no fetch(), no JSON, no change needed on the backend.
-    //
-    // Cropping is OPTIONAL per image: an admin can submit
-    // some images cropped and some not.
 
     (function () {
 
@@ -400,18 +358,12 @@
         );
 
 
-        // Our own editable list of files. Index in this array
-        // matches the data-index attribute on each preview item.
+       
         let currentFiles = [];
 
-        // Object URLs we create for previews, so we can revoke
-        // them later and avoid memory leaks.
         let objectUrls = [];
 
 
-        // ---------------------------------------------
-        // CROP MODAL STATE
-        // ---------------------------------------------
 
         const cropModalOverlay = document.getElementById(
             "cropModalOverlay"
@@ -432,9 +384,6 @@
         let cropSourceUrl = null;
 
 
-        // ---------------------------------------------
-        // SYNC currentFiles BACK INTO THE REAL FILE INPUT
-        // ---------------------------------------------
 
         const syncInputFiles = () => {
 
@@ -450,10 +399,7 @@
 
             } catch (syncError) {
 
-                // DataTransfer is supported in all modern
-                // browsers, but if something unexpected
-                // happens we fail safely rather than crash
-                // the whole page.
+               
 
                 console.error(
                     "Unable to sync file input:",
@@ -465,9 +411,6 @@
         };
 
 
-        // ---------------------------------------------
-        // PREVIEW RENDERING
-        // ---------------------------------------------
 
         const clearPreview = () => {
 
@@ -556,10 +499,7 @@
 
             input.addEventListener("change", () => {
 
-                // A fresh file selection replaces our working
-                // list entirely (any previous crops on images
-                // no longer selected are simply discarded).
-
+              
                 currentFiles = Array.from(input.files || []);
 
                 renderPreview();
@@ -568,10 +508,6 @@
 
         }
 
-
-        // ---------------------------------------------
-        // OPENING THE CROP MODAL
-        // ---------------------------------------------
 
         const openCropModal = (index) => {
 
@@ -592,9 +528,6 @@
             cropModalOverlay.classList.add("is-open");
 
 
-            // Cropper.js needs the image to actually be loaded
-            // in the DOM before it can measure it, so we wait
-            // for the "load" event.
 
             cropTargetImage.onload = () => {
 

@@ -4,10 +4,6 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../models/userModel");
 
 
-// =====================================================
-// GOOGLE STRATEGY
-// =====================================================
-
 passport.use(
     new GoogleStrategy(
         {
@@ -26,10 +22,6 @@ passport.use(
         ) => {
 
             try {
-
-                // =================================================
-                // GOOGLE PROFILE DATA
-                // =================================================
 
                 const googleId = profile.id;
 
@@ -50,10 +42,6 @@ passport.use(
                     "User";
 
 
-                // =================================================
-                // EMAIL CHECK
-                // =================================================
-
                 if (!email) {
                     return done(
                         null,
@@ -65,11 +53,6 @@ passport.use(
                     );
                 }
 
-
-                // =================================================
-                // FIND USER BY GOOGLE ID
-                // =================================================
-
                 let user =
                     await User.findOne({
                         googleId: googleId
@@ -78,10 +61,7 @@ passport.use(
 
                 if (user) {
 
-                    // =============================================
-                    // BLOCKED GOOGLE USER
-                    // =============================================
-
+                  
                     if (user.isBlocked === true) {
 
                         return done(
@@ -99,9 +79,6 @@ passport.use(
                 }
 
 
-                // =================================================
-                // FIND USER BY EMAIL
-                // =================================================
 
                 user =
                     await User.findOne({
@@ -110,10 +87,6 @@ passport.use(
 
 
                 if (user) {
-
-                    // =============================================
-                    // BLOCKED EXISTING USER
-                    // =============================================
 
                     if (user.isBlocked === true) {
 
@@ -126,11 +99,6 @@ passport.use(
                             }
                         );
                     }
-
-
-                    // =============================================
-                    // LINK GOOGLE ACCOUNT
-                    // =============================================
 
                     user.googleId = googleId;
 
@@ -143,9 +111,6 @@ passport.use(
                 }
 
 
-                // =================================================
-                // CREATE NEW GOOGLE USER
-                // =================================================
 
                 user = new User({
 

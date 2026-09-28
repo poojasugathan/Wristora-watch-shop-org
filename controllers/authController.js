@@ -17,6 +17,13 @@ const {
 
 
 const loadSignup = (req, res) => {
+     if (
+        req.session &&
+        req.session.user &&
+        req.session.user.id
+    ) {
+        return res.redirect("/");
+    }
 
     res.render("user/signup", {
 
@@ -635,6 +642,14 @@ const resendOtp = async (req, res) => {
 
 const loadLogin = (req, res) => {
 
+    if (
+        req.session &&
+        req.session.user &&
+        req.session.user.id
+    ) {
+        return res.redirect("/");
+    }
+
     let error = null;
     let success = null;
 
@@ -1076,6 +1091,14 @@ const googleCallback = (req, res) => {
 
 
 const loadForgotPassword = (req, res) => {
+
+     if (
+        req.session &&
+        req.session.user &&
+        req.session.user.id
+    ) {
+        return res.redirect("/");
+    }
 
     res.render("user/forgotPassword", {
         title: "Forgot Password",

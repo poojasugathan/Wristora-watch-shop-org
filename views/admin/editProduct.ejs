@@ -22,6 +22,11 @@
         href="/css/adminProducts.css"
     >
 
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css"
+    >
+
 </head>
 
 
@@ -62,45 +67,63 @@
         <% } %>
 
 
-        <!-- =================================================
-             EXISTING IMAGES (READ-ONLY FOR NOW)
-             Full image add/remove/replace comes in a later
-             image-management phase.
-        ================================================== -->
-
-        <% if (product.images && product.images.length > 0) { %>
-
-            <div class="product-existing-images">
-
-                <label>Current Images</label>
-
-                <div class="product-existing-images-row">
-
-                    <% product.images.forEach(image => { %>
-
-                        <img
-                            src="<%= image.url %>"
-                            alt="<%= product.productName %>"
-                        >
-
-                    <% }) %>
-
-                </div>
-
-                <p class="product-form-hint">
-                    Image editing is not available yet — this will be added in a future update.
-                </p>
-
-            </div>
-
-        <% } %>
-
-
         <form
             action="/admin/products/edit/<%= product._id %>"
             method="POST"
+            enctype="multipart/form-data"
             class="product-form-card"
+            id="editProductForm"
         >
+
+            <% if (product.images && product.images.length > 0) { %>
+
+                <div class="product-existing-images">
+
+                    <label>Current Images</label>
+
+                    <div
+                        class="product-existing-images-row"
+                        id="existingImagesRow"
+                    >
+
+                        <% product.images.forEach(image => { %>
+
+                            <div
+                                class="product-image-preview-item existing-image-item"
+                                data-public-id="<%= image.publicId %>"
+                            >
+
+                                <img
+                                    src="<%= image.url %>"
+                                    alt="<%= product.productName %>"
+                                >
+
+                                <label class="product-image-remove-toggle">
+
+                                    <input
+                                        type="checkbox"
+                                        name="removeImages"
+                                        value="<%= image.publicId %>"
+                                        class="existing-image-remove-checkbox"
+                                    >
+
+                                    Remove
+
+                                </label>
+
+                            </div>
+
+                        <% }) %>
+
+                    </div>
+
+                    <p class="product-form-hint">
+                        Check "Remove" on any image you want to delete. A product must always have at least 3 images.
+                    </p>
+
+                </div>
+
+            <% } %>
 
             <div class="product-form-group">
 
@@ -219,6 +242,35 @@
             </div>
 
 
+            <div class="product-form-group">
+
+                <label>Add New Images</label>
+
+                <input
+                    type="file"
+                    name="images"
+                    id="productImagesInput"
+                    accept="image/jpeg,image/png,image/webp"
+                    multiple
+                >
+
+                <p class="product-form-hint">
+                    Allowed formats: JPG, PNG, WEBP. Max 5MB each. Cropping to a square is optional.
+                </p>
+
+                <div
+                    class="product-image-preview-grid"
+                    id="productImagePreviewGrid"
+                ></div>
+
+                <p
+                    class="product-image-preview-count"
+                    id="productImagePreviewCount"
+                ></p>
+
+            </div>
+
+
             <div class="product-form-group checkbox-group">
 
                 <label>
@@ -260,6 +312,537 @@
     </main>
 
 </div>
+
+
+<div class="crop-modal-overlay" id="cropModalOverlay">
+
+    <div class="crop-modal">
+
+        <div class="crop-modal-header">
+
+            <h3>Crop Product Image</h3>
+
+            <button
+                type="button"
+                class="crop-modal-close"
+                id="cropModalCloseBtn"
+            >&times;</button>
+
+        </div>
+
+        <div class="crop-modal-body">
+
+            <div class="crop-image-container">
+
+                <img id="cropTargetImage" src="" alt="Image to crop">
+
+            </div>
+
+        </div>
+
+        <div class="crop-modal-tools">
+
+            <button type="button" id="cropZoomInBtn">Zoom In</button>
+            <button type="button" id="cropZoomOutBtn">Zoom Out</button>
+            <button type="button" id="cropRotateLeftBtn">Rotate Left</button>
+            <button type="button" id="cropRotateRightBtn">Rotate Right</button>
+            <button type="button" id="cropResetBtn">Reset</button>
+
+        </div>
+
+        <p class="crop-modal-error" id="cropModalError"></p>
+
+        <div class="crop-modal-footer">
+
+            <button
+                type="button"
+                class="product-cancel-button"
+                id="cropCancelBtn"
+            >Cancel</button>
+
+            <button
+                type="button"
+                class="product-submit-button"
+                id="cropConfirmBtn"
+            >Confirm Crop</button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Cropper.js library (CDN) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+
+<script>
+
+    (function () {
+
+        const existingImageCheckboxes = Array.from(
+            document.querySelectorAll(
+                ".existing-image-remove-checkbox"
+            )
+        );
+
+        const totalExistingImages = existingImageCheckboxes.length;
+
+        const input = document.getElementById(
+            "productImagesInput"
+        );
+
+        const previewGrid = document.getElementById(
+            "productImagePreviewGrid"
+        );
+
+        const countLabel = document.getElementById(
+            "productImagePreviewCount"
+        );
+
+        const form = document.getElementById(
+            "editProductForm"
+        );
+
+
+        let currentFiles = [];
+
+        let objectUrls = [];
+
+
+        const cropModalOverlay = document.getElementById(
+            "cropModalOverlay"
+        );
+
+        const cropTargetImage = document.getElementById(
+            "cropTargetImage"
+        );
+
+        const cropModalError = document.getElementById(
+            "cropModalError"
+        );
+
+        let cropperInstance = null;
+
+        let cropIndexInProgress = null;
+
+        let cropSourceUrl = null;
+
+
+        const syncInputFiles = () => {
+
+            try {
+
+                const dataTransfer = new DataTransfer();
+
+                currentFiles.forEach((file) => {
+                    dataTransfer.items.add(file);
+                });
+
+                input.files = dataTransfer.files;
+
+            } catch (syncError) {
+
+                console.error(
+                    "Unable to sync file input:",
+                    syncError
+                );
+
+            }
+
+        };
+
+
+        const countKeptExistingImages = () => {
+
+            const removedCount = existingImageCheckboxes.filter(
+                (checkbox) => checkbox.checked
+            ).length;
+
+            return totalExistingImages - removedCount;
+
+        };
+
+
+        const updateCountLabel = () => {
+
+            const totalImages =
+                countKeptExistingImages() + currentFiles.length;
+
+            if (totalImages < 3) {
+
+                countLabel.textContent =
+                    totalImages +
+                    " image(s) total — at least 3 are required.";
+
+                countLabel.className =
+                    "product-image-preview-count is-invalid";
+
+            } else {
+
+                countLabel.textContent =
+                    totalImages + " image(s) total.";
+
+                countLabel.className =
+                    "product-image-preview-count is-valid";
+
+            }
+
+        };
+
+
+        existingImageCheckboxes.forEach((checkbox) => {
+
+            checkbox.addEventListener("change", () => {
+
+                const item = checkbox.closest(
+                    ".existing-image-item"
+                );
+
+                if (item) {
+
+                    item.classList.toggle(
+                        "marked-for-removal",
+                        checkbox.checked
+                    );
+
+                }
+
+                updateCountLabel();
+
+            });
+
+        });
+
+
+        const clearPreview = () => {
+
+            objectUrls.forEach((url) => {
+                URL.revokeObjectURL(url);
+            });
+
+            objectUrls = [];
+
+            previewGrid.innerHTML = "";
+
+        };
+
+
+        const renderPreview = () => {
+
+            clearPreview();
+
+            currentFiles.forEach((file, index) => {
+
+                const url = URL.createObjectURL(file);
+
+                objectUrls.push(url);
+
+                const item = document.createElement("div");
+                item.className = "product-image-preview-item";
+                item.setAttribute("data-index", index);
+
+                const img = document.createElement("img");
+                img.src = url;
+                img.alt = file.name;
+
+                const cropBtn = document.createElement("button");
+                cropBtn.type = "button";
+                cropBtn.className = "product-image-crop-btn";
+                cropBtn.textContent = "Crop";
+                cropBtn.setAttribute("data-index", index);
+
+                item.appendChild(img);
+                item.appendChild(cropBtn);
+
+                if (file.wasCropped) {
+
+                    const badge = document.createElement("span");
+                    badge.className = "product-image-cropped-badge";
+                    badge.textContent = "Cropped";
+                    item.appendChild(badge);
+
+                }
+
+                previewGrid.appendChild(item);
+
+            });
+
+            updateCountLabel();
+
+        };
+
+
+        if (input) {
+
+            input.addEventListener("change", () => {
+
+                currentFiles = Array.from(input.files || []);
+                renderPreview();
+
+            });
+
+        }
+
+
+        const openCropModal = (index) => {
+
+            const file = currentFiles[index];
+
+            if (!file) {
+                return;
+            }
+
+            cropIndexInProgress = index;
+
+            cropModalError.textContent = "";
+
+            cropSourceUrl = URL.createObjectURL(file);
+
+            cropTargetImage.src = cropSourceUrl;
+
+            cropModalOverlay.classList.add("is-open");
+
+
+            cropTargetImage.onload = () => {
+
+                if (cropperInstance) {
+                    cropperInstance.destroy();
+                    cropperInstance = null;
+                }
+
+                try {
+
+                    cropperInstance = new Cropper(
+                        cropTargetImage,
+                        {
+                            aspectRatio: 1,
+                            viewMode: 1,
+                            autoCropArea: 1,
+                            responsive: true,
+                            background: false
+                        }
+                    );
+
+                } catch (cropperError) {
+
+                    console.error(
+                        "Cropper initialization error:",
+                        cropperError
+                    );
+
+                    cropModalError.textContent =
+                        "This image could not be opened for cropping. You can still upload it uncropped.";
+
+                }
+
+            };
+
+            cropTargetImage.onerror = () => {
+
+                cropModalError.textContent =
+                    "This image appears to be invalid or corrupted and cannot be cropped.";
+
+            };
+
+        };
+
+
+        const closeCropModal = () => {
+
+            cropModalOverlay.classList.remove("is-open");
+
+            if (cropperInstance) {
+                cropperInstance.destroy();
+                cropperInstance = null;
+            }
+
+            if (cropSourceUrl) {
+                URL.revokeObjectURL(cropSourceUrl);
+                cropSourceUrl = null;
+            }
+
+            cropIndexInProgress = null;
+
+            cropModalError.textContent = "";
+
+        };
+
+
+        previewGrid.addEventListener("click", (event) => {
+
+            const target = event.target;
+
+            if (
+                target &&
+                target.classList.contains(
+                    "product-image-crop-btn"
+                )
+            ) {
+
+                const index = parseInt(
+                    target.getAttribute("data-index"),
+                    10
+                );
+
+                openCropModal(index);
+
+            }
+
+        });
+
+
+        document.getElementById(
+            "cropZoomInBtn"
+        ).addEventListener("click", () => {
+            if (cropperInstance) cropperInstance.zoom(0.1);
+        });
+
+        document.getElementById(
+            "cropZoomOutBtn"
+        ).addEventListener("click", () => {
+            if (cropperInstance) cropperInstance.zoom(-0.1);
+        });
+
+        document.getElementById(
+            "cropRotateLeftBtn"
+        ).addEventListener("click", () => {
+            if (cropperInstance) cropperInstance.rotate(-90);
+        });
+
+        document.getElementById(
+            "cropRotateRightBtn"
+        ).addEventListener("click", () => {
+            if (cropperInstance) cropperInstance.rotate(90);
+        });
+
+        document.getElementById(
+            "cropResetBtn"
+        ).addEventListener("click", () => {
+            if (cropperInstance) cropperInstance.reset();
+        });
+
+        document.getElementById(
+            "cropModalCloseBtn"
+        ).addEventListener("click", closeCropModal);
+
+        document.getElementById(
+            "cropCancelBtn"
+        ).addEventListener("click", closeCropModal);
+
+
+        document.getElementById(
+            "cropConfirmBtn"
+        ).addEventListener("click", () => {
+
+            if (
+                !cropperInstance ||
+                cropIndexInProgress === null
+            ) {
+                closeCropModal();
+                return;
+            }
+
+            let canvas;
+
+            try {
+
+                canvas = cropperInstance.getCroppedCanvas({
+                    width: 800,
+                    height: 800,
+                    imageSmoothingQuality: "high"
+                });
+
+            } catch (canvasError) {
+
+                console.error(
+                    "Canvas processing error:",
+                    canvasError
+                );
+
+                cropModalError.textContent =
+                    "Cropping failed. Please try again or upload this image uncropped.";
+
+                return;
+
+            }
+
+            if (!canvas) {
+
+                cropModalError.textContent =
+                    "Cropping failed. Please try again or upload this image uncropped.";
+
+                return;
+
+            }
+
+            const originalFile = currentFiles[cropIndexInProgress];
+
+            canvas.toBlob(
+
+                (blob) => {
+
+                    if (!blob) {
+
+                        cropModalError.textContent =
+                            "Cropping failed while preparing the image. Please try again.";
+
+                        return;
+
+                    }
+
+                    const croppedFile = new File(
+                        [blob],
+                        originalFile.name,
+                        { type: "image/jpeg" }
+                    );
+
+                    croppedFile.wasCropped = true;
+
+                    currentFiles[cropIndexInProgress] = croppedFile;
+
+                    syncInputFiles();
+                    renderPreview();
+                    closeCropModal();
+
+                },
+                "image/jpeg",
+                0.9
+
+            );
+
+        });
+
+
+        if (form) {
+
+            form.addEventListener("submit", (event) => {
+
+                const totalImages =
+                    countKeptExistingImages() + currentFiles.length;
+
+                if (totalImages < 3) {
+
+                    event.preventDefault();
+
+                    countLabel.textContent =
+                        "A product must have at least 3 images. Please keep or add more before saving.";
+
+                    countLabel.className =
+                        "product-image-preview-count is-invalid";
+
+                }
+
+            });
+
+        }
+
+
+        updateCountLabel();
+
+    })();
+
+</script>
 
 </body>
 

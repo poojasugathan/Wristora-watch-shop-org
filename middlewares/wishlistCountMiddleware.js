@@ -1,9 +1,4 @@
-// =====================================================
-// WISHLIST COUNT MIDDLEWARE (PHASE 45)
-// Identical pattern to cartCountMiddleware — runs on every
-// request, makes res.locals.wishlistCount available to
-// every EJS view.
-// =====================================================
+
 
 const { getWishlistItemCount } = require("../controllers/wishlistController");
 

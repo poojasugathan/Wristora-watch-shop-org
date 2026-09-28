@@ -6,18 +6,14 @@
 
     <div class="products-container">
 
-        <!-- =====================================================
-             BREADCRUMB
-        ====================================================== -->
+      
 
         <p class="products-breadcrumb">
             <a href="/">HOME</a> &gt; PRODUCTS
         </p>
 
 
-        <!-- =====================================================
-             PAGE HEADER
-        ====================================================== -->
+       
 
         <div class="products-page-header">
 
@@ -45,10 +41,6 @@
         </div>
 
 
-        <!-- =====================================================
-             ERROR (backend/database failure)
-        ====================================================== -->
-
         <% if (typeof error !== "undefined" && error) { %>
 
             <div class="products-error">
@@ -58,13 +50,7 @@
         <% } %>
 
 
-        <!-- =====================================================
-             SEARCH + SORT + FILTERS
-             One form so "Apply Filters" also carries the
-             current search text and sort choice along with it,
-             and vice versa.
-        ====================================================== -->
-
+       
         <form
             action="/products"
             method="GET"
@@ -146,9 +132,6 @@
             </div>
 
 
-            <!-- =============================================
-                 FILTERS
-            ============================================== -->
 
             <div class="products-filters">
 
@@ -159,6 +142,7 @@
                     <select
                         name="category"
                         id="productsCategorySelect"
+                        
                     >
 
                         <option value="" <%= selectedCategory === "" ? "selected" : "" %>>
@@ -262,9 +246,7 @@
         </form>
 
 
-        <!-- =====================================================
-             PRODUCT GRID
-        ====================================================== -->
+      
 
         <% if (products && products.length > 0) { %>
 
@@ -354,11 +336,6 @@
 
             </div>
 
-
-            <!-- =================================================
-                 PAGINATION
-            ================================================== -->
-
             <% if (totalPages > 1) { %>
 
                 <nav class="products-pagination" aria-label="Product pages">
@@ -429,10 +406,7 @@
 
         <% } else { %>
 
-            <!-- =================================================
-                 EMPTY STATE
-            ================================================== -->
-
+           
             <div class="products-empty-state">
 
                 <div class="products-empty-icon">

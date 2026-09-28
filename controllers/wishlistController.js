@@ -12,15 +12,6 @@ const AVAILABILITY_FILTER = {
 };
 
 
-// =====================================================
-// SHARED HELPER — BUILD WISHLIST SUMMARY (PHASE 45)
-//
-// Same reasoning as buildCartSummary in cartController:
-// one place that reads the real, current Product data for
-// every item, instead of trusting whatever was true when
-// the item was added.
-// =====================================================
-
 const buildWishlistSummary = async (userId) => {
 
     const wishlist = await Wishlist.findOne({ user: userId }).lean();
@@ -90,11 +81,6 @@ const buildWishlistSummary = async (userId) => {
 
 };
 
-
-// =====================================================
-// VIEW WISHLIST
-// =====================================================
-
 const loadWishlist = async (req, res) => {
 
     try {
@@ -123,10 +109,6 @@ const loadWishlist = async (req, res) => {
 
 };
 
-
-// =====================================================
-// ADD TO WISHLIST
-// =====================================================
 
 const addToWishlist = async (req, res) => {
 
@@ -208,10 +190,6 @@ const addToWishlist = async (req, res) => {
 };
 
 
-// =====================================================
-// REMOVE FROM WISHLIST (form POST + redirect, matching
-// the existing cart remove-button pattern)
-// =====================================================
 
 const removeFromWishlist = async (req, res) => {
 
@@ -248,19 +226,6 @@ const removeFromWishlist = async (req, res) => {
 };
 
 
-// =====================================================
-// PHASE 45 CORE — ADD WISHLIST ITEM TO CART
-//
-// The whole point of this phase:
-//   1. Confirm this wishlist item belongs to this user.
-//   2. Try to add it to the cart using the EXACT SAME
-//      validation as the normal /cart/add route
-//      (attemptAddToCart, imported from cartController).
-//   3. Only if that succeeds, remove it from the wishlist.
-//   4. If it fails for any reason, the wishlist item is
-//      left completely untouched.
-// =====================================================
-
 const addWishlistItemToCart = async (req, res) => {
 
     try {
@@ -280,11 +245,7 @@ const addWishlistItemToCart = async (req, res) => {
 
         }
 
-        // Ownership check: this must be an item that is
-        // actually sitting in THIS user's wishlist. Without
-        // this, a manipulated request could try to move an
-        // arbitrary productId into the cart under the guise
-        // of "wishlist integration."
+       
         const wishlist = await Wishlist.findOne({ user: userId });
 
         const itemInWishlist =
@@ -302,11 +263,9 @@ const addWishlistItemToCart = async (req, res) => {
 
         }
 
-        // Step 1: attempt the cart addition using the exact
-        // same rules as everywhere else in the app.
         const cartResult = await attemptAddToCart(userId, productId);
 
-        // Step 2: only remove from wishlist if that succeeded.
+       
         if (!cartResult.success) {
 
             return res.status(cartResult.statusCode).json({
@@ -344,9 +303,6 @@ const addWishlistItemToCart = async (req, res) => {
 };
 
 
-// =====================================================
-// WISHLIST ITEM COUNT (used by navbar badge)
-// =====================================================
 
 const getWishlistItemCount = async (userId) => {
 

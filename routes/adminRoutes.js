@@ -145,6 +145,9 @@ router.get(
 router.post(
     "/products/edit/:id",
     requireAdmin,
+    handleProductImageUpload(
+        productUpload.array("images", 8)
+    ),
     adminController.editProduct
 );
 

@@ -9,35 +9,12 @@ const AVAILABILITY_FILTER = {
     isBlocked: false
 };
 
-// =====================================================
-// PHASE 44 — MAXIMUM QUANTITY PER PRODUCT
-//
-// The project had no maximum defined anywhere before this
-// phase. 5 is the agreed limit. The ACTUAL ceiling for any
-// product is whichever is smaller: this constant, or the
-// product's current stock. That smaller number is called
-// the "effective max" everywhere below.
-// =====================================================
+
 
 const MAX_QUANTITY_PER_PRODUCT = 5;
 
 
-// =====================================================
-// SHARED HELPER — BUILD CART SUMMARY (PHASE 44)
-//
-// Every place that needs "what does this user's cart look
-// like right now" (the cart page, increase, decrease, and
-// now Phase 46 checkout) goes through this ONE function.
-// That way there is only one definition of availability /
-// stock / totals logic instead of several copies that
-// could drift apart.
-//
-// It does NOT use populate(). Populate would silently turn
-// a deleted product's reference into `null` and we would
-// lose the original product id — and we need that id so we
-// can still show "this product is no longer available"
-// instead of just making the row disappear.
-// =====================================================
+
 
 const buildCartSummary = async (userId) => {
 
@@ -145,11 +122,6 @@ const buildCartSummary = async (userId) => {
 };
 
 
-// =====================================================
-// PHASE 45 — REUSABLE "ADD TO CART" LOGIC
-// (unchanged)
-// =====================================================
-
 const attemptAddToCart = async (userId, productId) => {
 
     if (
@@ -249,15 +221,6 @@ const attemptAddToCart = async (userId, productId) => {
 };
 
 
-// =====================================================
-// PHASE 46 — MAP A "WHY CHECKOUT WAS BLOCKED" QUERY FLAG
-// TO A FRIENDLY MESSAGE FOR THE CART PAGE.
-//
-// checkoutController redirects back here with
-// ?checkoutError=empty / invalid / server. This turns that
-// into text a user can actually read. It never exposes any
-// internal detail — just a plain sentence.
-// =====================================================
 
 const CHECKOUT_ERROR_MESSAGES = {
     empty: "Your cart is empty. Add a product before checking out.",
@@ -268,10 +231,7 @@ const CHECKOUT_ERROR_MESSAGES = {
 };
 
 
-// =====================================================
-// VIEW CART (PHASE 43, rebuilt on the Phase 44 helper,
-// now also surfaces Phase 46 checkout-block messages)
-// =====================================================
+
 
 const loadCart = async (req, res) => {
 
@@ -320,12 +280,6 @@ const loadCart = async (req, res) => {
 
 };
 
-
-// =====================================================
-// ADD TO CART (PHASE 43, tightened for PHASE 44,
-// now just a thin wrapper around attemptAddToCart — PHASE 45)
-// =====================================================
-
 const addToCart = async (req, res) => {
 
     try {
@@ -354,9 +308,6 @@ const addToCart = async (req, res) => {
 };
 
 
-// =====================================================
-// INCREASE QUANTITY (PHASE 44 — unchanged)
-// =====================================================
 
 const increaseQuantity = async (req, res) => {
 
@@ -482,10 +433,6 @@ const increaseQuantity = async (req, res) => {
 };
 
 
-// =====================================================
-// DECREASE QUANTITY (PHASE 44 — unchanged)
-// =====================================================
-
 const decreaseQuantity = async (req, res) => {
 
     try {
@@ -573,10 +520,6 @@ const decreaseQuantity = async (req, res) => {
 };
 
 
-// =====================================================
-// REMOVE FROM CART (PHASE 43 — unchanged)
-// =====================================================
-
 const removeFromCart = async (req, res) => {
 
     try {
@@ -612,9 +555,6 @@ const removeFromCart = async (req, res) => {
 };
 
 
-// =====================================================
-// CART ITEM COUNT (PHASE 43 — unchanged, used by navbar)
-// =====================================================
 
 const getCartItemCount = async (userId) => {
 
@@ -642,8 +582,8 @@ module.exports = {
     decreaseQuantity,
     removeFromCart,
     getCartItemCount,
-    attemptAddToCart,     // PHASE 45 — exported for wishlistController
-    buildCartSummary,     // PHASE 46 — exported for checkoutController
-    AVAILABILITY_FILTER,  // PHASE 46 — exported in case checkoutController needs it directly
+    attemptAddToCart,    
+    buildCartSummary,     
+    AVAILABILITY_FILTER,  
     MAX_QUANTITY_PER_PRODUCT
 };

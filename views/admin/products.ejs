@@ -35,11 +35,6 @@
 
     <main class="admin-main product-main">
 
-
-        <!-- =================================================
-             PAGE HEADER
-        ================================================== -->
-
         <div class="product-header">
 
             <div>
@@ -54,7 +49,7 @@
 
             </div>
 
-            
+            <a
             
                 href="/admin/products/add"
                 class="product-add-button"
@@ -67,10 +62,6 @@
 
 
 
-        <!-- =================================================
-             SUCCESS / ERROR MESSAGE
-        ================================================== -->
-
         <% if (typeof error !== "undefined" && error) { %>
 
             <div class="product-error">
@@ -79,11 +70,6 @@
 
         <% } %>
 
-
-
-        <!-- =================================================
-             LIST HEADER: SEARCH
-        ================================================== -->
 
         <div class="product-list-header">
 
@@ -111,13 +97,14 @@
                         value="<%= typeof search !== 'undefined' ? search : '' %>"
                         autocomplete="off"
                     >
+                   
 
                 </form>
 
 
                 <% if (typeof search !== "undefined" && search) { %>
 
-                    
+                    <a
                         href="/admin/products"
                         class="product-tool-button"
                         title="Clear search"
@@ -132,10 +119,6 @@
         </div>
 
 
-
-        <!-- =================================================
-             PRODUCT TABLE
-        ================================================== -->
 
         <section class="product-table-card">
 
@@ -290,7 +273,7 @@
 
                             <div class="product-action">
 
-                                
+                                <a
                                     href="/admin/products/edit/<%= product._id %>"
                                     class="product-action-button edit"
                                 >
@@ -356,7 +339,7 @@
 
                 <% if (currentPage > 1) { %>
 
-                    
+                    <a
                         href="/admin/products?page=<%= currentPage - 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"
                         class="pagination-button"
                     >
@@ -388,7 +371,7 @@
 
                         <% } else { %>
 
-                            
+                            <a
                                 href="/admin/products?page=<%= pageNumber %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"
                                 class="pagination-page"
                             >
@@ -404,7 +387,7 @@
 
                 <% if (currentPage < totalPages) { %>
 
-                    
+                    <a
                         href="/admin/products?page=<%= currentPage + 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"
                         class="pagination-button"
                     >
@@ -521,3 +504,5 @@
 </body>
 
 </html>
+
+

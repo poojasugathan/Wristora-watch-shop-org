@@ -169,7 +169,7 @@ const updateProfile = async (req, res) => {
             : "";
 
 
-        
+       
 
         const nameRegex =
             /^[A-Za-z]+(?:[ '-][A-Za-z]+)*$/;
@@ -476,10 +476,6 @@ const updateEmail = async (req, res) => {
         }
 
 
-        // =================================================
-        // EMAIL FORMAT
-        // =================================================
-
         const emailRegex =
             /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -641,7 +637,7 @@ const updateEmail = async (req, res) => {
             );
 
 
-            // Delete OTP if email could not be sent
+    
             await deleteOtp(
                 newEmail,
                 "email-change"

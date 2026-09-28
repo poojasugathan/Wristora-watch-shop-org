@@ -31,24 +31,10 @@
 <div class="admin-layout">
 
 
-    <!-- =====================================================
-         SIDEBAR
-    ====================================================== -->
-
     <%- include("partials/sidebar", { currentPage: "users" }) %>
-
-
-
-    <!-- =====================================================
-         MAIN CONTENT
-    ====================================================== -->
 
     <main class="admin-main customer-details-main">
 
-
-        <!-- =================================================
-             PAGE HEADER
-        ================================================== -->
 
         <div class="customer-details-header">
 
@@ -77,10 +63,6 @@
 
             </div>
 
-
-            <!-- =================================================
-                 BLOCK / UNBLOCK BUTTON
-            ================================================== -->
 
             <form
                 action="/admin/users/<%= user._id %>/block"
@@ -113,28 +95,14 @@
         </div>
 
 
-
-        <!-- =================================================
-             CUSTOMER DETAILS CONTENT
-        ================================================== -->
-
         <section class="customer-details-layout">
 
-
-            <!-- =================================================
-                 LEFT CUSTOMER PROFILE CARD
-            ================================================== -->
 
             <div class="customer-profile-card">
 
 
-                <!-- PROFILE COVER -->
-
                 <div class="customer-profile-cover"></div>
 
-
-
-                <!-- PROFILE IMAGE -->
 
                 <div class="customer-profile-image-wrapper">
 
@@ -164,9 +132,6 @@
                 </div>
 
 
-
-                <!-- CUSTOMER NAME -->
-
                 <h2 class="customer-profile-name">
 
                     <%= user.firstName || "" %>
@@ -174,14 +139,8 @@
 
                 </h2>
 
-
-
-                <!-- CUSTOMER INFORMATION -->
-
                 <div class="customer-profile-information">
 
-
-                    <!-- CUSTOMER ID -->
 
                     <div class="customer-information-item">
 
@@ -420,10 +379,6 @@
 
 
 
-                <!-- =================================================
-                     TRANSACTION HISTORY
-                ================================================== -->
-
                 <div class="customer-transaction-card">
 
                     <div class="customer-transaction-header">
@@ -512,29 +467,16 @@
 </div>
 
 
-
-<!-- =====================================================
-     CONFIRMATION
-====================================================== -->
-
 <script>
 
-document.getElementById("customerActionForm").addEventListener(
-    "submit",
-    function (event) {
-
+document.getElementById("customerActionForm").addEventListener("submit",function (event) {
+    
         event.preventDefault();
 
         const form = event.target;
 
-        const isBlocked = <%= user.isBlocked ? "true" : "false" %>;
-
-        const message = isBlocked
-            ? "Are you sure you want to unblock this customer?"
-            : "Are you sure you want to block this customer?";
-
         Swal.fire({
-            title: message,
+            title: "<%= user.isBlocked ? 'Are you sure you want to unblock this customer?' : 'Are you sure you want to block this customer?' %>",
             icon: "warning",
             showCancelButton: true,
             confirmButtonText: "Yes",

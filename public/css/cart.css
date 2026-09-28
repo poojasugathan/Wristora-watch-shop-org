@@ -48,9 +48,7 @@
     padding: 16px;
 }
 
-/* PHASE 44 — unavailable/out-of-stock/missing items are
-   still shown, but visually muted so it's obvious they
-   can't be purchased right now. */
+
 .cart-item.cart-item-disabled {
     opacity: 0.6;
 }

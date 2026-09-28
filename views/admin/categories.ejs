@@ -36,10 +36,6 @@
     <main class="admin-main category-main">
 
 
-        <!-- =================================================
-             PAGE HEADER
-        ================================================== -->
-
         <div class="category-header">
 
             <div>
@@ -55,7 +51,7 @@
             </div>
 
 
-            
+            <a
                 href="/admin/categories/add"
                 class="category-add-button"
             >
@@ -64,11 +60,6 @@
 
         </div>
 
-
-
-        <!-- =================================================
-             SUCCESS / ERROR MESSAGE
-        ================================================== -->
 
         <% if (typeof error !== "undefined" && error) { %>
 
@@ -79,10 +70,6 @@
         <% } %>
 
 
-
-        <!-- =================================================
-             LIST HEADER: SEARCH
-        ================================================== -->
 
         <div class="category-list-header">
 
@@ -116,7 +103,7 @@
 
                 <% if (typeof search !== "undefined" && search) { %>
 
-                    
+                   <a 
                         href="/admin/categories"
                         class="category-tool-button"
                         title="Clear search"
@@ -130,11 +117,6 @@
 
         </div>
 
-
-
-        <!-- =================================================
-             CATEGORY TABLE
-        ================================================== -->
 
         <section class="category-table-card">
 
@@ -208,7 +190,7 @@
                             <div class="category-action">
 
                                 
-                                    href="/admin/categories/edit/<%= category._id %>"
+                                <a    href="/admin/categories/edit/<%= category._id %>"
                                     class="category-action-button edit"
                                 >
                                     EDIT
@@ -262,18 +244,13 @@
         </section>
 
 
-
-        <!-- =================================================
-             PAGINATION
-        ================================================== -->
-
         <% if (totalPages > 1) { %>
 
             <div class="category-pagination">
 
                 <% if (currentPage > 1) { %>
 
-                    
+                    <a
                         href="/admin/categories?page=<%= currentPage - 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"
                         class="pagination-button"
                     >
@@ -305,7 +282,7 @@
 
                         <% } else { %>
 
-                            
+                            <a
                                 href="/admin/categories?page=<%= pageNumber %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"
                                 class="pagination-page"
                             >
@@ -321,7 +298,7 @@
 
                 <% if (currentPage < totalPages) { %>
                     
-                    
+                    <a
                         href="/admin/categories?page=<%= currentPage + 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"
                         class="pagination-button"
                     >

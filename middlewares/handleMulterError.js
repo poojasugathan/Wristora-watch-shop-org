@@ -71,8 +71,10 @@ const handleProductImageUpload = (multerMiddleware) => {
             }
 
 
+            const redirectPath = req.originalUrl.split("?")[0];
+
             return res.redirect(
-                `/admin/products/add?error=${errorCode}`
+                `${redirectPath}?error=${errorCode}`
             );
 
         });

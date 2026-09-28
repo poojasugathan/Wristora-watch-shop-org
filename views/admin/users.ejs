@@ -31,24 +31,14 @@
 <div class="admin-layout">
 
 
-    <!-- =====================================================
-         SIDEBAR
-    ====================================================== -->
 
     <%- include("partials/sidebar", { currentPage: "users" }) %>
 
 
 
-    <!-- =====================================================
-         MAIN CONTENT
-    ====================================================== -->
-
     <main class="admin-main customers-main">
 
 
-        <!-- =================================================
-             PAGE HEADER
-        ================================================== -->
 
         <div class="customers-header">
 
@@ -85,14 +75,7 @@
 
 
 
-        <!-- =================================================
-             SUMMARY CARDS
-        ================================================== -->
-
         <section class="customer-summary-grid">
-
-
-            <!-- TOTAL CUSTOMERS -->
 
             <div class="customer-summary-card">
 
@@ -109,13 +92,10 @@
                 </span>
 
 
-                
-
+            
             </div>
 
 
-
-            <!-- NEW CUSTOMERS -->
 
             <div class="customer-summary-card">
 
@@ -137,8 +117,6 @@
             </div>
 
 
-
-            <!-- VISITOR -->
 
             <div class="customer-summary-card">
 
@@ -162,10 +140,6 @@
         </section>
 
 
-
-        <!-- =================================================
-             CUSTOMER OVERVIEW
-        ================================================== -->
 
         <section class="customer-overview-card">
 
@@ -223,19 +197,13 @@
                 <div class="overview-grid-line"></div>
 
                 <div class="overview-message">
-                    Customer activity overview will be connected
-                    to order/visitor data in a later phase.
+                    Customer activity 
                 </div>
 
             </div>
 
         </section>
 
-
-
-        <!-- =================================================
-             CUSTOMER LIST HEADER
-        ================================================== -->
 
         <div class="customer-list-header">
 
@@ -247,7 +215,7 @@
             <div class="customer-tools">
 
 
-                <!-- SEARCH UI ONLY FOR PHASE 24 -->
+                
 
                 <form
                     class="customer-search"
@@ -282,7 +250,7 @@
                     <% } %>
 
             
-                <!-- SORT UI -->
+              
 
            <div class="sort-container">
 
@@ -318,11 +286,6 @@
         </div>
 
 
-
-        <!-- =================================================
-             ERROR MESSAGE
-        ================================================== -->
-
         <% if (typeof error !== "undefined" && error) { %>
 
             <div class="customer-error">
@@ -333,10 +296,6 @@
 
 
 
-        <!-- =================================================
-             CUSTOMER TABLE
-        ================================================== -->
-
         <section class="customer-table-card">
 
             <% if (users && users.length > 0) { %>
@@ -344,8 +303,6 @@
 
                 <div class="customer-table">
 
-
-                    <!-- TABLE HEADER -->
 
                     <div class="customer-table-header">
 

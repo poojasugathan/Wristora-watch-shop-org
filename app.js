@@ -1,9 +1,9 @@
 const express = require("express");
 const path = require("path");
 const env=require("dotenv").config();
-
-
 const cookieParser = require("cookie-parser");
+
+
 const connectDB = require("./config/db");
 const sessionConfig = require("./config/session");
 const adminSessionConfig = require("./config/adminSession");
@@ -29,16 +29,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-
-// =====================================================
-// SESSION DISPATCH
-//
-// /admin requests get their own session (their own cookie,
-// "admin.sid"). Every other request gets the regular user
-// session ("connect.sid"). This keeps the two identities on
-// completely separate cookies, so they can never overwrite
-// each other in the same browser.
-// =====================================================
 
 app.use((req, res, next) => {
 

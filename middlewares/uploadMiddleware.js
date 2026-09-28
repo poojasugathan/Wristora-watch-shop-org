@@ -4,10 +4,6 @@ const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const cloudinary = require("../config/cloudinary");
 
 
-// =====================================================
-// CLOUDINARY STORAGE
-// =====================================================
-
 const storage = new CloudinaryStorage({
 
     cloudinary: cloudinary,
@@ -28,10 +24,6 @@ const storage = new CloudinaryStorage({
 
 });
 
-
-// =====================================================
-// FILE FILTER
-// =====================================================
 
 const fileFilter = (req, file, cb) => {
 
@@ -60,9 +52,6 @@ const fileFilter = (req, file, cb) => {
 };
 
 
-// =====================================================
-// MULTER UPLOAD
-// =====================================================
 
 const upload = multer({
 

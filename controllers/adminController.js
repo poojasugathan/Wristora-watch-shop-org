@@ -368,14 +368,6 @@ const adminLogout = (req, res) => {
         }
 
 
-
-        // PHASE 45 SESSION FIX — the admin session now uses
-        // its own cookie ("admin.sid", scoped to path
-        // "/admin"), not the shared "connect.sid" used by the
-        // user session. Clearing the wrong cookie name would
-        // destroy the session server-side but leave a stale
-        // admin.sid cookie sitting in the browser, which could
-        // still get sent on the next admin request.
         res.clearCookie("admin.sid", { path: "/admin" });
 
 
@@ -509,7 +501,7 @@ const loadUsers = async (req, res) => {
 
 
 
-            const sortOption = req.query.sort || "created_desc";
+        const sortOption = req.query.sort || "created_desc";
 
              let sort = {
                 createdAt: -1
@@ -544,7 +536,6 @@ const loadUsers = async (req, res) => {
                     /[.*+?^${}()|[\]\\]/g,
                     "\\$&"
                 );
-
 
             query.$or = [
 
@@ -842,12 +833,6 @@ const blockUser = async (req, res) => {
 
 
 
-
-// =====================================================
-// CATEGORY MANAGEMENT (PHASE 34)
-// =====================================================
-
-
 const loadCategories = async (req, res) => {
 
     try {
@@ -865,11 +850,13 @@ const loadCategories = async (req, res) => {
             page = 1;
         }
 
-        const categoriesPerPage = 10;
+        const categoriesPerPage = 6;
 
         const query = {
             isDeleted: false
         };
+
+       
 
         if (search) {
 
@@ -1345,12 +1332,6 @@ const deleteCategory = async (req, res) => {
 
 
 
-
-// =====================================================
-// PRODUCT MANAGEMENT (PHASE 35)
-// =====================================================
-
-
 const loadProducts = async (req, res) => {
 
     try {
@@ -1359,6 +1340,7 @@ const loadProducts = async (req, res) => {
             ? req.query.search.trim()
             : "";
 
+        
         let page = parseInt(req.query.page, 10);
 
         if (
@@ -1368,7 +1350,7 @@ const loadProducts = async (req, res) => {
             page = 1;
         }
 
-        const productsPerPage = 10;
+        const productsPerPage = 9;
 
         const query = {
             isDeleted: false
@@ -1384,7 +1366,7 @@ const loadProducts = async (req, res) => {
             };
 
         }
-
+        
         const totalProducts =
             await Product.countDocuments(query);
 
@@ -1486,12 +1468,6 @@ const loadAddProduct = async (req, res) => {
             .lean();
  
  
-        // ---------------------------------------------
-        // PHASE 36 — friendly messages for image-upload
-        // errors caught by handleMulterError middleware
-        // (see routes/adminRoutes.js) before this page is
-        // reloaded via redirect.
-        // ---------------------------------------------
  
         let error = null;
  
@@ -1563,10 +1539,7 @@ const loadAddProduct = async (req, res) => {
 
 const addProduct = async (req, res) => {
 
-    // Uploaded files (if any) from productUploadMiddleware.
-    // Kept outside the try block so the catch/validation
-    // sections below can clean them up from Cloudinary
-    // if something goes wrong after upload.
+   
     const uploadedFiles = req.files || [];
 
 
@@ -1664,9 +1637,6 @@ const addProduct = async (req, res) => {
         };
 
 
-        // ---------------------------------------------
-        // BASIC FIELD VALIDATION
-        // ---------------------------------------------
 
         if (!productName) {
 
@@ -1758,10 +1728,6 @@ const addProduct = async (req, res) => {
         }
 
 
-        // ---------------------------------------------
-        // IMAGE VALIDATION (minimum 3 required by the
-        // Product model)
-        // ---------------------------------------------
 
         if (uploadedFiles.length < 3) {
 
@@ -1772,12 +1738,6 @@ const addProduct = async (req, res) => {
             );
 
         }
-
-
-        // ---------------------------------------------
-        // SELLING PRICE — calculated on the backend only.
-        // We never trust a selling price sent from the form.
-        // ---------------------------------------------
 
         const sellingPrice =
             Math.round(
@@ -1889,9 +1849,6 @@ const toggleProductBlock = async (req, res) => {
 
         const productId = req.params.id;
 
-        // Same lookup pattern as toggleProductListing —
-        // a soft-deleted product should never be reachable
-        // through either toggle.
         const product = await Product.findOne({
             _id: productId,
             isDeleted: false
@@ -1905,10 +1862,6 @@ const toggleProductBlock = async (req, res) => {
 
         }
 
-        // Only isBlocked changes here. isListed is left
-        // completely alone — a product can be listed AND
-        // blocked at the same time, and un-blocking it must
-        // not silently re-list it.
         product.isBlocked = !product.isBlocked;
 
         await product.save();
@@ -1960,6 +1913,32 @@ const loadEditProduct = async (req, res) => {
             .sort({ name: 1 })
             .lean();
 
+
+        let error = null;
+
+        if (req.query.error === "size") {
+
+            error =
+                "Each image must be smaller than 5MB.";
+
+        } else if (req.query.error === "count") {
+
+            error =
+                "You can upload a maximum of 8 images.";
+
+        } else if (req.query.error === "type") {
+
+            error =
+                "Only JPG, JPEG, PNG and WEBP images are allowed.";
+
+        } else if (req.query.error === "upload") {
+
+            error =
+                "Something went wrong while uploading images. Please try again.";
+
+        }
+
+
         return res.render(
             "admin/editProduct",
             {
@@ -1972,7 +1951,7 @@ const loadEditProduct = async (req, res) => {
 
                 product,
 
-                error: null,
+                error,
 
                 formData: {
                     productName: product.productName,
@@ -2006,6 +1985,32 @@ const loadEditProduct = async (req, res) => {
 
 const editProduct = async (req, res) => {
 
+    const newlyUploadedFiles = req.files || [];
+
+    const cleanupNewlyUploadedImages = async () => {
+
+        for (const file of newlyUploadedFiles) {
+
+            try {
+
+                await cloudinary.uploader.destroy(
+                    file.filename
+                );
+
+            } catch (cleanupError) {
+
+                console.error(
+                    "Cloudinary cleanup error:",
+                    cleanupError
+                );
+
+            }
+
+        }
+
+    };
+
+
     try {
 
         const productId = req.params.id;
@@ -2016,6 +2021,8 @@ const editProduct = async (req, res) => {
         });
 
         if (!product) {
+
+            await cleanupNewlyUploadedImages();
 
             return res.status(404).send(
                 "Product not found."
@@ -2061,7 +2068,9 @@ const editProduct = async (req, res) => {
             .lean();
 
 
-        const renderWithError = (message) => {
+        const renderWithError = async (message) => {
+
+            await cleanupNewlyUploadedImages();
 
             return res.status(400).render(
                 "admin/editProduct",
@@ -2096,7 +2105,7 @@ const editProduct = async (req, res) => {
 
         if (!productName) {
 
-            return renderWithError(
+            return await renderWithError(
                 "Please enter a product name."
             );
 
@@ -2104,7 +2113,7 @@ const editProduct = async (req, res) => {
 
         if (!description) {
 
-            return renderWithError(
+            return await renderWithError(
                 "Please enter a product description."
             );
 
@@ -2112,7 +2121,7 @@ const editProduct = async (req, res) => {
 
         if (!categoryId) {
 
-            return renderWithError(
+            return await renderWithError(
                 "Please select a category."
             );
 
@@ -2126,7 +2135,7 @@ const editProduct = async (req, res) => {
 
         if (!category) {
 
-            return renderWithError(
+            return await renderWithError(
                 "The selected category is invalid."
             );
 
@@ -2138,7 +2147,7 @@ const editProduct = async (req, res) => {
             price <= 0
         ) {
 
-            return renderWithError(
+            return await renderWithError(
                 "Please enter a valid price greater than 0."
             );
 
@@ -2151,7 +2160,7 @@ const editProduct = async (req, res) => {
             discount > 100
         ) {
 
-            return renderWithError(
+            return await renderWithError(
                 "Discount must be a number between 0 and 100."
             );
 
@@ -2163,15 +2172,48 @@ const editProduct = async (req, res) => {
             stock < 0
         ) {
 
-            return renderWithError(
+            return await renderWithError(
                 "Please enter a valid stock quantity (0 or more)."
             );
 
         }
 
 
-        // Selling price is always recalculated on the backend,
-        // never trusted from the form.
+        // ---- Image edit: figure out which existing images the
+        // admin wants removed, keep the rest, and add any new
+        // uploads to the end of the list ----
+
+        const rawRemoveImages = req.body.removeImages;
+
+        const removeImageIds = !rawRemoveImages
+            ? []
+            : Array.isArray(rawRemoveImages)
+                ? rawRemoveImages
+                : [rawRemoveImages];
+
+        const keptImages = product.images.filter(
+            (image) => !removeImageIds.includes(image.publicId)
+        );
+
+        const removedImages = product.images.filter(
+            (image) => removeImageIds.includes(image.publicId)
+        );
+
+        const newImages = newlyUploadedFiles.map((file) => ({
+            url: file.path,
+            publicId: file.filename
+        }));
+
+        const finalImages = keptImages.concat(newImages);
+
+        if (finalImages.length < 3) {
+
+            return await renderWithError(
+                "A product must have at least 3 images. Please keep or add more images."
+            );
+
+        }
+
 
         const sellingPrice =
             Math.round(
@@ -2197,8 +2239,33 @@ const editProduct = async (req, res) => {
 
         product.isListed = isListed;
 
+        product.images = finalImages;
+
 
         await product.save();
+
+
+        // Only remove the old images from Cloudinary after the
+        // product has been saved successfully, so a failed save
+        // never leaves the product pointing at deleted images.
+        for (const image of removedImages) {
+
+            try {
+
+                await cloudinary.uploader.destroy(
+                    image.publicId
+                );
+
+            } catch (cleanupError) {
+
+                console.error(
+                    "Cloudinary cleanup error (removed product image):",
+                    cleanupError
+                );
+
+            }
+
+        }
 
 
         return res.redirect(
@@ -2213,6 +2280,8 @@ const editProduct = async (req, res) => {
             error
         );
 
+        await cleanupNewlyUploadedImages();
+
         return res.status(500).send(
             "Unable to update product. Please try again."
         );
@@ -2220,7 +2289,6 @@ const editProduct = async (req, res) => {
     }
 
 };
-
 
 const deleteProduct = async (req, res) => {
 
