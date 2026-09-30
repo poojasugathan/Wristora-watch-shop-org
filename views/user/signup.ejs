@@ -96,6 +96,7 @@
             action="/auth/signup"
             method="POST"
             id="signupForm"
+            novalidate
         >
 
             <!-- First + Last Name -->
@@ -112,7 +113,7 @@
                         name="firstName"
                         placeholder="First name"
                         value="<%= formData.firstName || '' %>"
-                       
+                         
                     >
 
                 </div>
@@ -129,7 +130,7 @@
                         name="lastName"
                         placeholder="Last name"
                         value="<%= formData.lastName || '' %>"
-                      
+                     
                     >
 
                 </div>
@@ -150,7 +151,7 @@
                     placeholder="Phone number"
                     maxlength="10"
                     value="<%= formData.phone || '' %>"
-                
+                 
                 >
 
             </div>
@@ -168,7 +169,7 @@
                     name="email"
                     placeholder="Email address"
                     value="<%= formData.email || '' %>"
-                    
+                   
                 >
 
             </div>
@@ -185,7 +186,7 @@
                     type="password"
                     name="password"
                     placeholder="Password"
-                    
+                   
                 >
 
             </div>
@@ -202,7 +203,7 @@
                     type="password"
                     name="confirmPassword"
                     placeholder="Confirm password"
-                
+                   
                 >
 
                 <p class="password-hint">
@@ -237,7 +238,7 @@
                     name="termsAccepted"
                     id="termsAccepted"
                     value="true"
-                    
+                   
                 >
 
                 <label for="termsAccepted">

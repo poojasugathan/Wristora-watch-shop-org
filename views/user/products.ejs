@@ -1,6 +1,7 @@
 <%- include("../partials/header", { title: title, user: user }) %>
 
 <link rel="stylesheet" href="/css/products.css">
+<link rel="stylesheet" href="/css/wishlistButton.css">
 
 <main class="products-page">
 
@@ -283,6 +284,12 @@
 
                             <% } %>
 
+                            <%- include("../partials/wishlistHeart", {
+                                productId: product._id.toString(),
+                                active: typeof wishlistedIds !== "undefined" &&
+                                        wishlistedIds.includes(product._id.toString())
+                            }) %>
+
                         </div>
 
 
@@ -447,5 +454,7 @@
     </div>
 
 </main>
+
+<script src="/js/wishlistToggle.js"></script>
 
 <%- include("../partials/footer2") %>

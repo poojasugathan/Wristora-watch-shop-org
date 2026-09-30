@@ -1,0 +1,48 @@
+<%
+    // active = "profile" | "orders" | "wishlist" | "addresses"
+    const activeLink = typeof active !== "undefined" ? active : "";
+%>
+
+<aside class="profile-sidebar">
+
+    <nav class="profile-sidebar-menu">
+
+        <a href="/profile" class="profile-sidebar-link <%= activeLink === 'profile' ? 'active' : '' %>">
+            <i class="bi bi-person"></i>
+            <span>Profile</span>
+        </a>
+
+        <a href="/orders" class="profile-sidebar-link <%= activeLink === 'orders' ? 'active' : '' %>">
+            <i class="bi bi-box-seam"></i>
+            <span>My Orders</span>
+        </a>
+
+        <a href="/wishlist" class="profile-sidebar-link <%= activeLink === 'wishlist' ? 'active' : '' %>">
+            <i class="bi bi-heart"></i>
+            <span>Wishlist</span>
+        </a>
+
+        <a href="/addresses" class="profile-sidebar-link <%= activeLink === 'addresses' ? 'active' : '' %>">
+            <i class="bi bi-geo-alt"></i>
+            <span>Addresses</span>
+        </a>
+
+        <a href="/wallet" class="profile-sidebar-link">
+            <i class="bi bi-wallet2"></i>
+            <span>Wallet</span>
+        </a>
+
+        <a href="/coupons" class="profile-sidebar-link">
+            <i class="bi bi-tag"></i>
+            <span>My Coupons</span>
+        </a>
+
+    </nav>
+
+    <form action="/auth/logout" method="POST" class="profile-logout-form">
+        <button type="submit" class="profile-logout">
+            LOGOUT
+        </button>
+    </form>
+
+</aside>

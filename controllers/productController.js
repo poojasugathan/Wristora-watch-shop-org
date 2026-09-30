@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Product = require("../models/productModel");
 const Category = require("../models/categoryModel");
 const { getActiveBrands } = require("../services/brandService");
+const { getWishlistProductIds } = require("./wishlistController");
 
 
 
@@ -335,6 +336,12 @@ const loadProductListing = async (req, res) => {
             buildPageNumbers(page, totalPages);
 
 
+        // PHASE 49 — which products are already in this user's wishlist
+        // (empty array when logged out) so hearts render filled.
+        const wishlistedIds = await getWishlistProductIds(
+            req.session && req.session.user ? req.session.user.id : null
+        );
+
         const pageHeading = isLimitedView
             ? "Limited Edition Timepieces"
             : "All Timepieces";
@@ -349,6 +356,8 @@ const loadProductListing = async (req, res) => {
                     : "Shop All Watches",
 
                 pageHeading,
+
+                wishlistedIds,
 
                 products,
 
@@ -517,19 +526,59 @@ const loadProductDetails = async (req, res) => {
  
 
  
-        const relatedProducts = await Product.find({
-            category: product.category
-                ? product.category._id
-                : null,
+        // PHASE 49 — wishlist state for the main heart and related tiles.
+        const wishlistedIds = await getWishlistProductIds(
+            req.session && req.session.user ? req.session.user.id : null
+        );
+
+        const isWishlisted = wishlistedIds.includes(product._id.toString());
+
+               const relatedBaseFilter = {
             _id: { $ne: product._id },
             isDeleted: false,
             isListed: true,
             isBlocked: false
-        })
-            .populate("category", "name")
-            .sort({ createdAt: -1 })
-            .limit(RELATED_PRODUCTS_LIMIT)
-            .lean();
+        };
+
+        const findRelated = (extraFilter, limit) =>
+            Product.find({ ...relatedBaseFilter, ...extraFilter })
+                .populate("category", "name")
+                .sort({ createdAt: -1 })
+                .limit(limit)
+                .lean();
+
+        let relatedProducts = [];
+
+        // 1) Same category first
+        if (product.category) {
+            relatedProducts = await findRelated(
+                { category: product.category._id },
+                RELATED_PRODUCTS_LIMIT
+            );
+        }
+
+        // 2) Then the same brand
+        if (relatedProducts.length < RELATED_PRODUCTS_LIMIT && product.brand) {
+            const more = await findRelated(
+                {
+                    brand: product.brand,
+                    _id: { $nin: [product._id, ...relatedProducts.map((p) => p._id)] }
+                },
+                RELATED_PRODUCTS_LIMIT - relatedProducts.length
+            );
+            relatedProducts = relatedProducts.concat(more);
+        }
+
+        // 3) Then the newest other products
+        if (relatedProducts.length < RELATED_PRODUCTS_LIMIT) {
+            const more = await findRelated(
+                {
+                    _id: { $nin: [product._id, ...relatedProducts.map((p) => p._id)] }
+                },
+                RELATED_PRODUCTS_LIMIT - relatedProducts.length
+            );
+            relatedProducts = relatedProducts.concat(more);
+        }
  
  
         return res.render(
@@ -541,7 +590,11 @@ const loadProductDetails = async (req, res) => {
                 product,
  
                 relatedProducts,
- 
+
+                isWishlisted,
+
+                wishlistedIds,
+
                 error: null
  
             }
@@ -582,6 +635,3 @@ module.exports = {
 
     loadProductDetails
 };
-
-
-

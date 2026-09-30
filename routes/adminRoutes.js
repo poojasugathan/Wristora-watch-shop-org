@@ -14,6 +14,12 @@ const productUpload =
 const handleProductImageUpload =
     require("../middlewares/handleMulterError");    
 
+const adminOrderController =
+    require("../controllers/adminOrderController");
+
+const adminInventoryController =
+    require("../controllers/adminInventoryController");
+
 router.get(
     "/login",
     adminController.loadAdminLogin
@@ -170,6 +176,57 @@ router.post(
     "/products/toggle-block/:id",
     requireAdmin,
     adminController.toggleProductBlock
+);
+
+
+
+// =====================================================
+// ORDER MANAGEMENT (PHASE 52)
+// =====================================================
+
+router.get(
+    "/orders",
+    requireAdmin,
+    adminOrderController.loadOrders
+);
+
+
+router.get(
+    "/orders/:orderId",
+    requireAdmin,
+    adminOrderController.loadOrderDetails
+);
+
+
+router.post(
+    "/orders/:orderId/status",
+    requireAdmin,
+    adminOrderController.updateOrderStatus
+);
+
+
+router.post(
+    "/orders/:orderId/items/:itemId/cancel",
+    requireAdmin,
+    adminOrderController.cancelOrderItem
+);
+
+
+// =====================================================
+// INVENTORY / STOCK MANAGEMENT (PHASE 52)
+// =====================================================
+
+router.get(
+    "/inventory",
+    requireAdmin,
+    adminInventoryController.loadInventory
+);
+
+
+router.post(
+    "/inventory/:id/stock",
+    requireAdmin,
+    adminInventoryController.updateStock
 );
 
 

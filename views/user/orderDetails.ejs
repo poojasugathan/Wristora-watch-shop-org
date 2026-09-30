@@ -1,0 +1,279 @@
+<%- include("../partials/header", { title: title, user: user }) %>
+
+<link rel="stylesheet" href="/css/profile.css">
+<link rel="stylesheet" href="/css/orders.css">
+
+<%
+    const money = (n) => Number(n).toLocaleString("en-IN", {
+        minimumFractionDigits: Number.isInteger(n) ? 0 : 2,
+        maximumFractionDigits: 2
+    });
+
+    const formatDate = (d) => new Date(d).toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        timeZone: "Asia/Kolkata"
+    });
+
+    const formatDateTime = (d) => new Date(d).toLocaleString("en-IN", {
+        dateStyle: "medium",
+        timeStyle: "short",
+        timeZone: "Asia/Kolkata"
+    });
+
+    const addr = order.addressSnapshot;
+    const amounts = order.amounts;
+    const isCancelled = order.orderStatus === "Cancelled";
+
+    // tracker: which step is the order on?
+    const steps = [
+        { status: "Pending", label: "Order Confirmed" },
+        { status: "Shipped", label: "Shipped" },
+        { status: "Out for Delivery", label: "Out for Delivery" },
+        { status: "Delivered", label: "Delivered" }
+    ];
+    const currentStep = steps.findIndex((s) => s.status === order.orderStatus);
+%>
+
+<main class="profile-page orders-page">
+
+    <div class="profile-container">
+
+        <%- include("partials/profileSidebar", { active: "orders" }) %>
+
+        <section class="orders-content">
+
+            <a href="/orders" class="od-back"><i class="bi bi-arrow-left"></i> Back to My Orders</a>
+
+            <div class="od-head">
+
+                <div>
+                    <h1 class="orders-title">Order Details</h1>
+                    <p class="od-id">Order ID: <strong><%= order.orderId %></strong></p>
+                    <p class="od-meta">
+                        Order date: <%= formatDate(order.createdAt) %>
+                        <span class="order-status order-status-<%= order.statusClass %>">
+                            <%= order.displayStatus %>
+                        </span>
+                    </p>
+                </div>
+
+                <% if (order.canDownloadInvoice) { %>
+                    <a href="/orders/<%= order.orderId %>/invoice" class="order-btn">
+                        <i class="bi bi-download"></i> Invoice
+                    </a>
+                <% } %>
+
+            </div>
+
+            <!-- STATUS TRACKER -->
+            <% if (isCancelled) { %>
+
+                <div class="orders-alert orders-alert-error">
+                    <i class="bi bi-x-circle"></i>
+                    This order has been cancelled.
+                    <% if (order.cancellationReason) { %>
+                        Reason: <%= order.cancellationReason %>
+                    <% } %>
+                </div>
+
+            <% } else { %>
+
+                <ol class="od-tracker">
+                    <% steps.forEach((step, index) => { %>
+                        <li class="od-step <%= index < currentStep ? 'done' : '' %> <%= index === currentStep ? 'current' : '' %>">
+                            <span class="od-step-label"><%= step.label %></span>
+                            <span class="od-step-dot"></span>
+                            <span class="od-step-sub">
+                                <% if (index === 0) { %>
+                                    <%= formatDate(order.createdAt) %>
+                                <% } else if (index === currentStep) { %>
+                                    Current status
+                                <% } else if (index < currentStep) { %>
+                                    Completed
+                                <% } else { %>
+                                    Upcoming
+                                <% } %>
+                            </span>
+                        </li>
+                    <% }) %>
+                </ol>
+
+            <% } %>
+
+            <!-- RETURN INFO -->
+            <% if (order.returnStatus === "Requested") { %>
+                <div class="orders-alert orders-alert-info">
+                    <i class="bi bi-arrow-return-left"></i>
+                    Return requested on <%= formatDateTime(order.returnRequestedAt) %>.
+                    Reason: <%= order.returnReason %>
+                </div>
+            <% } %>
+
+            <!-- ITEMS -->
+            <div class="od-items">
+
+                <% order.items.forEach((item) => {
+                    const itemCancelled = item.itemStatus === "Cancelled";
+                %>
+
+                    <div class="od-item <%= itemCancelled ? 'is-cancelled' : '' %>">
+
+                        <div class="od-item-image">
+                            <% if (item.productImage) { %>
+                                <img src="<%= item.productImage %>" alt="<%= item.productName %>">
+                            <% } else { %>
+                                <i class="bi bi-watch"></i>
+                            <% } %>
+                        </div>
+
+                        <div class="od-item-info">
+
+                            <h2 class="od-item-name"><%= item.productName %></h2>
+
+                            <% if (item.brand) { %>
+                                <p class="od-item-brand"><%= item.brand %></p>
+                            <% } %>
+
+                            <p class="od-item-price">
+                                &#8377;<%= money(item.unitPrice) %>
+                                <% if (item.discountPercent > 0) { %>
+                                    <small class="od-item-mrp">&#8377;<%= money(item.mrp) %></small>
+                                    <small class="od-item-off"><%= item.discountPercent %>% off</small>
+                                <% } %>
+                            </p>
+
+                            <% if (itemCancelled) { %>
+                                <p class="od-item-cancelled">
+                                    Cancelled<% if (item.cancellationReason) { %>: <%= item.cancellationReason %><% } %>
+                                </p>
+                            <% } %>
+
+                        </div>
+
+                        <div class="od-item-side">
+
+                            <span class="od-qty">Qty: <%= item.quantity %></span>
+
+                            <strong class="od-item-total">&#8377;<%= money(item.itemTotal) %></strong>
+
+                            <% if (order.canCancelItems && !itemCancelled) { %>
+                                <button
+                                    type="button"
+                                    class="order-btn order-btn-small js-cancel-item"
+                                    data-order-id="<%= order.orderId %>"
+                                    data-item-id="<%= item._id %>"
+                                >
+                                    Cancel Item
+                                </button>
+                            <% } %>
+
+                        </div>
+
+                    </div>
+
+                <% }) %>
+
+            </div>
+
+            <!-- PAYMENT / DELIVERY / SUMMARY -->
+            <div class="od-lower">
+
+                <div class="od-info-col">
+
+                    <h3 class="od-section-title">Payment</h3>
+                    <p class="od-text"><%= paymentLabel %></p>
+                    <p class="od-text od-muted">Payment status: <%= order.paymentStatus %></p>
+
+                    <h3 class="od-section-title">Delivery Address</h3>
+                    <p class="od-text">
+                        <strong><%= addr.firstName %> <%= addr.lastName %></strong><br>
+                        <%= addr.addressLine1 %><br>
+                        <% if (addr.addressLine2) { %><%= addr.addressLine2 %><br><% } %>
+                        <%= addr.city %>, <%= addr.state %> - <%= addr.pinCode %><br>
+                        <%= addr.country %><br>
+                        Phone: <%= addr.phone %>
+                    </p>
+
+                </div>
+
+                <div class="od-summary">
+
+                    <h3 class="od-section-title">Order Summary</h3>
+
+                    <div class="od-summary-row">
+                        <span>Subtotal</span>
+                        <span>&#8377;<%= money(amounts.subtotal) %></span>
+                    </div>
+
+                    <% if (amounts.discountTotal > 0) { %>
+                        <div class="od-summary-row od-discount">
+                            <span>Discount</span>
+                            <span>-&#8377;<%= money(amounts.discountTotal) %></span>
+                        </div>
+                    <% } %>
+
+                    <% if (amounts.tax > 0) { %>
+                        <div class="od-summary-row">
+                            <span>Tax</span>
+                            <span>&#8377;<%= money(amounts.tax) %></span>
+                        </div>
+                    <% } %>
+
+                    <div class="od-summary-row">
+                        <span>Shipping</span>
+                        <span><%= amounts.shipping > 0 ? "₹" + money(amounts.shipping) : "Free" %></span>
+                    </div>
+
+                    <div class="od-summary-row od-total">
+                        <span>Total</span>
+                        <span>&#8377;<%= money(amounts.finalTotal) %></span>
+                    </div>
+
+                    <% if (amounts.cancelledCount > 0) { %>
+                        <p class="od-summary-note">
+                            <%= amounts.cancelledCount %> cancelled item<%= amounts.cancelledCount > 1 ? "s are" : " is" %> not included in this total.
+                        </p>
+                    <% } %>
+
+                </div>
+
+            </div>
+
+            <!-- ACTIONS -->
+            <% if (order.canCancel || order.canReturn) { %>
+                <div class="od-actions">
+
+                    <% if (order.canCancel) { %>
+                        <button
+                            type="button"
+                            class="order-btn order-btn-danger js-cancel-order"
+                            data-order-id="<%= order.orderId %>"
+                        >
+                            Cancel Order
+                        </button>
+                    <% } %>
+
+                    <% if (order.canReturn) { %>
+                        <button
+                            type="button"
+                            class="order-btn order-btn-dark js-return-order"
+                            data-order-id="<%= order.orderId %>"
+                        >
+                            Return Order
+                        </button>
+                    <% } %>
+
+                </div>
+            <% } %>
+
+        </section>
+
+    </div>
+
+</main>
+
+<script src="/js/orders.js"></script>
+
+<%- include("../partials/footer2") %>

@@ -8,8 +8,8 @@ const requireAuth = require("../middlewares/authMiddleware");
 
 
 // =====================================================
-// USER WISHLIST (PHASE 45)
-// Same pattern as cartRoutes: every route requires login.
+// USER WISHLIST (PHASE 45 + PHASE 49)
+// Every route requires login.
 // =====================================================
 
 router.get(
@@ -22,6 +22,15 @@ router.post(
     "/add",
     requireAuth,
     wishlistController.addToWishlist
+);
+
+// PHASE 49 — one JSON route used by every heart button
+// (product cards + product details). It adds the product
+// if it is not in the wishlist and removes it if it is.
+router.post(
+    "/toggle",
+    requireAuth,
+    wishlistController.toggleWishlist
 );
 
 router.post(

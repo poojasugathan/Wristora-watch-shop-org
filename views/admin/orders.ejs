@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title><%= title %> | Wristora</title>
+
+    <link rel="stylesheet" href="/css/adminDashboard.css">
+
+    <link rel="stylesheet" href="/css/adminOrders.css">
+
+</head>
+
+
+<body>
+
+<div class="admin-layout">
+
+    <%- include("partials/sidebar", { currentPage: "orders" }) %>
+
+
+    <main class="admin-main ao-main">
+
+        <!-- =====================================================
+             HEADER
+        ====================================================== -->
+
+        <div class="ao-header">
+
+            <div>
+                <h1>Order Management</h1>
+
+                <p>
+                    <%= totalOrders %>
+                    <%= totalOrders === 1 ? "order" : "orders" %>
+                    <%= (search || status !== "all") ? "found" : "in total" %>
+                </p>
+            </div>
+
+        </div>
+
+
+        <% if (flash) { %>
+            <div class="ao-flash <%= flash.type %>">
+                <%= flash.message %>
+            </div>
+        <% } %>
+
+        <% if (error) { %>
+            <div class="ao-flash error">
+                <%= error %>
+            </div>
+        <% } %>
+
+
+        <!-- =====================================================
+             SEARCH (keeps the current status filter + sort)
+        ====================================================== -->
+
+        <div class="ao-tools">
+
+            <form
+                class="ao-search"
+                action="/admin/orders"
+                method="GET"
+            >
+                <span class="ao-search-icon">⌕</span>
+
+                <input
+                    type="text"
+                    name="search"
+                    placeholder="Search order ID, customer name or email"
+                    value="<%= search %>"
+                    maxlength="60"
+                    autocomplete="off"
+                >
+
+                <% if (status !== "all") { %>
+                    <input type="hidden" name="status" value="<%= status %>">
+                <% } %>
+
+                <% if (sort !== "latest") { %>
+                    <input type="hidden" name="sort" value="<%= sort %>">
+                <% } %>
+            </form>
+
+            <% if (search) { %>
+                <a
+                    href="<%= urlFor({ search: '' }) %>"
+                    class="ao-btn"
+                    title="Clear search"
+                >
+                    Clear
+                </a>
+            <% } %>
+
+
+            <!-- SORT -->
+
+            <div class="ao-sort">
+
+                <span>Sort:</span>
+
+                <% sortOptions.forEach(option => { %>
+                    <a
+                        href="<%= urlFor({ sort: option.value }) %>"
+                        class="ao-pill <%= sort === option.value ? 'active' : '' %>"
+                    >
+                        <%= option.label %>
+                    </a>
+                <% }) %>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             STATUS FILTER
+        ====================================================== -->
+
+        <div class="ao-pills">
+
+            <% statusFilters.forEach(filter => { %>
+                <a
+                    href="<%= urlFor({ status: filter.value }) %>"
+                    class="ao-pill <%= status === filter.value ? 'active' : '' %>"
+                >
+                    <%= filter.label %>
+                </a>
+            <% }) %>
+
+        </div>
+
+
+        <!-- =====================================================
+             ORDER TABLE
+        ====================================================== -->
+
+        <section class="ao-card">
+
+            <% if (orders.length > 0) { %>
+
+                <table class="ao-table">
+
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Customer</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <% orders.forEach(order => { %>
+
+                            <tr>
+
+                                <td>
+                                    <a
+                                        class="ao-link"
+                                        href="/admin/orders/<%= order.orderId %>"
+                                    >
+                                        <%= order.orderId %>
+                                    </a>
+                                </td>
+
+                                <td>
+                                    <%= new Date(order.createdAt).toLocaleDateString("en-IN", {
+                                        day: "2-digit",
+                                        month: "short",
+                                        year: "numeric"
+                                    }) %>
+                                    <div class="ao-muted">
+                                        <%= new Date(order.createdAt).toLocaleTimeString("en-IN", {
+                                            hour: "2-digit",
+                                            minute: "2-digit"
+                                        }) %>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <% if (order.user) { %>
+                                        <strong>
+                                            <%= order.user.firstName %>
+                                            <%= order.user.lastName %>
+                                        </strong>
+                                        <div class="ao-muted">
+                                            <%= order.user.email %>
+                                        </div>
+                                    <% } else { %>
+                                        <span class="ao-muted">Customer removed</span>
+                                    <% } %>
+                                </td>
+
+                                <td>
+                                    <%= order.itemCount %>
+                                    <% if (order.activeItemCount < order.itemCount) { %>
+                                        <div class="ao-muted">
+                                            <%= order.activeItemCount %> active
+                                        </div>
+                                    <% } %>
+                                </td>
+
+                                <td>
+                                    ₹<%= order.amounts.finalTotal.toLocaleString("en-IN") %>
+                                </td>
+
+                                <td>
+                                    <span class="ao-status ao-status-<%= order.statusClass %>">
+                                        <%= order.displayStatus %>
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <a
+                                        href="/admin/orders/<%= order.orderId %>"
+                                        class="ao-btn small dark"
+                                    >
+                                        View Details
+                                    </a>
+                                </td>
+
+                            </tr>
+
+                        <% }) %>
+
+                    </tbody>
+
+                </table>
+
+            <% } else { %>
+
+                <div class="ao-empty">
+
+                    <h3>No orders found</h3>
+
+                    <p>
+                        <% if (search || status !== "all") { %>
+                            Nothing matches your search or filter.
+                        <% } else { %>
+                            Orders will appear here once customers place them.
+                        <% } %>
+                    </p>
+
+                </div>
+
+            <% } %>
+
+        </section>
+
+
+        <!-- =====================================================
+             PAGINATION (keeps search + status + sort)
+        ====================================================== -->
+
+        <% if (totalPages > 1) { %>
+
+            <nav class="ao-pagination">
+
+                <% if (currentPage > 1) { %>
+                    <a href="<%= urlFor({ page: currentPage - 1 }) %>" class="ao-page">Previous</a>
+                <% } else { %>
+                    <span class="ao-page disabled">Previous</span>
+                <% } %>
+
+
+                <% pageNumbers.forEach(number => { %>
+
+                    <% if (number === "...") { %>
+                        <span class="ao-page disabled">…</span>
+                    <% } else if (number === currentPage) { %>
+                        <span class="ao-page active"><%= number %></span>
+                    <% } else { %>
+                        <a href="<%= urlFor({ page: number }) %>" class="ao-page"><%= number %></a>
+                    <% } %>
+
+                <% }) %>
+
+
+                <% if (currentPage < totalPages) { %>
+                    <a href="<%= urlFor({ page: currentPage + 1 }) %>" class="ao-page">Next</a>
+                <% } else { %>
+                    <span class="ao-page disabled">Next</span>
+                <% } %>
+
+            </nav>
+
+        <% } %>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

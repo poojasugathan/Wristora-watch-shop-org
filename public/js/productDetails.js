@@ -42,6 +42,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     });
 
+    
+
 
     // -------------------------------------------------
     // ZOOM MODAL
@@ -52,6 +54,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const zoomModalImage = document.getElementById("productZoomModalImage");
     const zoomModalClose = document.getElementById("productZoomModalClose");
 
+        // Puts the full-screen image back to normal size
+    const resetModalZoom = () => {
+
+        if (!zoomModalImage) {
+            return;
+        }
+
+        zoomModalImage.classList.remove("zoomed");
+        zoomModalImage.style.transformOrigin = "center center";
+
+    };
+
     const openZoomModal = () => {
 
         if (!mainImage || !zoomModal || !zoomModalImage) {
@@ -60,6 +74,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         zoomModalImage.src = mainImage.src;
         zoomModalImage.alt = mainImage.alt;
+
+        resetModalZoom();
 
         zoomModal.classList.add("active");
 
@@ -71,7 +87,9 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        zoomModal.classList.remove("active");
+              zoomModal.classList.remove("active");
+
+        resetModalZoom();
 
     };
 
@@ -79,8 +97,8 @@ document.addEventListener("DOMContentLoaded", () => {
         zoomBtn.addEventListener("click", openZoomModal);
     }
 
-    if (mainImage) {
-        mainImage.addEventListener("click", openZoomModal);
+        if (mainImage) {
+        mainImage.addEventListener("dblclick", openZoomModal);
     }
 
     if (zoomModalClose) {
@@ -94,6 +112,54 @@ document.addEventListener("DOMContentLoaded", () => {
             if (event.target === zoomModal) {
                 closeZoomModal();
             }
+
+        });
+
+    }
+
+
+        // -------------------------------------------------
+    // DOUBLE CLICK INSIDE THE FULL-SCREEN VIEW
+    // 1st double click -> zoom in at the clicked spot
+    // 2nd double click -> zoom back out
+    // While zoomed, moving the mouse pans the image.
+    // -------------------------------------------------
+
+    if (zoomModalImage) {
+
+        zoomModalImage.addEventListener("dblclick", (event) => {
+
+            if (zoomModalImage.classList.contains("zoomed")) {
+                resetModalZoom();
+                return;
+            }
+
+            const rect = zoomModalImage.getBoundingClientRect();
+
+            const x = ((event.clientX - rect.left) / rect.width) * 100;
+            const y = ((event.clientY - rect.top) / rect.height) * 100;
+
+            zoomModalImage.style.transformOrigin = x + "% " + y + "%";
+            zoomModalImage.classList.add("zoomed");
+
+        });
+
+    }
+
+    if (zoomModal && zoomModalImage) {
+
+        zoomModal.addEventListener("mousemove", (event) => {
+
+            if (!zoomModalImage.classList.contains("zoomed")) {
+                return;
+            }
+
+            const rect = zoomModal.getBoundingClientRect();
+
+            const x = ((event.clientX - rect.left) / rect.width) * 100;
+            const y = ((event.clientY - rect.top) / rect.height) * 100;
+
+            zoomModalImage.style.transformOrigin = x + "% " + y + "%";
 
         });
 
@@ -117,7 +183,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const qtyValueEl = document.getElementById("productQtyValue");
 
     const MIN_QTY = 1;
-    const MAX_QTY = 10;
+
+    // Same limit as MAX_QUANTITY_PER_PRODUCT in cartController.js.
+    // This is only for the buttons. The server still checks the
+    // real limit and the real stock.
+    const MAX_QTY = 5;
 
     const getQty = () => parseInt(qtyValueEl ? qtyValueEl.textContent : "1", 10) || 1;
 
@@ -176,12 +246,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // -------------------------------------------------
     // ADD TO CART (PHASE 43 — real backend call)
     //
-    // Note: the quantity stepper above is purely a display
-    // feature for now. Add to Cart always adds 1 unit (or
-    // increments by 1 if already in the cart) — sending the
-    // stepper's value here would let the browser dictate
-    // quantity, which isn't validated against stock at this
-    // entry point.
+    // The quantity chosen with the stepper is sent to the server.
+    // The server checks it against the current stock and the
+    // per-product maximum, and refuses it if it is not allowed.
     // -------------------------------------------------
 
     const addToCartBtn = document.getElementById("productAddToCartBtn");
@@ -212,13 +279,24 @@ document.addEventListener("DOMContentLoaded", () => {
                         "Content-Type": "application/json"
                     },
 
-                    body: JSON.stringify({ productId })
+                    body: JSON.stringify({ productId, quantity: getQty() })
 
                 });
 
                 const data = await response.json();
 
                 if (response.ok && data.success) {
+
+                    // keep the navbar cart badge in sync (no reload needed)
+                    if (typeof data.cartCount === "number") {
+
+                        document
+                            .querySelectorAll(".wristora-cart-count")
+                            .forEach((badge) => {
+                                badge.textContent = data.cartCount;
+                            });
+
+                    }
 
                     showMessage(
                         "success",
@@ -260,87 +338,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // -------------------------------------------------
-    // ADD TO WISHLIST (PHASE 45 — real backend call)
+    // WISHLIST (PHASE 49)
     //
-    // This button only ever ADDS. It does not reflect
-    // whether the product is already in the wishlist on
-    // page load — the backend already handles a repeat add
-    // gracefully (returns success with an "already in your
-    // wishlist" message instead of erroring or duplicating).
+    // The heart button is now handled by public/js/wishlistToggle.js,
+    // which is shared with the product cards. Nothing to do here.
     // -------------------------------------------------
-
-    const wishlistBtn = document.getElementById("productWishlistBtn");
-
-    if (wishlistBtn) {
-
-        wishlistBtn.addEventListener("click", async () => {
-
-            if (wishlistBtn.disabled) {
-                return;
-            }
-
-            const productId = wishlistBtn.getAttribute("data-product-id");
-
-            if (!productId) {
-                return;
-            }
-
-            wishlistBtn.disabled = true;
-
-            try {
-
-                const response = await fetch("/wishlist/add", {
-
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-
-                    body: JSON.stringify({ productId })
-
-                });
-
-                const data = await response.json();
-
-                if (response.ok && data.success) {
-
-                    wishlistBtn.classList.add("active");
-
-                    showMessage(
-                        "success",
-                        "Added to Wishlist",
-                        data.message || "Added to your wishlist."
-                    );
-
-                } else {
-
-                    showMessage(
-                        "error",
-                        "Unable to Add",
-                        data.message || "Unable to add this product to your wishlist."
-                    );
-
-                }
-
-            } catch (error) {
-
-                console.error("Add to wishlist request failed:", error);
-
-                showMessage(
-                    "error",
-                    "Something Went Wrong",
-                    "Unable to add this product to your wishlist. Please try again."
-                );
-
-            } finally {
-
-                wishlistBtn.disabled = false;
-
-            }
-
-        });
-
-    }
 
 });

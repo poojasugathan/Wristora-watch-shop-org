@@ -156,15 +156,12 @@ function updateCartTotals(cartTotal) {
 
 function updateCartCountBadge(cartCount) {
 
-    // NOTE: adjust this selector to match whatever the
-    // navbar cart badge actually uses in header.ejs. Using
-    // a data attribute here as a safe guess — if the badge
-    // doesn't have data-cart-count-badge yet, add it once
-    // and this will keep it in sync without a page reload.
-    const badge = document.querySelector("[data-cart-count-badge]");
-
-    if (badge) {
-        badge.textContent = cartCount;
-    }
+    // The navbar badge in partials/header.ejs is
+    // <span class="wristora-cart-count">.
+    document
+        .querySelectorAll(".wristora-cart-count")
+        .forEach((badge) => {
+            badge.textContent = cartCount;
+        });
 
 }

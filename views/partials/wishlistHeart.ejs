@@ -1,0 +1,15 @@
+<%
+    // Reusable heart button (PHASE 49).
+    // Pass in: productId (string), active (true/false).
+    // public/js/wishlistToggle.js handles every click.
+%>
+<button
+    type="button"
+    class="wishlist-heart-btn <%= active ? 'active' : '' %>"
+    data-wishlist-toggle
+    data-product-id="<%= productId %>"
+    aria-pressed="<%= active ? 'true' : 'false' %>"
+    aria-label="<%= active ? 'Remove from wishlist' : 'Add to wishlist' %>"
+>
+    <i class="bi <%= active ? 'bi-heart-fill' : 'bi-heart' %>"></i>
+</button>

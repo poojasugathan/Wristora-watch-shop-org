@@ -219,3 +219,192 @@
     }
 
 }
+
+/* =====================================================
+   PHASE 50 ADDITIONS
+   (payment section, edit link, notice, success page)
+====================================================== */
+
+.checkout-address-edit {
+    margin-left: auto;
+    font-size: 0.8rem;
+    text-decoration: underline;
+    white-space: nowrap;
+    color: #444;
+}
+
+.checkout-notice {
+    border: 1px solid #b7dfc4;
+    background: #eef8f1;
+    color: #1a7f37;
+    border-radius: 6px;
+    padding: 0.7rem 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.checkout-summary-payment {
+    font-size: 0.85rem;
+    color: #555;
+    margin: 0.75rem 0 1rem;
+}
+
+.checkout-summary .cart-continue-btn {
+    width: 100%;
+}
+
+.checkout-summary .cart-continue-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* ---- Order success page ---- */
+
+.order-success-layout {
+    display: flex;
+    gap: 3rem;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 2.5rem 0;
+}
+
+.order-success-message {
+    flex: 1 1 340px;
+    min-width: 0;
+}
+
+.order-success-icon {
+    font-size: 4.5rem;
+    color: #b08d57;
+    line-height: 1;
+    margin-bottom: 1rem;
+}
+
+.order-success-title {
+    font-size: 2.2rem;
+    margin: 0 0 0.75rem;
+}
+
+.order-success-text {
+    font-size: 1.1rem;
+    margin: 0 0 0.4rem;
+}
+
+.order-success-subtext {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0 0 1.5rem;
+}
+
+.order-success-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.order-success-btn-primary,
+.order-success-btn-secondary {
+    display: inline-block;
+    padding: 0.7rem 1.4rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
+.order-success-btn-primary {
+    background: #1e1e1e;
+    color: #fff;
+    border: 1px solid #1e1e1e;
+}
+
+.order-success-btn-secondary {
+    background: transparent;
+    color: #1e1e1e;
+    border: 1px solid #b08d57;
+}
+
+.order-success-card {
+    flex: 1 1 380px;
+    min-width: 0;
+    background: #fff;
+    border: 1px solid #e2e2e2;
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.order-success-badge {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: #e6f4ec;
+    color: #1f9d5b;
+    font-size: 2.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.75rem;
+}
+
+.order-success-card-title {
+    text-align: center;
+    font-size: 1.4rem;
+    margin: 0 0 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.order-success-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.order-success-row strong {
+    color: #111;
+    text-align: right;
+    word-break: break-word;
+}
+
+.order-success-address {
+    font-weight: 500;
+    font-size: 0.85rem;
+    max-width: 60%;
+}
+
+.order-success-items {
+    border-top: 1px dashed #ddd;
+    border-bottom: 1px dashed #ddd;
+    margin: 0.75rem 0;
+    padding: 0.5rem 0;
+}
+
+.order-success-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 0.85rem;
+    padding: 0.25rem 0;
+    color: #444;
+}
+
+.order-success-amount strong {
+    font-size: 1.3rem;
+}
+
+@media (max-width: 860px) {
+
+    .order-success-layout {
+        gap: 1.5rem;
+    }
+
+    .order-success-title {
+        font-size: 1.7rem;
+    }
+
+}

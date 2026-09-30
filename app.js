@@ -17,6 +17,7 @@ const productRoutes = require("./routes/productRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 const wishlistRoutes = require("./routes/wishlistRoutes");
 const checkoutRoutes= require("./routes/checkoutRoutes");
+const orderRoutes = require("./routes/orderRoutes");
 const attachHeaderData = require("./middlewares/headerDataMiddleware");
 const attachCartCount = require("./middlewares/cartCountMiddleware");
 const attachWishlistCount = require("./middlewares/wishlistCountMiddleware");
@@ -71,6 +72,7 @@ app.use("/products", productRoutes);
 app.use("/cart", cartRoutes);
 app.use("/wishlist", wishlistRoutes);
 app.use("/checkout", checkoutRoutes);
+app.use("/orders", orderRoutes);
 
 app.get("/", (req, res) => {
     res.render("user/home", {

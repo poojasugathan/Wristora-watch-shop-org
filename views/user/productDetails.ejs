@@ -2,6 +2,7 @@
 
 <link rel="stylesheet" href="/css/products.css">
 <link rel="stylesheet" href="/css/productDetails.css">
+<link rel="stylesheet" href="/css/wishlistButton.css">
 
 <main class="product-details-page">
 
@@ -238,14 +239,18 @@
                             <%= product.stock <= 0 ? "Out of Stock" : "Add to Cart" %>
                         </button>
 
+                        <% const inWishlist = typeof isWishlisted !== "undefined" && isWishlisted; %>
+
                         <button
                             type="button"
-                            class="product-wishlist-btn"
+                            class="product-wishlist-btn wishlist-heart-btn <%= inWishlist ? 'active' : '' %>"
                             id="productWishlistBtn"
+                            data-wishlist-toggle
                             data-product-id="<%= product._id %>"
-                            aria-label="Add to wishlist"
+                            aria-pressed="<%= inWishlist ? 'true' : 'false' %>"
+                            aria-label="<%= inWishlist ? 'Remove from wishlist' : 'Add to wishlist' %>"
                         >
-                            <i class="bi bi-heart"></i>
+                            <i class="bi <%= inWishlist ? 'bi-heart-fill' : 'bi-heart' %>"></i>
                         </button>
 
                     </div>
@@ -367,6 +372,12 @@
 
                                     <% } %>
 
+                                    <%- include("../partials/wishlistHeart", {
+                                        productId: related._id.toString(),
+                                        active: typeof wishlistedIds !== "undefined" &&
+                                                wishlistedIds.includes(related._id.toString())
+                                    }) %>
+
                                 </div>
 
                                 <div class="product-tile-info">
@@ -450,6 +461,7 @@
 </div>
 
 
+<script src="/js/wishlistToggle.js"></script>
 <script src="/js/productDetails.js"></script>
 
 <%- include("../partials/footer2") %>

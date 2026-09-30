@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title><%= title %> | Wristora</title>
+
+    <link rel="stylesheet" href="/css/adminDashboard.css">
+
+    <link rel="stylesheet" href="/css/adminOrders.css">
+
+</head>
+
+
+<body>
+
+<div class="admin-layout">
+
+    <%- include("partials/sidebar", { currentPage: "inventory" }) %>
+
+
+    <main class="admin-main ao-main">
+
+        <!-- =====================================================
+             HEADER
+        ====================================================== -->
+
+        <div class="ao-header">
+
+            <div>
+                <h1>Inventory</h1>
+
+                <p>
+                    Low stock means <%= lowStockThreshold %> or fewer items left.
+                </p>
+            </div>
+
+        </div>
+
+
+        <% if (flash) { %>
+            <div class="ao-flash <%= flash.type %>">
+                <%= flash.message %>
+            </div>
+        <% } %>
+
+        <% if (error) { %>
+            <div class="ao-flash error">
+                <%= error %>
+            </div>
+        <% } %>
+
+
+        <!-- =====================================================
+             SUMMARY (click a card to filter)
+        ====================================================== -->
+
+        <section class="ao-summary">
+
+            <a href="<%= urlFor({ stock: 'all' }) %>" class="ao-summary-card">
+                <span>All products</span>
+                <strong><%= counts.all %></strong>
+            </a>
+
+            <a href="<%= urlFor({ stock: 'in-stock' }) %>" class="ao-summary-card">
+                <span>In Stock</span>
+                <strong><%= counts.inStock %></strong>
+            </a>
+
+            <a href="<%= urlFor({ stock: 'low-stock' }) %>" class="ao-summary-card">
+                <span>Low Stock</span>
+                <strong><%= counts.lowStock %></strong>
+            </a>
+
+            <a href="<%= urlFor({ stock: 'out-of-stock' }) %>" class="ao-summary-card">
+                <span>Out of Stock</span>
+                <strong><%= counts.outOfStock %></strong>
+            </a>
+
+        </section>
+
+
+        <!-- =====================================================
+             SEARCH + SORT + FILTER
+        ====================================================== -->
+
+        <div class="ao-tools">
+
+            <form
+                class="ao-search"
+                action="/admin/inventory"
+                method="GET"
+            >
+                <span class="ao-search-icon">⌕</span>
+
+                <input
+                    type="text"
+                    name="search"
+                    placeholder="Search product or brand"
+                    value="<%= search %>"
+                    maxlength="60"
+                    autocomplete="off"
+                >
+
+                <% if (stock !== "all") { %>
+                    <input type="hidden" name="stock" value="<%= stock %>">
+                <% } %>
+
+                <% if (sort !== "latest") { %>
+                    <input type="hidden" name="sort" value="<%= sort %>">
+                <% } %>
+            </form>
+
+            <% if (search) { %>
+                <a href="<%= urlFor({ search: '' }) %>" class="ao-btn" title="Clear search">
+                    Clear
+                </a>
+            <% } %>
+
+            <div class="ao-sort">
+
+                <span>Sort:</span>
+
+                <% sortOptions.forEach(option => { %>
+                    <a
+                        href="<%= urlFor({ sort: option.value }) %>"
+                        class="ao-pill <%= sort === option.value ? 'active' : '' %>"
+                    >
+                        <%= option.label %>
+                    </a>
+                <% }) %>
+
+            </div>
+
+        </div>
+
+
+        <div class="ao-pills">
+
+            <% stockFilters.forEach(filter => { %>
+                <a
+                    href="<%= urlFor({ stock: filter.value }) %>"
+                    class="ao-pill <%= stock === filter.value ? 'active' : '' %>"
+                >
+                    <%= filter.label %>
+                </a>
+            <% }) %>
+
+        </div>
+
+
+        <!-- =====================================================
+             INVENTORY TABLE
+        ====================================================== -->
+
+        <section class="ao-card">
+
+            <% if (products.length > 0) { %>
+
+                <table class="ao-table">
+
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th>Current Stock</th>
+                            <th>Update Stock</th>
+                            <th>Stock Status</th>
+                            <th>Availability</th>
+                            <th>Listing</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <% products.forEach(product => { %>
+
+                            <tr>
+
+                                <td>
+                                    <div class="ao-product-cell">
+
+                                        <% if (product.images && product.images.length > 0) { %>
+                                            <img
+                                                src="<%= product.images[0].url %>"
+                                                alt="<%= product.productName %>"
+                                                class="ao-thumb"
+                                            >
+                                        <% } else { %>
+                                            <div class="ao-thumb"></div>
+                                        <% } %>
+
+                                        <div>
+                                            <strong><%= product.productName %></strong>
+
+                                            <% if (product.brand) { %>
+                                                <span class="ao-muted"><%= product.brand %></span>
+                                            <% } %>
+                                        </div>
+
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <%= product.category && product.category.name
+                                        ? product.category.name
+                                        : "—" %>
+                                </td>
+
+                                <td>
+                                    <strong><%= product.stock %></strong>
+                                </td>
+
+                                <td>
+                                    <form
+                                        class="ao-stock-form"
+                                        action="/admin/inventory/<%= product._id %>/stock"
+                                        method="POST"
+                                    >
+                                        <input
+                                            type="number"
+                                            name="stock"
+                                            value="<%= product.stock %>"
+                                            min="0"
+                                            max="<%= maxStock %>"
+                                            step="1"
+                                            required
+                                            aria-label="New stock for <%= product.productName %>"
+                                        >
+
+                                        <!-- lets the server come back to this same list view -->
+                                        <input type="hidden" name="search" value="<%= search %>">
+                                        <input type="hidden" name="stockFilter" value="<%= stock %>">
+                                        <input type="hidden" name="sort" value="<%= sort %>">
+                                        <input type="hidden" name="page" value="<%= currentPage %>">
+
+                                        <button type="submit" class="ao-btn small dark">
+                                            Save
+                                        </button>
+                                    </form>
+                                </td>
+
+                                <td>
+                                    <span class="ao-status ao-status-<%= product.stockClass %>">
+                                        <%= product.stockStatus %>
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="ao-status ao-status-<%= product.isAvailable ? 'available' : 'unavailable' %>">
+                                        <%= product.isAvailable ? "Available" : "Unavailable" %>
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <% if (product.isBlocked) { %>
+                                        <span class="ao-status ao-status-blocked">Blocked</span>
+                                    <% } else if (product.isListed) { %>
+                                        <span class="ao-status ao-status-listed">Listed</span>
+                                    <% } else { %>
+                                        <span class="ao-status ao-status-unlisted">Unlisted</span>
+                                    <% } %>
+                                </td>
+
+                            </tr>
+
+                        <% }) %>
+
+                    </tbody>
+
+                </table>
+
+            <% } else { %>
+
+                <div class="ao-empty">
+
+                    <h3>No products found</h3>
+
+                    <p>
+                        <% if (search || stock !== "all") { %>
+                            Nothing matches your search or filter.
+                        <% } else { %>
+                            Add products first and they will appear here.
+                        <% } %>
+                    </p>
+
+                </div>
+
+            <% } %>
+
+        </section>
+
+        <p class="ao-note">
+            Stock must be a whole number from 0 to <%= maxStock %>.
+            "Available" means the product is listed, not blocked and in stock.
+        </p>
+
+
+        <!-- =====================================================
+             PAGINATION (keeps search + filter + sort)
+        ====================================================== -->
+
+        <% if (totalPages > 1) { %>
+
+            <nav class="ao-pagination">
+
+                <% if (currentPage > 1) { %>
+                    <a href="<%= urlFor({ page: currentPage - 1 }) %>" class="ao-page">Previous</a>
+                <% } else { %>
+                    <span class="ao-page disabled">Previous</span>
+                <% } %>
+
+
+                <% for (let n = 1; n <= totalPages; n++) { %>
+
+                    <% if (n === currentPage) { %>
+                        <span class="ao-page active"><%= n %></span>
+                    <% } else { %>
+                        <a href="<%= urlFor({ page: n }) %>" class="ao-page"><%= n %></a>
+                    <% } %>
+
+                <% } %>
+
+
+                <% if (currentPage < totalPages) { %>
+                    <a href="<%= urlFor({ page: currentPage + 1 }) %>" class="ao-page">Next</a>
+                <% } else { %>
+                    <span class="ao-page disabled">Next</span>
+                <% } %>
+
+            </nav>
+
+        <% } %>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

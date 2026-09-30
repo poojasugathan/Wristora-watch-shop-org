@@ -32,7 +32,10 @@
         </a>
 
 
-        <a href="#" class="sidebar-link">
+        <a
+            href="/admin/orders"
+            class="sidebar-link <%= currentPage === 'orders' ? 'active' : '' %>"
+        >
 
             <span class="sidebar-icon">♧</span>
 
@@ -115,6 +118,17 @@
             <span class="sidebar-icon">☰</span>
 
             <span>Product List</span>
+
+        </a>
+
+
+        <a
+            href="/admin/inventory"
+            class="sidebar-link <%= currentPage === 'inventory' ? 'active' : '' %>"
+        >
+            <span class="sidebar-icon">▦</span>
+
+            <span>Inventory</span>
 
         </a>
 

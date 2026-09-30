@@ -29,6 +29,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     // Remove the row from the DOM — it moved to the cart.
                     itemEl.remove();
 
+                    // If that was the last item, reload so the
+                    // "Your wishlist is empty" state is shown.
+                    if (document.querySelectorAll(".wishlist-item").length === 0) {
+                        window.location.reload();
+                    }
+
                     // Update cart badge in navbar.
                     const cartCountEl = document.querySelector(".wristora-cart-count");
                     if (cartCountEl && typeof data.cartCount !== "undefined") {

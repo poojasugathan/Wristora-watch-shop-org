@@ -1,0 +1,218 @@
+<%- include("../partials/header", { title: title, user: user }) %>
+
+<link rel="stylesheet" href="/css/profile.css">
+<link rel="stylesheet" href="/css/orders.css">
+
+<%
+    const money = (n) => Number(n).toLocaleString("en-IN", {
+        minimumFractionDigits: Number.isInteger(n) ? 0 : 2,
+        maximumFractionDigits: 2
+    });
+
+    const formatDate = (d) => new Date(d).toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        timeZone: "Asia/Kolkata"
+    });
+
+    const pageLink = (page) =>
+        "/orders?" + (baseQueryString ? baseQueryString + "&" : "") + "page=" + page;
+%>
+
+<main class="profile-page orders-page">
+
+    <div class="profile-container">
+
+        <%- include("partials/profileSidebar", { active: "orders" }) %>
+
+        <section class="orders-content">
+
+            <h1 class="orders-title">Order History</h1>
+            <p class="orders-subtitle">View and manage all your orders</p>
+
+            <% if (errorMessage) { %>
+                <div class="orders-alert orders-alert-error"><%= errorMessage %></div>
+            <% } %>
+
+            <% if (notice) { %>
+                <div class="orders-alert orders-alert-info"><%= notice %></div>
+            <% } %>
+
+            <!-- SEARCH -->
+            <form action="/orders" method="GET" class="orders-search">
+
+                <div class="orders-search-field">
+                    <i class="bi bi-search"></i>
+                    <input
+                        type="text"
+                        name="search"
+                        value="<%= search %>"
+                        maxlength="60"
+                        placeholder="Search by order ID or product name"
+                        aria-label="Search orders"
+                    >
+                </div>
+
+                <button type="submit" class="orders-search-btn">Search</button>
+
+                <% if (search) { %>
+                    <a href="/orders" class="orders-clear-btn">Clear</a>
+                <% } %>
+
+            </form>
+
+            <% if (orders.length > 0) { %>
+
+                <div class="orders-list">
+
+                    <% orders.forEach((order) => {
+                        const lead = order.leadItem;
+                        const isCancelled = order.orderStatus === "Cancelled";
+                        const shownTotal = isCancelled ? order.finalTotal : order.amounts.finalTotal;
+                    %>
+
+                        <article class="order-card">
+
+                            <div class="order-card-image">
+                                <% if (lead && lead.productImage) { %>
+                                    <img src="<%= lead.productImage %>" alt="<%= lead.productName %>">
+                                <% } else { %>
+                                    <i class="bi bi-watch"></i>
+                                <% } %>
+                            </div>
+
+                            <div class="order-card-body">
+
+                                <div class="order-card-top">
+
+                                    <div>
+                                        <h2 class="order-card-name"><%= lead ? lead.productName : "Order" %></h2>
+
+                                        <% if (order.items.length > 1) { %>
+                                            <p class="order-card-more">
+                                                + <%= order.items.length - 1 %> more item<%= order.items.length - 1 > 1 ? "s" : "" %>
+                                            </p>
+                                        <% } %>
+                                    </div>
+
+                                    <div class="order-card-meta">
+                                        <span class="order-status order-status-<%= order.statusClass %>">
+                                            Status: <%= order.displayStatus %>
+                                        </span>
+                                        <span>Ordered: <%= formatDate(order.createdAt) %></span>
+                                        <span class="order-card-id">Order #<%= order.orderId %></span>
+                                    </div>
+
+                                </div>
+
+                                <div class="order-card-bottom">
+
+                                    <p class="order-card-price <%= isCancelled ? 'is-cancelled' : '' %>">
+                                        &#8377;<%= money(shownTotal) %>
+                                    </p>
+
+                                    <div class="order-card-actions">
+
+                                        <% if (order.canCancel) { %>
+                                            <button
+                                                type="button"
+                                                class="order-btn js-cancel-order"
+                                                data-order-id="<%= order.orderId %>"
+                                            >
+                                                Cancel Order
+                                            </button>
+                                        <% } %>
+
+                                        <% if (order.canReturn) { %>
+                                            <button
+                                                type="button"
+                                                class="order-btn js-return-order"
+                                                data-order-id="<%= order.orderId %>"
+                                            >
+                                                Return
+                                            </button>
+                                        <% } %>
+
+                                        <% if (order.canDownloadInvoice) { %>
+                                            <a href="/orders/<%= order.orderId %>/invoice" class="order-btn">
+                                                <i class="bi bi-download"></i> Invoice
+                                            </a>
+                                        <% } %>
+
+                                        <a href="/orders/<%= order.orderId %>" class="order-btn order-btn-dark">
+                                            View Details
+                                        </a>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </article>
+
+                    <% }) %>
+
+                </div>
+
+                <% if (totalPages > 1) { %>
+
+                    <nav class="orders-pagination" aria-label="Order pages">
+
+                        <% if (currentPage > 1) { %>
+                            <a href="<%= pageLink(currentPage - 1) %>" class="orders-page-btn">&laquo; Previous</a>
+                        <% } else { %>
+                            <span class="orders-page-btn disabled">&laquo; Previous</span>
+                        <% } %>
+
+                        <div class="orders-page-numbers">
+                            <% pageNumbers.forEach((pageItem) => { %>
+                                <% if (pageItem === "...") { %>
+                                    <span class="orders-page-ellipsis">&hellip;</span>
+                                <% } else { %>
+                                    <a
+                                        href="<%= pageLink(pageItem) %>"
+                                        class="orders-page-number <%= pageItem === currentPage ? 'active' : '' %>"
+                                    ><%= pageItem %></a>
+                                <% } %>
+                            <% }) %>
+                        </div>
+
+                        <% if (currentPage < totalPages) { %>
+                            <a href="<%= pageLink(currentPage + 1) %>" class="orders-page-btn">Next &raquo;</a>
+                        <% } else { %>
+                            <span class="orders-page-btn disabled">Next &raquo;</span>
+                        <% } %>
+
+                    </nav>
+
+                <% } %>
+
+            <% } else { %>
+
+                <div class="orders-empty">
+                    <i class="bi bi-box-seam"></i>
+
+                    <% if (search) { %>
+                        <h2>No orders matched your search</h2>
+                        <p>Try a different order ID or product name.</p>
+                        <a href="/orders" class="order-btn order-btn-dark">Clear Search</a>
+                    <% } else { %>
+                        <h2>You haven't placed any orders yet</h2>
+                        <p>Your orders will appear here once you place one.</p>
+                        <a href="/products" class="order-btn order-btn-dark">Start Shopping</a>
+                    <% } %>
+                </div>
+
+            <% } %>
+
+        </section>
+
+    </div>
+
+</main>
+
+<script src="/js/orders.js"></script>
+
+<%- include("../partials/footer2") %>

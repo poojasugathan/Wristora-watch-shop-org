@@ -6,10 +6,16 @@ const addressController = require("../controllers/addressController");
 
 const requireAuth = require("../middlewares/authMiddleware");
 
+const {
+    returnToCheckout,
+    clearCheckoutReturn
+} = require("../middlewares/checkoutReturnMiddleware");
+
 
 router.get(
     "/",
     requireAuth,
+    clearCheckoutReturn,
     addressController.loadAddresses
 );
 
@@ -25,6 +31,7 @@ router.get(
 router.post(
     "/add",
     requireAuth,
+    returnToCheckout,
     addressController.addAddress
 );
 
@@ -39,6 +46,7 @@ router.get(
 router.post(
     "/edit/:id",
     requireAuth,
+    returnToCheckout,
     addressController.updateAddress
 );
 

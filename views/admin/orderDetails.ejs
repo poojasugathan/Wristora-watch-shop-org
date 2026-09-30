@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title><%= title %> | Wristora</title>
+
+    <link rel="stylesheet" href="/css/adminDashboard.css">
+
+    <link rel="stylesheet" href="/css/adminOrders.css">
+
+</head>
+
+
+<body>
+
+<div class="admin-layout">
+
+    <%- include("partials/sidebar", { currentPage: "orders" }) %>
+
+
+    <main class="admin-main ao-main">
+
+        <!-- =====================================================
+             HEADER
+        ====================================================== -->
+
+        <div class="ao-breadcrumb">
+            <a href="/admin/orders">Order Management</a>
+            &nbsp;›&nbsp;
+            <strong><%= order.orderId %></strong>
+        </div>
+
+        <div class="ao-header">
+
+            <div>
+                <h1><%= order.orderId %></h1>
+
+                <p>
+                    Placed on
+                    <%= new Date(order.createdAt).toLocaleDateString("en-IN", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric"
+                    }) %>
+                    at
+                    <%= new Date(order.createdAt).toLocaleTimeString("en-IN", {
+                        hour: "2-digit",
+                        minute: "2-digit"
+                    }) %>
+                </p>
+            </div>
+
+            <span class="ao-status ao-status-<%= order.statusClass %>">
+                <%= order.displayStatus %>
+            </span>
+
+        </div>
+
+
+        <% if (flash) { %>
+            <div class="ao-flash <%= flash.type %>">
+                <%= flash.message %>
+            </div>
+        <% } %>
+
+
+        <div class="ao-detail-layout">
+
+            <!-- =====================================================
+                 LEFT: PRODUCTS + TOTALS
+            ====================================================== -->
+
+            <div>
+
+                <section class="ao-card ao-items">
+
+                    <table class="ao-table">
+
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                                <th>Discount</th>
+                                <th>Item Total</th>
+                                <th>Item Status</th>
+                                <% if (order.canCancelItems) { %>
+                                    <th>Action</th>
+                                <% } %>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <% order.items.forEach(item => {
+
+                                const itemCancelled = item.itemStatus === "Cancelled";
+
+                            %>
+
+                                <tr class="<%= itemCancelled ? 'ao-item-cancelled' : '' %>">
+
+                                    <td>
+                                        <div class="ao-product-cell">
+
+                                            <% if (item.productImage) { %>
+                                                <img
+                                                    src="<%= item.productImage %>"
+                                                    alt="<%= item.productName %>"
+                                                    class="ao-thumb"
+                                                >
+                                            <% } else { %>
+                                                <div class="ao-thumb"></div>
+                                            <% } %>
+
+                                            <div>
+                                                <strong><%= item.productName %></strong>
+
+                                                <% if (item.brand) { %>
+                                                    <span class="ao-muted"><%= item.brand %></span>
+                                                <% } %>
+                                            </div>
+
+                                        </div>
+
+                                        <% if (itemCancelled && item.cancellationReason) { %>
+                                            <div class="ao-muted" style="margin-top:6px;">
+                                                Reason: <%= item.cancellationReason %>
+                                            </div>
+                                        <% } %>
+                                    </td>
+
+                                    <td><%= item.quantity %></td>
+
+                                    <td>₹<%= item.unitPrice.toLocaleString("en-IN") %></td>
+
+                                    <td>
+                                        <% if (item.discountAmount > 0) { %>
+                                            −₹<%= item.discountAmount.toLocaleString("en-IN") %>
+                                        <% } else { %>
+                                            —
+                                        <% } %>
+                                    </td>
+
+                                    <td>₹<%= item.itemTotal.toLocaleString("en-IN") %></td>
+
+                                    <td>
+                                        <span class="ao-status ao-status-<%= itemCancelled ? 'cancelled' : 'available' %>">
+                                            <%= itemCancelled ? "Cancelled" : "Active" %>
+                                        </span>
+                                    </td>
+
+                                    <% if (order.canCancelItems) { %>
+                                        <td>
+                                            <% if (!itemCancelled) { %>
+                                                <form
+                                                    action="/admin/orders/<%= order.orderId %>/items/<%= item._id %>/cancel"
+                                                    method="POST"
+                                                    onsubmit="return confirm('Cancel this item and return its stock to the shop?');"
+                                                >
+                                                    <button type="submit" class="ao-btn small danger">
+                                                        Cancel Item
+                                                    </button>
+                                                </form>
+                                            <% } %>
+                                        </td>
+                                    <% } %>
+
+                                </tr>
+
+                            <% }) %>
+
+                        </tbody>
+
+                    </table>
+
+                    <!-- TOTALS (cancelled items are left out) -->
+
+                    <div class="ao-totals">
+
+                        <div class="ao-totals-row">
+                            <span>Subtotal</span>
+                            <span>₹<%= order.amounts.subtotal.toLocaleString("en-IN") %></span>
+                        </div>
+
+                        <% if (order.amounts.discountTotal > 0) { %>
+                            <div class="ao-totals-row">
+                                <span>Discount</span>
+                                <span>−₹<%= order.amounts.discountTotal.toLocaleString("en-IN") %></span>
+                            </div>
+                        <% } %>
+
+                        <% if (order.amounts.tax > 0) { %>
+                            <div class="ao-totals-row">
+                                <span>Tax</span>
+                                <span>₹<%= order.amounts.tax.toLocaleString("en-IN") %></span>
+                            </div>
+                        <% } %>
+
+                        <div class="ao-totals-row">
+                            <span>Shipping</span>
+                            <span>
+                                <%= order.amounts.shipping > 0
+                                    ? "₹" + order.amounts.shipping.toLocaleString("en-IN")
+                                    : "Free" %>
+                            </span>
+                        </div>
+
+                        <div class="ao-totals-row final">
+                            <span>Final Total</span>
+                            <span>₹<%= order.amounts.finalTotal.toLocaleString("en-IN") %></span>
+                        </div>
+
+                        <% if (order.amounts.cancelledCount > 0) { %>
+                            <p class="ao-note">
+                                <%= order.amounts.cancelledCount %> cancelled
+                                <%= order.amounts.cancelledCount === 1 ? "item is" : "items are" %>
+                                not included in these totals.
+                            </p>
+                        <% } %>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <!-- =====================================================
+                 RIGHT: STATUS, CUSTOMER, ADDRESS, PAYMENT
+            ====================================================== -->
+
+            <div class="ao-detail-side">
+
+                <!-- CHANGE STATUS -->
+
+                <section class="ao-panel">
+
+                    <h3>Order Status</h3>
+
+                    <% if (order.nextStatuses.length > 0) { %>
+
+                        <form
+                            action="/admin/orders/<%= order.orderId %>/status"
+                            method="POST"
+                            id="statusForm"
+                        >
+
+                            <div class="ao-form-row">
+
+                                <label for="statusSelect">
+                                    Current: <%= order.orderStatus %> — change to
+                                </label>
+
+                                <select name="status" id="statusSelect" required>
+                                    <% order.nextStatuses.forEach(next => { %>
+                                        <option value="<%= next %>"><%= next %></option>
+                                    <% }) %>
+                                </select>
+
+                                <div id="reasonBox" class="ao-hidden">
+                                    <label for="reasonInput">Cancellation reason (optional)</label>
+                                    <textarea
+                                        name="reason"
+                                        id="reasonInput"
+                                        maxlength="300"
+                                        placeholder="Why is this order being cancelled?"
+                                    ></textarea>
+                                </div>
+
+                                <button type="submit" class="ao-btn dark">
+                                    Update Status
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                        <p class="ao-note">
+                            Cancelling returns the stock of every active item to the shop.
+                        </p>
+
+                    <% } else { %>
+
+                        <p>
+                            This order is <strong><%= order.orderStatus %></strong>,
+                            so its status can no longer be changed.
+                        </p>
+
+                    <% } %>
+
+                </section>
+
+
+                <!-- RETURN REQUEST -->
+
+                <% if (order.returnStatus === "Requested") { %>
+
+                    <section class="ao-panel">
+
+                        <h3>Return Requested</h3>
+
+                        <p><strong>Reason:</strong> <%= order.returnReason %></p>
+
+                        <% if (order.returnRequestedAt) { %>
+                            <p>
+                                <strong>Requested on:</strong>
+                                <%= new Date(order.returnRequestedAt).toLocaleDateString("en-IN", {
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric"
+                                }) %>
+                            </p>
+                        <% } %>
+
+                    </section>
+
+                <% } %>
+
+
+                <!-- CUSTOMER -->
+
+                <section class="ao-panel">
+
+                    <h3>Customer</h3>
+
+                    <% if (order.user) { %>
+                        <p><strong><%= order.user.firstName %> <%= order.user.lastName %></strong></p>
+                        <p><%= order.user.email %></p>
+                        <% if (order.user.phone) { %>
+                            <p><%= order.user.phone %></p>
+                        <% } %>
+                    <% } else { %>
+                        <p>Customer account no longer exists.</p>
+                    <% } %>
+
+                </section>
+
+
+                <!-- DELIVERY ADDRESS (saved with the order) -->
+
+                <section class="ao-panel">
+
+                    <h3>Delivery Address</h3>
+
+                    <p>
+                        <strong>
+                            <%= order.addressSnapshot.firstName %>
+                            <%= order.addressSnapshot.lastName %>
+                        </strong>
+                    </p>
+                    <p><%= order.addressSnapshot.addressLine1 %></p>
+                    <% if (order.addressSnapshot.addressLine2) { %>
+                        <p><%= order.addressSnapshot.addressLine2 %></p>
+                    <% } %>
+                    <p>
+                        <%= order.addressSnapshot.city %>,
+                        <%= order.addressSnapshot.state %> —
+                        <%= order.addressSnapshot.pinCode %>
+                    </p>
+                    <p><%= order.addressSnapshot.country %></p>
+                    <p>Phone: <%= order.addressSnapshot.phone %></p>
+
+                </section>
+
+
+                <!-- PAYMENT -->
+
+                <section class="ao-panel">
+
+                    <h3>Payment</h3>
+
+                    <p><strong>Method:</strong> <%= paymentLabel %></p>
+                    <p><strong>Status:</strong> <%= order.paymentStatus %></p>
+
+                </section>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+    // Show the "reason" box only when "Cancelled" is chosen,
+    // and ask the admin to confirm before cancelling.
+    (function () {
+
+        const select = document.getElementById("statusSelect");
+        const reasonBox = document.getElementById("reasonBox");
+        const form = document.getElementById("statusForm");
+
+        if (!select || !reasonBox || !form) {
+            return;
+        }
+
+        const toggleReason = () => {
+            reasonBox.classList.toggle("ao-hidden", select.value !== "Cancelled");
+        };
+
+        select.addEventListener("change", toggleReason);
+        toggleReason();
+
+        form.addEventListener("submit", (event) => {
+
+            if (
+                select.value === "Cancelled" &&
+                !confirm("Cancel this order? Stock for all active items will be returned to the shop.")
+            ) {
+                event.preventDefault();
+            }
+        });
+
+    })();
+</script>
+
+</body>
+
+</html>

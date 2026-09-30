@@ -1,0 +1,124 @@
+<%- include("../partials/header", { title: title, user: user }) %>
+
+<link rel="stylesheet" href="/css/products.css">
+<link rel="stylesheet" href="/css/cart.css">
+<link rel="stylesheet" href="/css/checkout.css">
+
+<%
+    const money = (n) => Number(n).toLocaleString("en-IN", {
+        minimumFractionDigits: Number.isInteger(n) ? 0 : 2,
+        maximumFractionDigits: 2
+    });
+
+    const placedAt = new Date(order.createdAt).toLocaleString("en-IN", {
+        dateStyle: "medium",
+        timeStyle: "short",
+        timeZone: "Asia/Kolkata"
+    });
+
+    const addr = order.addressSnapshot;
+%>
+
+<main class="cart-page">
+
+    <div class="cart-container">
+
+        <div class="order-success-layout">
+
+            <!-- LEFT: message + buttons -->
+
+            <div class="order-success-message">
+
+                <div class="order-success-icon">
+                    <i class="bi bi-bag-check"></i>
+                </div>
+
+                <h1 class="order-success-title">Thank You for Your Order!</h1>
+
+                <p class="order-success-text">
+                    Your order has been successfully placed.
+                </p>
+
+                <p class="order-success-subtext">
+                    Keep your order ID handy. You can use it to track your order.
+                </p>
+
+                <div class="order-success-actions">
+
+                    <a href="/orders/<%= order.orderId %>" class="order-success-btn-primary">
+                        View Order Details
+                    </a>
+
+                    <a href="/products" class="order-success-btn-secondary">
+                        Continue Shopping
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- RIGHT: order card -->
+
+            <div class="order-success-card">
+
+                <div class="order-success-badge">
+                    <i class="bi bi-check-lg"></i>
+                </div>
+
+                <h2 class="order-success-card-title">Order Placed!</h2>
+
+                <div class="order-success-row">
+                    <span>Order ID</span>
+                    <strong><%= order.orderId %></strong>
+                </div>
+
+                <div class="order-success-row">
+                    <span>Order Date</span>
+                    <strong><%= placedAt %></strong>
+                </div>
+
+                <div class="order-success-row">
+                    <span>Payment Method</span>
+                    <strong><%= paymentLabel %></strong>
+                </div>
+
+                <div class="order-success-row">
+                    <span>Payment Status</span>
+                    <strong><%= order.paymentStatus %></strong>
+                </div>
+
+                <div class="order-success-row">
+                    <span>Deliver To</span>
+                    <strong class="order-success-address">
+                        <%= addr.firstName %> <%= addr.lastName %>,
+                        <%= addr.addressLine1 %><% if (addr.addressLine2) { %>, <%= addr.addressLine2 %><% } %>,
+                        <%= addr.city %>, <%= addr.state %> - <%= addr.pinCode %>
+                    </strong>
+                </div>
+
+                <div class="order-success-items">
+
+                    <% order.items.forEach((item) => { %>
+                        <div class="order-success-item">
+                            <span><%= item.productName %> &times; <%= item.quantity %></span>
+                            <span>&#8377;<%= money(item.itemTotal) %></span>
+                        </div>
+                    <% }) %>
+
+                </div>
+
+                <div class="order-success-row order-success-amount">
+                    <span>Amount</span>
+                    <strong>&#8377;<%= money(order.finalTotal) %></strong>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+<%- include("../partials/footer2") %>

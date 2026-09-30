@@ -4,236 +4,286 @@
 <link rel="stylesheet" href="/css/cart.css">
 <link rel="stylesheet" href="/css/checkout.css">
 
+<%
+    // Show whole rupees without decimals, otherwise 2 decimals.
+    const money = (n) => Number(n).toLocaleString("en-IN", {
+        minimumFractionDigits: Number.isInteger(n) ? 0 : 2,
+        maximumFractionDigits: 2
+    });
+%>
+
 <main class="cart-page">
 
     <div class="cart-container">
-
-        <!-- =====================================================
-             BREADCRUMB
-        ====================================================== -->
 
         <p class="products-breadcrumb">
             <a href="/">HOME</a> &gt;
             <a href="/cart">CART</a> &gt; CHECKOUT
         </p>
 
-
-        <!-- =====================================================
-             PAGE HEADER
-        ====================================================== -->
-
         <div class="cart-page-header">
             <h1 class="products-title">Checkout</h1>
         </div>
 
-
-        <!-- =====================================================
-             ERROR (backend/database failure)
-        ====================================================== -->
-
         <% if (typeof error !== "undefined" && error) { %>
-
-            <div class="products-error">
-                <%= error %>
-            </div>
-
+            <div class="products-error"><%= error %></div>
         <% } %>
 
+        <% if (typeof notice !== "undefined" && notice) { %>
+            <div class="checkout-notice"><%= notice %></div>
+        <% } %>
 
-        <div class="checkout-layout">
+        <div id="checkout-client-error" class="products-error" style="display:none;"></div>
 
-            <!-- =============================================
-                 LEFT COLUMN
-            ============================================== -->
 
-            <div class="checkout-main">
+        <!-- One form wraps both columns so the Place Order button
+             (in the summary) submits the chosen address + payment. -->
+        <form
+            id="checkout-form"
+            action="/checkout/place-order"
+            method="POST"
+        >
 
-                <!-- =========================================
-                     SECTION 1 — DELIVERY ADDRESS
+            <div class="checkout-layout">
 
-                     Read-only foundation for now. Only this
-                     user's own addresses are ever passed in —
-                     checkoutController scopes the query by
-                     userId, so there is nothing here to select
-                     that doesn't belong to the logged-in user.
-                ========================================== -->
+                <!-- =============================================
+                     LEFT COLUMN
+                ============================================== -->
 
-                <section class="checkout-section">
+                <div class="checkout-main">
 
-                    <div class="checkout-section-header">
-                        <h2>Delivery Address</h2>
-                        <a href="/addresses/add" class="checkout-section-link">+ Add New Address</a>
-                    </div>
+                    <!-- SECTION 1 — DELIVERY ADDRESS -->
 
-                    <% if (addresses && addresses.length > 0) { %>
+                    <section class="checkout-section">
 
-                        <div class="checkout-address-list">
+                        <div class="checkout-section-header">
+                            <h2>Delivery Address</h2>
+                            <a href="/checkout/address/new" class="checkout-section-link">+ Add New Address</a>
+                        </div>
 
-                            <% addresses.forEach((address, index) => { %>
+                        <% if (addresses && addresses.length > 0) { %>
 
-                                <label class="checkout-address-card">
+                            <div class="checkout-address-list">
 
-                                    <input
-                                        type="radio"
-                                        name="selectedAddress"
-                                        value="<%= address._id %>"
-                                        <%= (address.isDefault || index === 0) ? "checked" : "" %>
-                                    >
+                                <% addresses.forEach((address, index) => { %>
 
-                                    <div class="checkout-address-details">
+                                    <label class="checkout-address-card">
 
-                                        <div class="checkout-address-name-row">
-                                            <span class="checkout-address-name">
-                                                <%= address.addressName || "Address" %>
-                                            </span>
+                                        <input
+                                            type="radio"
+                                            name="selectedAddress"
+                                            value="<%= address._id %>"
+                                            <%= (address.isDefault || (index === 0 && !addresses.some(a => a.isDefault))) ? "checked" : "" %>
+                                        >
 
-                                            <% if (address.isDefault) { %>
-                                                <span class="checkout-address-default-tag">Default</span>
-                                            <% } %>
+                                        <div class="checkout-address-details">
+
+                                            <div class="checkout-address-name-row">
+                                                <span class="checkout-address-name">
+                                                    <%= address.addressName || "Address" %>
+                                                </span>
+
+                                                <% if (address.isDefault) { %>
+                                                    <span class="checkout-address-default-tag">Default</span>
+                                                <% } %>
+                                            </div>
+
+                                            <p class="checkout-address-person">
+                                                <%= address.firstName %> <%= address.lastName %>
+                                            </p>
+
+                                            <p class="checkout-address-line">
+                                                <%= address.addressLine1 %><% if (address.addressLine2) { %>, <%= address.addressLine2 %><% } %>
+                                            </p>
+
+                                            <p class="checkout-address-line">
+                                                <%= address.city %>, <%= address.state %> - <%= address.pinCode %>, <%= address.country %>
+                                            </p>
+
+                                            <p class="checkout-address-phone">
+                                                <%= address.phone %>
+                                            </p>
+
                                         </div>
 
-                                        <p class="checkout-address-person">
-                                            <%= address.firstName %> <%= address.lastName %>
-                                        </p>
+                                        <a
+                                            href="/checkout/address/<%= address._id %>/edit"
+                                            class="checkout-address-edit"
+                                        >
+                                            Edit
+                                        </a>
 
-                                        <p class="checkout-address-line">
-                                            <%= address.addressLine1 %><% if (address.addressLine2) { %>, <%= address.addressLine2 %><% } %>
-                                        </p>
+                                    </label>
 
-                                        <p class="checkout-address-line">
-                                            <%= address.city %>, <%= address.state %> - <%= address.pinCode %>, <%= address.country %>
-                                        </p>
+                                <% }) %>
 
-                                        <p class="checkout-address-phone">
-                                            <%= address.phone %>
+                            </div>
+
+                        <% } else { %>
+
+                            <div class="checkout-empty-address">
+                                <p>You haven't added a delivery address yet.</p>
+                                <a href="/checkout/address/new" class="products-empty-btn">Add Address</a>
+                            </div>
+
+                        <% } %>
+
+                    </section>
+
+
+                    <!-- SECTION 2 — PAYMENT METHOD -->
+
+                    <section class="checkout-section">
+
+                        <div class="checkout-section-header">
+                            <h2>Payment Method</h2>
+                        </div>
+
+                        <label class="checkout-address-card">
+
+                            <input
+                                type="radio"
+                                name="paymentMethod"
+                                value="COD"
+                                checked
+                            >
+
+                            <div class="checkout-address-details">
+                                <span class="checkout-address-name"><%= paymentLabel %></span>
+                                <p class="checkout-address-line">
+                                    Pay in cash when your order is delivered.
+                                </p>
+                            </div>
+
+                        </label>
+
+                    </section>
+
+
+                    <!-- SECTION 3 — ORDER ITEMS
+                         Every value here was recalculated from the
+                         database by the server just before rendering. -->
+
+                    <section class="checkout-section">
+
+                        <div class="checkout-section-header">
+                            <h2>Order Items</h2>
+                            <a href="/cart" class="checkout-section-link">Edit Cart</a>
+                        </div>
+
+                        <div class="checkout-item-list">
+
+                            <% lines.forEach((line) => { %>
+
+                                <div class="checkout-item">
+
+                                    <div class="checkout-item-image">
+                                        <% if (line.productImage) { %>
+                                            <img src="<%= line.productImage %>" alt="<%= line.productName %>">
+                                        <% } else { %>
+                                            <div class="image-missing"></div>
+                                        <% } %>
+                                    </div>
+
+                                    <div class="checkout-item-info">
+
+                                        <p class="checkout-item-name"><%= line.productName %></p>
+
+                                        <% if (line.brand) { %>
+                                            <p class="checkout-item-brand"><%= line.brand %></p>
+                                        <% } %>
+
+                                        <p class="checkout-item-qty">
+                                            &#8377;<%= money(line.unitPrice) %> &times; <%= line.quantity %>
                                         </p>
 
                                     </div>
 
-                                </label>
+                                    <div class="checkout-item-subtotal">
+                                        &#8377;<%= money(line.itemTotal) %>
+                                    </div>
+
+                                </div>
 
                             <% }) %>
 
                         </div>
 
-                    <% } else { %>
+                    </section>
 
-                        <div class="checkout-empty-address">
-                            <p>You haven't added a delivery address yet.</p>
-                            <a href="/addresses/add" class="products-empty-btn">Add Address</a>
+                </div>
+
+
+                <!-- =============================================
+                     RIGHT COLUMN — ORDER SUMMARY
+                ============================================== -->
+
+                <aside class="checkout-summary">
+
+                    <h2>Order Summary</h2>
+
+                    <div class="checkout-summary-row">
+                        <span>Subtotal (<%= lines.length %> <%= lines.length === 1 ? "item" : "items" %>)</span>
+                        <span>&#8377;<%= money(pricing.subtotal) %></span>
+                    </div>
+
+                    <% if (pricing.discountTotal > 0) { %>
+                        <div class="checkout-summary-row">
+                            <span>Discount</span>
+                            <span class="checkout-summary-free">- &#8377;<%= money(pricing.discountTotal) %></span>
                         </div>
-
                     <% } %>
 
-                </section>
+                    <% if (pricing.tax > 0) { %>
+                        <div class="checkout-summary-row">
+                            <span>Tax</span>
+                            <span>&#8377;<%= money(pricing.tax) %></span>
+                        </div>
+                    <% } %>
 
-
-                <!-- =========================================
-                     SECTION 2 — ORDER ITEMS
-
-                     Everything shown here (name, price, qty,
-                     subtotal) was recalculated from the database
-                     inside checkoutController just before this
-                     page rendered. Quantity edits still happen
-                     back on the cart page, not here.
-                ========================================== -->
-
-                <section class="checkout-section">
-
-                    <div class="checkout-section-header">
-                        <h2>Order Items</h2>
-                        <a href="/cart" class="checkout-section-link">Edit Cart</a>
+                    <div class="checkout-summary-row">
+                        <span>Shipping</span>
+                        <% if (pricing.shipping > 0) { %>
+                            <span>&#8377;<%= money(pricing.shipping) %></span>
+                        <% } else { %>
+                            <span class="checkout-summary-free">Free</span>
+                        <% } %>
                     </div>
 
-                    <div class="checkout-item-list">
+                    <div class="cart-summary-divider"></div>
 
-                        <% cartItems.forEach((item) => { %>
-
-                            <div class="checkout-item">
-
-                                <div class="checkout-item-image">
-
-                                    <% if (item.image) { %>
-                                        <img src="<%= item.image %>" alt="<%= item.productName %>">
-                                    <% } else { %>
-                                        <div class="image-missing"></div>
-                                    <% } %>
-
-                                </div>
-
-                                <div class="checkout-item-info">
-
-                                    <p class="checkout-item-name"><%= item.productName %></p>
-
-                                    <% if (item.brand) { %>
-                                        <p class="checkout-item-brand"><%= item.brand %></p>
-                                    <% } %>
-
-                                    <p class="checkout-item-qty">Qty: <%= item.quantity %></p>
-
-                                </div>
-
-                                <div class="checkout-item-subtotal">
-                                    &#8377;<%= item.subtotal.toLocaleString("en-IN") %>
-                                </div>
-
-                            </div>
-
-                        <% }) %>
-
+                    <div class="checkout-summary-row checkout-summary-total">
+                        <span>Total</span>
+                        <span>&#8377;<%= money(pricing.finalTotal) %></span>
                     </div>
 
-                </section>
+                    <p class="checkout-summary-payment">
+                        Payment: <strong><%= paymentLabel %></strong>
+                    </p>
+
+                    <button
+                        type="submit"
+                        id="place-order-btn"
+                        class="cart-continue-btn"
+                        <%= (addresses && addresses.length > 0) ? "" : "disabled" %>
+                    >
+                        Place Order
+                    </button>
+
+                    <a href="/cart" class="checkout-back-link">
+                        &larr; Back to Cart
+                    </a>
+
+                </aside>
 
             </div>
 
-
-            <!-- =============================================
-                 RIGHT COLUMN — ORDER SUMMARY (sticky)
-            ============================================== -->
-
-            <aside class="checkout-summary">
-
-                <h2>Order Summary</h2>
-
-                <div class="checkout-summary-row">
-                    <span>Items (<%= cartItems.length %>)</span>
-                    <span>&#8377;<%= cartTotal.toLocaleString("en-IN") %></span>
-                </div>
-
-                <div class="checkout-summary-row">
-                    <span>Delivery</span>
-                    <span class="checkout-summary-free">Free</span>
-                </div>
-
-                <div class="cart-summary-divider"></div>
-
-                <div class="checkout-summary-row checkout-summary-total">
-                    <span>Total</span>
-                    <span>&#8377;<%= cartTotal.toLocaleString("en-IN") %></span>
-                </div>
-
-                <button
-                    type="button"
-                    class="cart-continue-btn"
-                    disabled
-                    title="Order placement is coming in a later phase"
-                >
-                    Continue
-                </button>
-
-                <a href="/cart" class="checkout-back-link">
-                    &larr; Back to Cart
-                </a>
-
-            </aside>
-
-        </div>
+        </form>
 
     </div>
 
 </main>
 
-<script src="/js/cart.js"></script>
+<script src="/js/checkout.js"></script>
 
 <%- include("../partials/footer2") %>
