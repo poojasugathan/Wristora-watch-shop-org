@@ -9,9 +9,7 @@ const {
 } = require("../config/orderConstants");
 
 
-// One product line inside an order. Everything a customer
-// paid for is COPIED here at purchase time, so later price
-// changes / product edits never change an old order.
+
 const orderItemSchema = new mongoose.Schema(
     {
         product: {
@@ -26,23 +24,20 @@ const orderItemSchema = new mongoose.Schema(
 
         quantity: { type: Number, required: true, min: 1 },
 
-        // price per unit BEFORE discount (product.price)
+        
         mrp: { type: Number, required: true, min: 0 },
 
-        // discount percent that applied at purchase time
         discountPercent: { type: Number, default: 0, min: 0 },
 
-        // price per unit the customer actually pays
-        // (product.sellingPrice at purchase time)
         unitPrice: { type: Number, required: true, min: 0 },
 
-        // total discount on this line = (mrp * qty) - itemTotal
+       
         discountAmount: { type: Number, default: 0, min: 0 },
 
-        // unitPrice * quantity
+        
         itemTotal: { type: Number, required: true, min: 0 },
 
-        // used by item-level cancellation (Phase 51)
+        
         itemStatus: {
             type: String,
             enum: Object.values(ITEM_STATUS),
@@ -54,9 +49,6 @@ const orderItemSchema = new mongoose.Schema(
 );
 
 
-// Copy of the delivery address taken at order time, so
-// editing/deleting the saved address later cannot change
-// where an old order was delivered.
 const addressSnapshotSchema = new mongoose.Schema(
     {
         addressName: { type: String, default: "" },
@@ -76,7 +68,6 @@ const addressSnapshotSchema = new mongoose.Schema(
 
 const orderSchema = new mongoose.Schema(
     {
-        // Human-readable unique ID, e.g. WR-20260929-K7M2Q
         orderId: {
             type: String,
             required: true,
@@ -99,7 +90,6 @@ const orderSchema = new mongoose.Schema(
             }
         },
 
-        // subtotal - discountTotal + tax + shipping = finalTotal
         subtotal: { type: Number, required: true, min: 0 },
         discountTotal: { type: Number, default: 0, min: 0 },
         tax: { type: Number, default: 0, min: 0 },
@@ -130,11 +120,10 @@ const orderSchema = new mongoose.Schema(
             index: true
         },
 
-        // Phase 51: set when the WHOLE order gets cancelled
-        // (single-item reasons live on each item).
+       
         cancellationReason: { type: String, default: "", trim: true },
 
-        // Phase 51: return request (only for Delivered orders)
+      
         returnStatus: {
             type: String,
             enum: Object.values(RETURN_STATUS),

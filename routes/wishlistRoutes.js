@@ -7,11 +7,6 @@ const wishlistController = require("../controllers/wishlistController");
 const requireAuth = require("../middlewares/authMiddleware");
 
 
-// =====================================================
-// USER WISHLIST (PHASE 45 + PHASE 49)
-// Every route requires login.
-// =====================================================
-
 router.get(
     "/",
     requireAuth,
@@ -24,9 +19,7 @@ router.post(
     wishlistController.addToWishlist
 );
 
-// PHASE 49 — one JSON route used by every heart button
-// (product cards + product details). It adds the product
-// if it is not in the wishlist and removes it if it is.
+
 router.post(
     "/toggle",
     requireAuth,

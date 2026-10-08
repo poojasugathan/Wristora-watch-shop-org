@@ -112,8 +112,7 @@ const buildCartSummary = async (userId) => {
 
     }, 0);
 
-    // Navbar badge = number of DIFFERENT products in the cart,
-    // not the total quantity.
+   
     const cartCount = rawItems.length;
 
     return { cartItems, cartTotal, cartCount };
@@ -121,8 +120,7 @@ const buildCartSummary = async (userId) => {
 };
 
 
-// quantity defaults to 1, so the wishlist "move to cart" code that
-// calls attemptAddToCart(userId, productId) keeps working unchanged.
+
 const attemptAddToCart = async (userId, productId, quantity = 1) => {
 
     if (!Number.isInteger(quantity) || quantity < 1) {
@@ -195,8 +193,7 @@ const attemptAddToCart = async (userId, productId, quantity = 1) => {
         product.stock
     );
 
-    // Checked on the server against the CURRENT stock, whatever the
-    // browser sent.
+   
     if (currentQuantity + quantity > effectiveMax) {
 
         const message =
@@ -302,8 +299,7 @@ const addToCart = async (req, res) => {
         const userId = req.session.user.id;
         const productId = req.body.productId;
 
-        // Optional. Missing -> 1. Anything that is not a whole
-        // number >= 1 is rejected inside attemptAddToCart.
+        
         const quantity =
             req.body.quantity === undefined
                 ? 1
@@ -595,7 +591,7 @@ const getCartItemCount = async (userId) => {
         return 0;
     }
 
-    // number of different products (not total quantity)
+    
     return cart.items.length;
 
 };

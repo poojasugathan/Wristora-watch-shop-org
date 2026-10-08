@@ -1,19 +1,3 @@
-// =====================================================
-// ADMIN ORDER SERVICE (PHASE 52)
-//
-// Everything the ADMIN can do with orders: list (search, sort,
-// filter, pagination), view, change status, cancel an item or
-// the whole order.
-//
-// Golden rules (same as Phase 50 + 51):
-//  - the browser is never trusted: the status, the item and the
-//    order are always re-checked here, in MongoDB
-//  - a status change must follow ORDER_STATUS_TRANSITIONS
-//  - stock is given back EXACTLY once per item, using the same
-//    "claim the item first" atomic update as customer cancellation
-//    (so cancelling twice, or admin + customer at the same time,
-//    can never restore stock twice)
-// =====================================================
 
 const mongoose = require("mongoose");
 
@@ -23,7 +7,6 @@ const User = require("../models/userModel");
 
 const { ORDER_ID_PATTERN } = require("./orderService");
 
-// Reused from Phase 51 - do NOT copy this logic a second time.
 const {
     OrderError,
     calculateActiveAmounts
@@ -50,19 +33,11 @@ const {
     toSlug
 } = require("../config/orderConstants");
 
-
-// Old orders may not have itemStatus, so "not cancelled" = active.
 const isActive = (item) => item.itemStatus !== ITEM_STATUS.CANCELLED;
 
 const cleanText = (value) =>
     typeof value === "string" ? value.trim() : "";
 
-
-// -----------------------------------------------------
-// Adds the values the admin pages need. The pages only
-// DISPLAY these - the real checks are repeated in
-// changeOrderStatus / cancelOrderItemAsAdmin.
-// -----------------------------------------------------
 const decorateAdminOrder = (order) => {
 
     const items = order.items || [];
@@ -93,11 +68,6 @@ const decorateAdminOrder = (order) => {
 };
 
 
-// -----------------------------------------------------
-// ADMIN ORDER LIST
-// search (order ID / customer name / email) + status filter
-// + sort by date + pagination. All done in MongoDB.
-// -----------------------------------------------------
 const listAdminOrders = async ({
     search = "",
     status = "all",
@@ -107,7 +77,7 @@ const listAdminOrders = async ({
 
     const cleanSearch = cleanText(search).slice(0, ORDER_SEARCH_MAX_LENGTH);
 
-    // unknown values in the URL fall back to the defaults
+   
     const statusFilter =
         ADMIN_ORDER_STATUS_FILTERS.find((f) => f.value === status) ||
         ADMIN_ORDER_STATUS_FILTERS[0];
@@ -131,8 +101,6 @@ const listAdminOrders = async ({
         const escaped = escapeRegex(cleanSearch);
         const pattern = new RegExp(escaped, "i");
 
-        // 1) find customers whose name / email matches
-        //    (the $expr part lets "john doe" match first + last name)
         const matchingUsers = await User.find({
             $or: [
                 { firstName: pattern },
@@ -153,7 +121,7 @@ const listAdminOrders = async ({
             .limit(500)
             .lean();
 
-        // 2) orders with that order ID, or placed by those customers
+        
         filter.$or = [{ orderId: pattern }];
 
         if (matchingUsers.length > 0) {
@@ -188,9 +156,7 @@ const listAdminOrders = async ({
 };
 
 
-// -----------------------------------------------------
-// ONE order by its public order ID (WR-...), or a 404 error.
-// -----------------------------------------------------
+
 const findOrderByOrderId = async (orderId) => {
 
     if (typeof orderId !== "string" || !ORDER_ID_PATTERN.test(orderId)) {
@@ -223,24 +189,13 @@ const getAdminOrder = async (orderId) => {
     return decorateAdminOrder(order);
 };
 
-
-// -----------------------------------------------------
-// CANCEL the given items (shared by "cancel whole order" and
-// "cancel one item").
-//
-// For every item we first CLAIM it with an atomic update that
-// only matches while the item is still Active and the order is
-// still cancellable. Only the request that wins the claim gives
-// the stock back - an item that is already cancelled is skipped,
-// so its stock is never restored twice.
-// -----------------------------------------------------
 const cancelItems = async (order, targets, reason) => {
 
     let cancelledCount = 0;
 
     for (const item of targets) {
 
-        // Step 1: claim the item (only one request can win this)
+       
         const claim = await Order.updateOne(
             {
                 _id: order._id,
@@ -261,12 +216,12 @@ const cancelItems = async (order, targets, reason) => {
         );
 
         if (claim.modifiedCount !== 1) {
-            continue; // already cancelled by another request
+            continue; 
         }
 
         cancelledCount++;
 
-        // Step 2: only the winner gives the stock back
+        
         try {
             await Product.updateOne(
                 { _id: item.product },
@@ -284,7 +239,6 @@ const cancelItems = async (order, targets, reason) => {
         throw new OrderError("These items were already cancelled.");
     }
 
-    // If no active item is left, the whole order becomes Cancelled.
     const closeOrder = await Order.updateOne(
         {
             _id: order._id,
@@ -320,14 +274,11 @@ const cleanCancelReason = (reason) => {
 };
 
 
-// -----------------------------------------------------
-// CHANGE ORDER STATUS
-// -----------------------------------------------------
 const changeOrderStatus = async (orderId, newStatus, reason = "") => {
 
     const order = await findOrderByOrderId(orderId);
 
-    // the browser can send anything - only real statuses pass
+   
     if (
         typeof newStatus !== "string" ||
         !Object.values(ORDER_STATUS).includes(newStatus)
@@ -347,8 +298,7 @@ const changeOrderStatus = async (orderId, newStatus, reason = "") => {
         );
     }
 
-    // Cancelled = cancel every item that is still active
-    // (already-cancelled items are skipped, stock restored once).
+   
     if (newStatus === ORDER_STATUS.CANCELLED) {
 
         const cleanReason = cleanCancelReason(reason);
@@ -362,15 +312,13 @@ const changeOrderStatus = async (orderId, newStatus, reason = "") => {
         return cancelItems(order, targets, cleanReason);
     }
 
-    // Normal forward step (Pending -> Shipped -> ... -> Delivered).
+   
     const changes = { orderStatus: newStatus };
 
-    // Cash on Delivery is paid when the parcel is handed over.
     if (newStatus === ORDER_STATUS.DELIVERED) {
         changes.paymentStatus = PAYMENT_STATUS.PAID;
     }
 
-    // Only succeeds if the order still has the status we just checked.
     const result = await Order.updateOne(
         { _id: order._id, orderStatus: order.orderStatus },
         { $set: changes }
@@ -387,9 +335,6 @@ const changeOrderStatus = async (orderId, newStatus, reason = "") => {
 };
 
 
-// -----------------------------------------------------
-// CANCEL ONE ITEM (partial cancellation by the admin)
-// -----------------------------------------------------
 const cancelOrderItemAsAdmin = async (orderId, itemId, reason = "") => {
 
     const cleanReason = cleanCancelReason(reason);

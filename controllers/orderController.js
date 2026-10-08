@@ -1,10 +1,3 @@
-// =====================================================
-// ORDER CONTROLLER (PHASE 51)
-//
-// My Orders, Order Details, Cancel, Return, Invoice.
-// All business rules live in services/orderManagementService.js.
-// This file only reads the request and sends the response.
-// =====================================================
 
 const User = require("../models/userModel");
 
@@ -23,7 +16,6 @@ const {
 } = require("../config/orderConstants");
 
 
-// Friendly JSON reply used by the cancel / return buttons.
 const sendJsonError = (res, error, logLabel) => {
 
     if (error instanceof OrderError) {
@@ -40,11 +32,6 @@ const sendJsonError = (res, error, logLabel) => {
         message: "Something went wrong. Please try again."
     });
 };
-
-
-// =====================================================
-// MY ORDERS  (GET /orders?search=&page=)
-// =====================================================
 
 const loadOrders = async (req, res) => {
 
@@ -97,10 +84,6 @@ const loadOrders = async (req, res) => {
 };
 
 
-// =====================================================
-// ORDER DETAILS  (GET /orders/:orderId)
-// =====================================================
-
 const loadOrderDetails = async (req, res) => {
 
     try {
@@ -130,12 +113,6 @@ const loadOrderDetails = async (req, res) => {
     }
 };
 
-
-// =====================================================
-// CANCEL WHOLE ORDER  (POST /orders/:orderId/cancel)
-// CANCEL ONE ITEM     (POST /orders/:orderId/items/:itemId/cancel)
-// Body: { reason }  (reason is optional)
-// =====================================================
 
 const cancelOrder = async (req, res) => {
 
@@ -185,11 +162,6 @@ const cancelOrderItem = async (req, res) => {
 };
 
 
-// =====================================================
-// RETURN  (POST /orders/:orderId/return)
-// Body: { reason }  (reason is MANDATORY)
-// =====================================================
-
 const requestReturn = async (req, res) => {
 
     try {
@@ -211,9 +183,6 @@ const requestReturn = async (req, res) => {
 };
 
 
-// =====================================================
-// INVOICE PDF  (GET /orders/:orderId/invoice)
-// =====================================================
 
 const downloadInvoice = async (req, res) => {
 
@@ -231,8 +200,6 @@ const downloadInvoice = async (req, res) => {
             .select("firstName lastName email phone")
             .lean();
 
-        // Build the whole PDF first, so a failure can still show
-        // a normal redirect instead of a half-sent file.
         const pdf = await generateInvoiceBuffer(order, customer);
 
         res.set({

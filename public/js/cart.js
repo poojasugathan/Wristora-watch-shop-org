@@ -1,18 +1,4 @@
-// =====================================================
-// CART QUANTITY CONTROLS (PHASE 44)
-//
-// This file is new — Phase 43 had no +/- buttons yet.
-//
-// How it works, in plain terms:
-// 1. When + or - is clicked, we send a fetch() request to
-//    the backend telling it which product and which
-//    direction.
-// 2. The backend re-checks everything (stock, availability,
-//    max quantity) and sends back the REAL new numbers.
-// 3. We only ever update the page using what the backend
-//    sent back — never numbers we calculated ourselves in
-//    the browser. The backend is the source of truth.
-// =====================================================
+
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -50,8 +36,7 @@ async function handleQuantityChange(cartItem, productId, url) {
     const subtotalEl = cartItem.querySelector("[data-role='subtotal']");
     const messageEl = cartItem.querySelector("[data-role='inline-message']");
 
-    // Prevent double-clicks from firing two requests before
-    // the first one comes back.
+   
     if (increaseBtn) increaseBtn.disabled = true;
     if (decreaseBtn) decreaseBtn.disabled = true;
 
@@ -74,10 +59,7 @@ async function handleQuantityChange(cartItem, productId, url) {
 
         if (!data.success) {
 
-            // Backend rejected it (max reached, out of stock,
-            // product no longer available, etc). Show the
-            // message it gave us and re-enable the buttons
-            // based on what it told us, if it told us.
+            
             if (messageEl) {
                 messageEl.textContent = data.message || "Unable to update quantity.";
                 messageEl.classList.add("cart-item-message-error");
@@ -95,8 +77,7 @@ async function handleQuantityChange(cartItem, productId, url) {
 
         }
 
-        // Success — update this item's numbers using exactly
-        // what the backend calculated.
+      
         if (quantityEl) {
             quantityEl.textContent = data.quantity;
         }
@@ -156,8 +137,7 @@ function updateCartTotals(cartTotal) {
 
 function updateCartCountBadge(cartCount) {
 
-    // The navbar badge in partials/header.ejs is
-    // <span class="wristora-cart-count">.
+    
     document
         .querySelectorAll(".wristora-cart-count")
         .forEach((badge) => {

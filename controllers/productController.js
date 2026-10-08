@@ -526,7 +526,6 @@ const loadProductDetails = async (req, res) => {
  
 
  
-        // PHASE 49 — wishlist state for the main heart and related tiles.
         const wishlistedIds = await getWishlistProductIds(
             req.session && req.session.user ? req.session.user.id : null
         );

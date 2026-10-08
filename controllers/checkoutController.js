@@ -17,18 +17,12 @@ const {
 } = require("../config/orderConstants");
 
 
-// =====================================================
-// CHECKOUT PAGE  (GET /checkout)
-// =====================================================
-
 const loadCheckout = async (req, res) => {
 
     try {
 
         const userId = req.session.user.id;
 
-        // Coming back to checkout ends any "return here after
-        // saving an address" trip.
         delete req.session.checkoutReturn;
 
         const cart = await Cart.findOne({ user: userId }).lean();
@@ -39,7 +33,6 @@ const loadCheckout = async (req, res) => {
             return res.redirect("/cart?checkoutError=empty");
         }
 
-        // Same rules as placing the order, using fresh database data.
         const { lines, problems } = await evaluateCartItems(cartItems);
 
         if (problems.length > 0) {
@@ -52,7 +45,6 @@ const loadCheckout = async (req, res) => {
             .sort({ isDefault: -1, createdAt: -1 })
             .lean();
 
-        // One-time error message left by placeOrder (then removed).
         const error = req.session.checkoutError || null;
         delete req.session.checkoutError;
 
@@ -80,11 +72,6 @@ const loadCheckout = async (req, res) => {
     }
 };
 
-
-// =====================================================
-// PLACE ORDER  (POST /checkout/place-order)
-// =====================================================
-
 const placeOrder = async (req, res) => {
 
     const userId = req.session.user.id;
@@ -96,8 +83,6 @@ const placeOrder = async (req, res) => {
             paymentMethod: req.body.paymentMethod
         });
 
-        // Redirect (not render) so refreshing the success page
-        // is a harmless GET and never re-submits the order.
         return res.redirect(`/checkout/success/${order.orderId}`);
 
     } catch (error) {
@@ -112,7 +97,6 @@ const placeOrder = async (req, res) => {
                 return res.redirect("/cart?checkoutError=invalid");
             }
 
-            // address / payment problems: back to checkout with a message
             req.session.checkoutError = error.message;
             return res.redirect("/checkout");
         }
@@ -126,11 +110,6 @@ const placeOrder = async (req, res) => {
     }
 };
 
-
-// =====================================================
-// ORDER SUCCESS PAGE  (GET /checkout/success/:orderId)
-// Only the owner of the order can open it.
-// =====================================================
 
 const loadOrderSuccess = async (req, res) => {
 
@@ -168,12 +147,6 @@ const loadOrderSuccess = async (req, res) => {
 };
 
 
-// =====================================================
-// ADD / EDIT ADDRESS FROM CHECKOUT
-// These reuse the existing address pages. We only leave a
-// small note in the session so that, after saving, the user
-// is sent back to checkout instead of the address list.
-// =====================================================
 
 const startAddAddress = (req, res) => {
 
@@ -190,7 +163,7 @@ const startEditAddress = async (req, res) => {
         return res.redirect("/checkout");
     }
 
-    // ownership check: only this user's own address
+   
     const address = await Address.findOne({
         _id: addressId,
         userId: req.session.user.id

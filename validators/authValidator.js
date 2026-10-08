@@ -16,8 +16,8 @@ const signupValidator = [
         .withMessage("Last name is required")
         .isAlpha()
         .withMessage("Last name must contain only letters")
-        .isLength({ min: 1, max: 15 })
-        .withMessage("Last name must be between 1 and 15 characters"),
+        .isLength({ min: 1, max: 4 })
+        .withMessage("Last name must be between 1 and 4 characters"),
 
     body("email")
         .trim()

@@ -1,9 +1,3 @@
-// =====================================================
-// ADMIN ORDER CONTROLLER (PHASE 52)
-//
-// Thin layer: read the request, call adminOrderService,
-// render a page or redirect. All rules live in the service.
-// =====================================================
 
 const {
     OrderError
@@ -24,13 +18,8 @@ const {
     PAYMENT_METHOD_LABEL
 } = require("../config/orderConstants");
 
-
-// Query values can be arrays (?search=a&search=b) - only accept text.
 const asText = (value) => (typeof value === "string" ? value : "");
 
-
-// Builds /admin/orders?search=..&status=..&sort=..&page=..
-// Default values are left out so the URL stays short.
 const buildOrdersUrl = ({ search, status, sort, page }) => {
 
     const params = new URLSearchParams();
@@ -45,10 +34,6 @@ const buildOrdersUrl = ({ search, status, sort, page }) => {
     return "/admin/orders" + (queryString ? `?${queryString}` : "");
 };
 
-
-// -----------------------------------------------------
-// GET /admin/orders
-// -----------------------------------------------------
 const loadOrders = async (req, res) => {
 
     const flash = takeFlash(req);
@@ -64,9 +49,6 @@ const loadOrders = async (req, res) => {
             page
         });
 
-        // urlFor({ status: "shipped" }) keeps the current search + sort
-        // and changes only what you pass. Changing anything except the
-        // page number sends you back to page 1.
         const urlFor = (changes = {}) =>
             buildOrdersUrl({
                 search: result.search,
@@ -110,9 +92,6 @@ const loadOrders = async (req, res) => {
 };
 
 
-// -----------------------------------------------------
-// GET /admin/orders/:orderId
-// -----------------------------------------------------
 const loadOrderDetails = async (req, res) => {
 
     try {
@@ -140,10 +119,6 @@ const loadOrderDetails = async (req, res) => {
 };
 
 
-// -----------------------------------------------------
-// POST /admin/orders/:orderId/status
-// body: status, reason (reason only used when cancelling)
-// -----------------------------------------------------
 const updateOrderStatus = async (req, res) => {
 
     const orderId = req.params.orderId;
@@ -187,10 +162,6 @@ const updateOrderStatus = async (req, res) => {
 };
 
 
-// -----------------------------------------------------
-// POST /admin/orders/:orderId/items/:itemId/cancel
-// body: reason (optional)
-// -----------------------------------------------------
 const cancelOrderItem = async (req, res) => {
 
     const orderId = req.params.orderId;
@@ -220,8 +191,7 @@ const cancelOrderItem = async (req, res) => {
 
             setFlash(req, "error", error.message);
 
-            // (if the order itself is missing, the details page sends
-            //  the admin on to the order list with a message)
+            
             return res.redirect(detailsUrl);
         }
 

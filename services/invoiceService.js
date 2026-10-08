@@ -1,13 +1,4 @@
-// =====================================================
-// INVOICE SERVICE (PHASE 51)
-//
-// Builds the invoice PDF on the server using PDFKit and hands
-// back a Buffer. Nothing is written to disk, and nothing about
-// the server (paths, env values) is put in the file.
-//
-// Note: PDFKit's built-in fonts have no rupee sign, so amounts
-// are printed as "Rs. 1,234.00" in the PDF.
-// =====================================================
+
 
 const PDFDocument = require("pdfkit");
 
@@ -19,7 +10,7 @@ const {
 const MARGIN = 50;
 const PAGE_BOTTOM = 760;
 
-// column x positions / widths of the items table
+
 const COL = {
     item: { x: 50, w: 210 },
     qty: { x: 265, w: 35 },
@@ -69,7 +60,7 @@ const generateInvoiceBuffer = (order, customer) =>
                 (item) => item.itemStatus !== ITEM_STATUS.CANCELLED
             );
 
-            // ---------- header ----------
+            
             doc.font("Helvetica-Bold").fontSize(26).fillColor("#1c1c1c")
                 .text("Wristora", MARGIN, MARGIN);
 
@@ -85,7 +76,7 @@ const generateInvoiceBuffer = (order, customer) =>
             doc.moveTo(MARGIN, 105).lineTo(545, 105)
                 .strokeColor("#dddddd").stroke();
 
-            // ---------- order details (left) ----------
+           
             const detailRows = [
                 ["Order ID", order.orderId],
                 ["Order Date", formatDate(order.createdAt)],
@@ -107,7 +98,7 @@ const generateInvoiceBuffer = (order, customer) =>
                 y += 18;
             });
 
-            // ---------- customer + address (right) ----------
+            
             const rightX = 310;
             let ry = 120;
 
@@ -147,7 +138,7 @@ const generateInvoiceBuffer = (order, customer) =>
 
             y = Math.max(y, ry) + 20;
 
-            // ---------- items table ----------
+            
             const drawTableHeader = (atY) => {
 
                 doc.rect(MARGIN, atY, 495, 22).fill("#efede8");
@@ -233,7 +224,7 @@ const generateInvoiceBuffer = (order, customer) =>
 
             totalRow("Total", money(amounts.finalTotal), true);
 
-            // ---------- notes ----------
+           
             if (amounts.cancelledCount > 0) {
                 doc.font("Helvetica-Oblique").fontSize(9).fillColor("#888888")
                     .text(

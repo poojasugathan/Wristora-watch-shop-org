@@ -19,6 +19,7 @@ const wishlistRoutes = require("./routes/wishlistRoutes");
 const checkoutRoutes= require("./routes/checkoutRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const attachHeaderData = require("./middlewares/headerDataMiddleware");
+const { notFoundHandler, errorHandler } = require("./middlewares/errorMiddleware");
 const attachCartCount = require("./middlewares/cartCountMiddleware");
 const attachWishlistCount = require("./middlewares/wishlistCountMiddleware");
 
@@ -81,9 +82,8 @@ app.get("/", (req, res) => {
 });
 
 
-app.use((req, res) => {
-    res.status(404).send("Page not found");
-});
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 
 app.listen(process.env.PORT,()=>{

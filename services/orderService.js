@@ -1,14 +1,4 @@
-// =====================================================
-// ORDER SERVICE (PHASE 50)
-//
-// All checkout / order-creation business rules live here so
-// the controller stays small and the SAME rules are used for
-// (a) showing the checkout page and (b) placing the order.
-//
-// Golden rule: nothing coming from the browser (price, total,
-// stock, quantity) is trusted. Everything is re-read from
-// MongoDB here.
-// =====================================================
+
 
 const mongoose = require("mongoose");
 const crypto = require("crypto");
@@ -29,10 +19,6 @@ const {
     SHIPPING_CHARGE
 } = require("../config/orderConstants");
 
-
-// An error whose message is safe to show to the customer.
-// type tells the controller where to send them:
-//   "empty" | "items" | "address" | "payment" | "server"
 class CheckoutError extends Error {
     constructor(message, type) {
         super(message);
@@ -43,7 +29,7 @@ class CheckoutError extends Error {
 
 const round2 = (n) => Math.round(n * 100) / 100;
 
-// WR-YYYYMMDD-XXXXX  (letters/digits without 0,O,1,I)
+
 const ORDER_ID_PATTERN = /^WR-\d{8}-[A-Z2-9]{5}$/;
 const ID_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
@@ -66,12 +52,6 @@ const generateOrderId = () => {
 };
 
 
-// -----------------------------------------------------
-// Check cart items against the database.
-// Returns { lines, problems }
-//   lines    -> validated order lines with fresh prices
-//   problems -> plain-English reasons the cart can't be ordered
-// -----------------------------------------------------
 const evaluateCartItems = async (cartItems) => {
 
     const lines = [];
@@ -164,9 +144,6 @@ const evaluateCartItems = async (cartItems) => {
 };
 
 
-// -----------------------------------------------------
-// subtotal - discount + tax + shipping = final total
-// -----------------------------------------------------
 const calculatePricing = (lines) => {
 
     const subtotal = round2(
@@ -216,21 +193,6 @@ const createOrderWithUniqueId = async (data) => {
 };
 
 
-// -----------------------------------------------------
-// PLACE ORDER (Cash on Delivery)
-//
-// Steps:
-//  1. validate payment method + address ownership
-//  2. CLAIM the cart: atomically empty it and take its items.
-//     A double-click / second tab finds an empty cart, so it
-//     can never create a second order.
-//  3. re-validate every product with fresh database data
-//  4. reduce stock with an atomic "stock >= quantity" update
-//     (never goes negative, safe if two buyers race)
-//  5. create the order
-//  If ANYTHING fails after step 2: stock is given back and
-//  the cart is restored, so the customer loses nothing.
-// -----------------------------------------------------
 const placeOrder = async (userId, { addressId, paymentMethod }) => {
 
     if (paymentMethod !== PAYMENT_METHOD.COD) {
@@ -247,7 +209,6 @@ const placeOrder = async (userId, { addressId, paymentMethod }) => {
         );
     }
 
-    // userId in the query = the address MUST belong to this user
     const address = await Address.findOne({
         _id: addressId,
         userId
@@ -345,7 +306,7 @@ const placeOrder = async (userId, { addressId, paymentMethod }) => {
 
     } catch (error) {
 
-        // Undo: give stock back, then put the cart back.
+        
         for (const line of reducedLines) {
             try {
                 await Product.updateOne(

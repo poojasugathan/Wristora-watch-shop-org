@@ -1,18 +1,4 @@
-// =====================================================
-// ORDER MANAGEMENT SERVICE (PHASE 51)
-//
-// Everything a customer can do with an order AFTER it has
-// been placed: list, search, view, cancel (whole order or one
-// item), and request a return.
-//
-// Golden rules (same as checkout):
-//  - the browser is never trusted: status, ownership and
-//    eligibility are always re-checked here, in MongoDB
-//  - every lookup includes `user: userId`, so changing an ID
-//    in the URL can never reach someone else's order
-//  - stock is given back EXACTLY once per item, using an
-//    atomic "claim the item first" update
-// =====================================================
+
 
 const mongoose = require("mongoose");
 
@@ -39,7 +25,7 @@ const {
 } = require("../config/orderConstants");
 
 
-// An error whose message is safe to show to the customer.
+
 class OrderError extends Error {
     constructor(message, status = 400) {
         super(message);
@@ -53,18 +39,13 @@ const round2 = (n) => Math.round(n * 100) / 100;
 const sum = (list, pick) =>
     list.reduce((total, entry) => total + pick(entry), 0);
 
-// Old orders may not have itemStatus, so "not cancelled" = active.
+
 const isActive = (item) => item.itemStatus !== ITEM_STATUS.CANCELLED;
 
 const cleanText = (value) =>
     typeof value === "string" ? value.trim() : "";
 
 
-// -----------------------------------------------------
-// Totals for the items that are STILL active.
-// Cancelled items are removed from what the customer pays.
-// (itemTotal is already after discount.)
-// -----------------------------------------------------
 const calculateActiveAmounts = (order) => {
 
     const allItems = order.items || [];
@@ -81,7 +62,7 @@ const calculateActiveAmounts = (order) => {
         sum(activeItems, (i) => i.discountAmount)
     );
 
-    // tax follows the items that remain
+    
     const ratio = allTotal > 0 ? activeTotal / allTotal : 0;
     const tax = round2((order.tax || 0) * ratio);
 
@@ -101,12 +82,6 @@ const calculateActiveAmounts = (order) => {
     };
 };
 
-
-// -----------------------------------------------------
-// Adds the "what can the customer do?" flags used by the
-// pages. The pages only DISPLAY these; the real checks are
-// repeated in cancelOrderItems / returnOrder / invoice.
-// -----------------------------------------------------
 const decorateOrder = (order) => {
 
     const items = order.items || [];
@@ -143,15 +118,11 @@ const decorateOrder = (order) => {
     };
 };
 
-
-// -----------------------------------------------------
-// MY ORDERS LIST: backend search + newest first + pagination
-// -----------------------------------------------------
 const listUserOrders = async (userId, { search = "", page = 1 } = {}) => {
 
     const cleanSearch = cleanText(search).slice(0, ORDER_SEARCH_MAX_LENGTH);
 
-    const filter = { user: userId };
+    const filter = { user: userId};
 
     if (cleanSearch) {
 
@@ -186,11 +157,6 @@ const listUserOrders = async (userId, { search = "", page = 1 } = {}) => {
     };
 };
 
-
-// -----------------------------------------------------
-// ONE order that belongs to this user (or a 404-style error).
-// A wrong ID and someone else's order look exactly the same.
-// -----------------------------------------------------
 const findOwnedOrder = async (userId, orderId) => {
 
     if (typeof orderId !== "string" || !ORDER_ID_PATTERN.test(orderId)) {
@@ -209,19 +175,12 @@ const findOwnedOrder = async (userId, orderId) => {
 const getUserOrder = async (userId, orderId) =>
     decorateOrder(await findOwnedOrder(userId, orderId));
 
-
-// -----------------------------------------------------
-// CANCEL  (whole order, or one item when itemId is given)
-//
-// For every item we first CLAIM it with an atomic update that
-// only matches while the item is still Active and the order is
-// still cancellable. Only the request that wins the claim gives
-// the stock back, so repeating the request can never restore
-// stock twice.
-// -----------------------------------------------------
 const cancelOrderItems = async (userId, orderId, { itemId = null, reason = "" } = {}) => {
 
     const cleanReason = cleanText(reason);
+
+
+
 
     if (cleanReason.length > CANCEL_REASON_MAX_LENGTH) {
         throw new OrderError(
@@ -276,7 +235,7 @@ const cancelOrderItems = async (userId, orderId, { itemId = null, reason = "" } 
 
     for (const item of targets) {
 
-        // Step 1: claim the item (only one request can win this)
+       
         const claim = await Order.updateOne(
             {
                 _id: order._id,
@@ -298,12 +257,12 @@ const cancelOrderItems = async (userId, orderId, { itemId = null, reason = "" } 
         );
 
         if (claim.modifiedCount !== 1) {
-            continue; // already cancelled by another request
+            continue; 
         }
 
         cancelledCount++;
 
-        // Step 2: only the winner gives the stock back
+       
         try {
             await Product.updateOne(
                 { _id: item.product },
@@ -321,7 +280,7 @@ const cancelOrderItems = async (userId, orderId, { itemId = null, reason = "" } 
         throw new OrderError("These items were already cancelled.");
     }
 
-    // If no active item is left, the whole order becomes Cancelled.
+    
     const closeOrder = await Order.updateOne(
         {
             _id: order._id,
@@ -343,9 +302,6 @@ const cancelOrderItems = async (userId, orderId, { itemId = null, reason = "" } 
 };
 
 
-// -----------------------------------------------------
-// RETURN REQUEST (Delivered orders only, reason mandatory)
-// -----------------------------------------------------
 const returnOrder = async (userId, orderId, reason) => {
 
     const cleanReason = cleanText(reason);
@@ -376,7 +332,7 @@ const returnOrder = async (userId, orderId, reason) => {
         throw new OrderError("A return has already been requested for this order.");
     }
 
-    // Atomic: only one request can move None -> Requested
+  
     const updated = await Order.findOneAndUpdate(
         {
             _id: order._id,

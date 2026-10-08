@@ -688,10 +688,10 @@
 
     padding: 13px 16px;
 
-    background: #f7eaea;
-    border: 1px solid #e0caca;
-
-    color: #8a3f3f;
+    background: #fdecea;
+    border: 1px solid #f1b5ae;
+ 
+    color: #c62828;
 
     font-size: 12px;
 }
@@ -766,6 +766,16 @@
     background: #efede8;
 
     border-radius: 50%;
+}
+
+.account-settings-google-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 16px;
+    font-size: 13px;
+    color: #666;
+    line-height: 1.5;
 }
 
 
@@ -1416,11 +1426,11 @@
 
     padding: 14px 18px;
 
-    border: 1px solid #dedede;
-
-    background: #fafafa;
-
-    color: #333;
+    border: 1px solid #f1b5ae;
+ 
+    background: #fdecea;
+ 
+    color: #c62828;
 
     font-family: "Montserrat", sans-serif;
 
@@ -2138,11 +2148,12 @@
 
     padding: 13px 16px;
 
-    background: #f7eaea;
-
-    border: 1px solid #e0caca;
-
-    color: #8a3f3f;
+    
+    background: #fdecea;
+ 
+    border: 1px solid #f1b5ae;
+ 
+    color: #c62828;
 
     font-size: 11px;
 }

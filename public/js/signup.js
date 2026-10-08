@@ -1,6 +1,6 @@
 const signupForm = document.getElementById("signupForm");
 
-// Short display labels for each required field
+
 const fieldLabels = {
     firstName: "First name",
     lastName: "Last name",
@@ -57,8 +57,7 @@ function validateSignupForm() {
     const missingFields = getMissingFields();
 
     if (missingFields.length > 0) {
-        // If most of the form is empty, give one generic message.
-        // If only a couple of fields are missing, name them specifically.
+        
         if (missingFields.length > requiredFieldNames.length / 2) {
             messages.push("All fields are required.");
         } else {
@@ -69,7 +68,7 @@ function validateSignupForm() {
         }
     }
 
-    // Format / match checks only make sense once a field actually has a value
+   
     const email = signupForm.querySelector('[name="email"]');
     if (email.value.trim() !== "" && email.validity.typeMismatch) {
         messages.push("Enter a valid email address.");

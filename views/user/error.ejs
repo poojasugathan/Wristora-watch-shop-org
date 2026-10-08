@@ -1,0 +1,41 @@
+<% if (!bare) { %>
+
+<%- include("../partials/header", { title: title, user: (typeof user !== "undefined" ? user : null) }) %>
+
+<% } else { %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> | Wristora</title>
+</head>
+<body>
+<% } %>
+
+<link rel="stylesheet" href="/css/errorPage.css">
+
+<main class="error-page">
+
+    <div class="error-box">
+
+        <span class="error-code"><%= status %></span>
+
+        <h1><%= heading %></h1>
+
+        <p><%= message %></p>
+
+        <a href="<%= homeUrl %>" class="error-btn"><%= homeLabel %></a>
+
+    </div>
+
+</main>
+
+<% if (!bare) { %>
+
+<%- include("../partials/footer2") %>
+
+<% } else { %>
+</body>
+</html>
+<% } %>

@@ -1,13 +1,4 @@
-// =====================================================
-// ADMIN INVENTORY CONTROLLER (PHASE 52)
-//
-//   GET  /admin/inventory            list products + stock status
-//   POST /admin/inventory/:id/stock  set a product's stock
-//
-// Stock is read/written on the Product model (product.stock),
-// the same field the cart, checkout and product pages already
-// use - so a change here shows up everywhere immediately.
-// =====================================================
+
 
 const mongoose = require("mongoose");
 
@@ -31,7 +22,7 @@ const {
 const asText = (value) => (typeof value === "string" ? value : "");
 
 
-// Builds /admin/inventory?search=..&stock=..&sort=..&page=..
+
 const buildInventoryUrl = ({ search, stock, sort, page }) => {
 
     const params = new URLSearchParams();
@@ -47,9 +38,6 @@ const buildInventoryUrl = ({ search, stock, sort, page }) => {
 };
 
 
-// -----------------------------------------------------
-// GET /admin/inventory
-// -----------------------------------------------------
 const loadInventory = async (req, res) => {
 
     const flash = takeFlash(req);
@@ -72,7 +60,7 @@ const loadInventory = async (req, res) => {
             page = 1;
         }
 
-        // deleted products never appear (same rule as the product list)
+       
         const baseQuery = { isDeleted: false };
 
         const query = { ...baseQuery };
@@ -88,7 +76,7 @@ const loadInventory = async (req, res) => {
             query.stock = stockCondition;
         }
 
-        // the four numbers on the summary cards (ignore search/filter)
+       
         const [totalAll, totalIn, totalLow, totalOut] = await Promise.all([
             Product.countDocuments(baseQuery),
             Product.countDocuments({ ...baseQuery, stock: buildStockCondition("in-stock") }),

@@ -1,0 +1,66 @@
+/* =====================================================
+   ERROR / 404 PAGE (PHASE 53)
+   Used by views/user/error.ejs
+===================================================== */
+
+.error-page {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    background: #faf9f6;
+    font-family: "Montserrat", Arial, sans-serif;
+    color: #1c1c1c;
+}
+
+.error-box {
+    max-width: 520px;
+    text-align: center;
+}
+
+.error-code {
+    display: block;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 96px;
+    line-height: 1;
+    font-weight: 600;
+    color: #c9c4b8;
+    margin-bottom: 10px;
+}
+
+.error-box h1 {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 34px;
+    font-weight: 600;
+    margin: 0 0 12px;
+}
+
+.error-box p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #666;
+    margin: 0 0 28px;
+}
+
+.error-btn {
+    display: inline-block;
+    padding: 13px 34px;
+    background: #292929;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
+.error-btn:hover {
+    background: #000;
+    color: #fff;
+}
+
+@media (max-width: 600px) {
+    .error-code { font-size: 72px; }
+    .error-box h1 { font-size: 28px; }
+}

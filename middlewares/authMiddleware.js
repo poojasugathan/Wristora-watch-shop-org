@@ -1,23 +1,9 @@
-// =====================================================
-// USER AUTH MIDDLEWARE
-//
-// Normal page requests  -> redirect to the login page.
-// JSON/fetch requests   -> reply with a 401 JSON message
-//                          (a redirect would hand the
-//                          browser a login HTML page
-//                          instead of JSON and break the
-//                          wishlist / cart buttons).
-// =====================================================
 
-const requireAuth = (req, res, next) => {
 
-    if (
-        req.session &&
-        req.session.user &&
-        req.session.user.id
-    ) {
-        return next();
-    }
+const User = require("../models/userModel");
+
+
+const rejectRequest = (req, res) => {
 
     const isJsonRequest =
         req.is("application/json") ||
@@ -35,6 +21,37 @@ const requireAuth = (req, res, next) => {
     }
 
     return res.redirect("/auth/login");
+};
+
+
+const requireAuth = async (req, res, next) => {
+
+    const sessionUser = req.session && req.session.user;
+
+  
+    if (!sessionUser || !sessionUser.id) {
+        return rejectRequest(req, res);
+    }
+
+    try {
+
+        const account = await User
+            .findById(sessionUser.id)
+            .select("isBlocked")
+            .lean();
+
+        if (account && account.isBlocked !== true) {
+            return next();
+        }
+
+    } catch (error) {
+
+       
+        return next(error);
+    }
+
+    
+    return req.session.destroy(() => rejectRequest(req, res));
 };
 
 

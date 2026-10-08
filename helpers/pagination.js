@@ -1,17 +1,9 @@
-// =====================================================
-// PAGINATION / SEARCH HELPERS (PHASE 51)
-//
-// Small shared helpers used by the My Orders page now and
-// by the admin orders page later (Phase 52).
-// =====================================================
 
-// Makes user-typed text safe to use inside a MongoDB regex
-// (so typing "(" or "." can't break or abuse the search).
 const escapeRegex = (text) =>
     String(text).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 
-// [1, "...", 4, 5, 6, "...", 12] style page list.
+
 const buildPageNumbers = (currentPage, totalPages) => {
 
     const pages = [];

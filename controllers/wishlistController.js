@@ -10,18 +10,12 @@ const {
 } = require("./cartController");
 
 
-// -----------------------------------------------------
-// Small helper: is this a valid MongoDB id string?
-// -----------------------------------------------------
+
 const isValidId = (id) =>
     Boolean(id) && mongoose.Types.ObjectId.isValid(id);
 
 
-// -----------------------------------------------------
-// PHASE 49 — used by productController so product cards
-// and the details page know which hearts should be filled.
-// Returns an array of product id strings ([] if logged out).
-// -----------------------------------------------------
+
 const getWishlistProductIds = async (userId) => {
 
     if (!userId) {
@@ -138,14 +132,7 @@ const loadWishlist = async (req, res) => {
 };
 
 
-// -----------------------------------------------------
-// PHASE 49 — core "add" logic, shared by /add and /toggle.
-//
-// Duplicate prevention is done INSIDE MongoDB in a single
-// atomic update: the item is only pushed if the product
-// is not already in the list. So two fast clicks (or two
-// browser tabs) can never create a duplicate.
-// -----------------------------------------------------
+
 const attemptAddToWishlist = async (userId, productId) => {
 
     if (!isValidId(productId)) {
@@ -200,10 +187,7 @@ const attemptAddToWishlist = async (userId, productId) => {
 
     } catch (error) {
 
-        // E11000 = "duplicate key". It happens when the filter
-        // above did not match (product already in the list) and
-        // MongoDB then tried to create a second wishlist document
-        // for the same user. It simply means "already there".
+        
         if (error && error.code === 11000) {
 
             return {
@@ -273,13 +257,7 @@ const addToWishlist = async (req, res) => {
 };
 
 
-// -----------------------------------------------------
-// PHASE 49 — heart button: add if missing, remove if present.
-//
-// Adding needs the product to be available (listed, not
-// blocked, not deleted). Removing does NOT — a user must
-// always be able to clear an unavailable product out.
-// -----------------------------------------------------
+
 const toggleWishlist = async (req, res) => {
 
     try {
@@ -374,16 +352,7 @@ const removeFromWishlist = async (req, res) => {
 };
 
 
-// -----------------------------------------------------
-// Wishlist -> Cart
-//
-// Order of events (this order is the whole point):
-//   1. Check the item really is in THIS user's wishlist.
-//   2. Try to add it to the cart (full stock/availability
-//      validation lives in cartController.attemptAddToCart).
-//   3. ONLY if step 2 succeeded, remove it from the wishlist.
-// If step 2 fails we return early and the wishlist is untouched.
-// -----------------------------------------------------
+
 const addWishlistItemToCart = async (req, res) => {
 
     try {
