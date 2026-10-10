@@ -1,0 +1,381 @@
+/* =====================================================
+   MY WALLET (PHASE 56)
+   Re-uses the profile page grid + sidebar (profile.css) and the
+   pagination / alert styles from orders.css. Colours and fonts
+   match the rest of Wristora.
+===================================================== */
+
+.wallet-title {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 42px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin: 0 0 28px;
+}
+
+
+/* ---------- balance card ---------- */
+
+.wallet-balance-card {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 34px 40px;
+    margin-bottom: 36px;
+    background: #fff;
+    border: 1px solid #eceae4;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.wallet-balance-label {
+    font-size: 20px;
+    color: #1c1c1c;
+}
+
+.wallet-balance-amount {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1c1c1c;
+}
+
+
+/* ---------- transactions table ---------- */
+
+.wallet-table-wrap {
+    background: #fff;
+    border: 1px solid #eceae4;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    overflow-x: auto;
+}
+
+.wallet-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 640px;
+}
+
+.wallet-table thead {
+    background: #f6f7f9;
+}
+
+.wallet-table th {
+    padding: 20px 22px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: #1c1c1c;
+}
+
+.wallet-table td {
+    padding: 26px 22px;
+    font-size: 12px;
+    color: #1c1c1c;
+    border-top: 1px solid #f0eee9;
+    vertical-align: middle;
+}
+
+.wallet-tx-id {
+    letter-spacing: 1px;
+    color: #444;
+}
+
+.wallet-tx-amount {
+    font-weight: 600;
+}
+
+.wallet-tx-desc {
+    color: #555;
+    max-width: 280px;
+}
+
+.wallet-col-status {
+    text-align: right !important;
+}
+
+.wallet-tx-type {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+.wallet-tx-credit { color: #1f9d55; }
+.wallet-tx-debit  { color: #d12a2a; }
+
+
+.wallet-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+}
+
+.wallet-empty i {
+    font-size: 40px;
+    color: #b08d57;
+}
+
+.wallet-empty h2 {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 26px;
+    margin: 12px 0 6px;
+    color: #1c1c1c;
+}
+
+.wallet-empty p {
+    margin: 0;
+    font-size: 13px;
+}
+
+
+/* ---------- Add Money button ---------- */
+
+.wallet-add-row {
+    text-align: center;
+    margin-top: 44px;
+}
+
+.wallet-add-btn {
+    min-width: 195px;
+    padding: 18px 36px;
+    border: 1px solid #2a2a2a;
+    background: #2a2a2a;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+    transition: background 0.2s, transform 0.2s;
+}
+
+.wallet-add-btn:hover:not(:disabled) {
+    background: #000;
+    transform: translateY(-1px);
+}
+
+.wallet-add-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.wallet-add-note {
+    margin: 12px 0 0;
+    font-size: 12px;
+    color: #888;
+}
+
+
+/* ---------- Add Money window ---------- */
+
+.wallet-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(30, 28, 24, 0.55);
+    backdrop-filter: blur(3px);
+}
+
+.wallet-modal-overlay[hidden] {
+    display: none;
+}
+
+.wallet-modal {
+    position: relative;
+    width: 100%;
+    max-width: 512px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    padding: 48px;
+    background: #fff;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+    font-family: "Montserrat", sans-serif;
+    color: #1c1c1c;
+}
+
+.wallet-modal-close {
+    position: absolute;
+    top: 38px;
+    right: 34px;
+    border: none;
+    background: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #1c1c1c;
+}
+
+.wallet-modal-title {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 34px;
+}
+
+.wallet-modal-error {
+    margin-bottom: 18px;
+    padding: 10px 14px;
+    font-size: 12px;
+    background: #fdecee;
+    border: 1px solid #f3c3c8;
+    color: #a3202c;
+}
+
+.wallet-field-label {
+    display: block;
+    font-size: 14px;
+    color: #1c1c1c;
+}
+
+.wallet-field-label-caps {
+    margin-top: 30px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.wallet-field {
+    width: 100%;
+    padding: 10px 0;
+    border: none;
+    border-bottom: 1px solid #1c1c1c;
+    background: transparent;
+    font-size: 14px;
+    outline: none;
+    border-radius: 0;
+}
+
+.wallet-field::placeholder {
+    color: #8a8a8a;
+}
+
+.wallet-field:focus {
+    border-bottom-color: #b08d57;
+}
+
+.wallet-or {
+    position: relative;
+    margin: 24px 0 20px;
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #777;
+}
+
+.wallet-or::before,
+.wallet-or::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: calc(50% - 26px);
+    height: 1px;
+    background: #1c1c1c;
+}
+
+.wallet-or::before { left: 0; }
+.wallet-or::after  { right: 0; }
+
+.wallet-quick {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+}
+
+.wallet-quick-btn {
+    padding: 10px 4px;
+    border: 1px solid #1c1c1c;
+    background: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.wallet-quick-btn:last-child {
+    grid-column: 1 / -1;
+}
+
+.wallet-quick-btn:hover,
+.wallet-quick-btn.is-selected {
+    background: #1c1c1c;
+    color: #fff;
+}
+
+.wallet-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 44px;
+}
+
+.wallet-modal-pay {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 15px;
+}
+
+.wallet-modal-submit {
+    min-width: 165px;
+    padding: 15px 28px;
+    border: 1px solid #2a2a2a;
+    background: #2a2a2a;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.wallet-modal-submit:hover:not(:disabled) {
+    background: #000;
+}
+
+.wallet-modal-submit:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+
+/* ---------- small screens ---------- */
+
+@media (max-width: 600px) {
+
+    .wallet-title {
+        font-size: 34px;
+    }
+
+    .wallet-balance-card {
+        padding: 24px 20px;
+    }
+
+    .wallet-balance-label {
+        font-size: 16px;
+    }
+
+    .wallet-modal {
+        padding: 34px 24px;
+    }
+
+    .wallet-modal-close {
+        top: 26px;
+        right: 22px;
+    }
+
+    .wallet-quick {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .wallet-modal-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

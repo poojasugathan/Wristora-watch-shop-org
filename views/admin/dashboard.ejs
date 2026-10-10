@@ -12,468 +12,341 @@
 
     <title><%= title %> | Wristora</title>
 
-    <link
-        rel="stylesheet"
-        href="/css/adminDashboard.css"
-    >
+    <link rel="stylesheet" href="/css/adminDashboard.css">
+
+    <link rel="stylesheet" href="/css/adminAnalytics.css">
 
 </head>
 
+<%
+    // PHASE 58: every number below is calculated by the server from
+    // real orders (services/dashboardService.js). The sales rule is the
+    // same one the Sales Report uses.
+
+    const inr = (n) =>
+        "₹" + Number(n || 0).toLocaleString("en-IN", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
+    // "+12.4%" / "-3.1%" / "New" (when the previous period had nothing)
+    const growthText = (value) => {
+        if (value === null) return "New";
+        return (value > 0 ? "+" : "") + value + "%";
+    };
+
+    const growthClass = (value) =>
+        value !== null && value < 0 ? "negative" : "positive";
+%>
 
 <body>
 
-
-   
-
     <div class="admin-layout">
-
 
         <%- include("partials/sidebar", { currentPage: "dashboard" }) %>
 
 
-
         <main class="admin-main">
-
 
             <div class="dashboard-header">
 
-
                 <div>
 
-                    <h1>
-                        Dashboard
-                    </h1>
+                    <h1>Dashboard</h1>
 
                     <h2>
-                        Sales report for this week
+                        <% if (range) { %>
+                            Sales report for <%= range.label %>
+                        <% } else { %>
+                            Choose a period
+                        <% } %>
                     </h2>
 
                 </div>
 
+                <!-- FILTER: the server does the work -->
+                <form
+                    class="an-filter"
+                    action="/admin/dashboard"
+                    method="GET"
+                    id="an-filter"
+                >
 
-                <div class="period-toggle">
+                    <div class="period-toggle">
 
-                    <button class="period-button active">
-                        This week
-                    </button>
+                        <% periods.forEach((item) => { %>
 
-                    <button class="period-button">
-                        This month
-                    </button>
+                            <label class="period-button an-period <%= period === item.value ? 'active' : '' %>">
 
-                </div>
+                                <input
+                                    type="radio"
+                                    name="period"
+                                    value="<%= item.value %>"
+                                    <%= period === item.value ? "checked" : "" %>
+                                >
 
+                                <%= item.label %>
+
+                            </label>
+
+                        <% }) %>
+
+                    </div>
+
+                    <div class="an-dates" id="an-dates" <%= period === "custom" ? "" : "hidden" %>>
+
+                        <label>
+                            From
+                            <input type="date" name="from" value="<%= from %>">
+                        </label>
+
+                        <label>
+                            To
+                            <input type="date" name="to" value="<%= to %>">
+                        </label>
+
+                    </div>
+
+                    <button type="submit" class="an-apply">Apply</button>
+
+                </form>
 
             </div>
 
 
+            <% if (error) { %>
+                <div class="an-error"><%= error %></div>
+            <% } %>
+
+
+            <!-- =====================================================
+                 SUMMARY CARDS
+            ====================================================== -->
 
             <section class="summary-grid">
 
-
                 <div class="summary-card">
 
-                    <div class="summary-label">
-                        Total Sales
-                    </div>
+                    <div class="summary-label">Net Sales</div>
 
                     <div class="summary-subtitle">
-                        Last 7 days
+                        After discounts and coupons
                     </div>
 
-                    <div class="summary-value">
+                    <div class="summary-value"><%= inr(data.summary.netSales) %></div>
 
-                        ₹<%= dashboardData.totalSales.toLocaleString("en-IN") %>
-
-                    </div>
-
-                    <span class="growth-badge positive">
-                        Sales ↑ <%= dashboardData.salesGrowth %>%
+                    <span class="growth-badge <%= growthClass(data.salesGrowth) %>">
+                        Sales <%= growthText(data.salesGrowth) %>
                     </span>
 
                     <div class="previous-value">
-
-                        Previous 7days
-                        (₹<%= dashboardData.previousSales.toLocaleString("en-IN") %>)
-
+                        Previous period (<%= inr(data.previous.netSales) %>)
                     </div>
 
                 </div>
 
 
-
                 <div class="summary-card">
 
-                    <div class="summary-label">
-                        Total Orders
-                    </div>
+                    <div class="summary-label">Total Orders</div>
 
                     <div class="summary-subtitle">
-                        Last 7 days
+                        Cancelled orders not counted
                     </div>
 
-                    <div class="summary-value">
-                        <%= dashboardData.totalOrders %>
-                    </div>
+                    <div class="summary-value"><%= data.summary.totalOrders %></div>
 
-                    <span class="growth-badge positive">
-                        order ↑ <%= dashboardData.orderGrowth %>%
+                    <span class="growth-badge <%= growthClass(data.orderGrowth) %>">
+                        Orders <%= growthText(data.orderGrowth) %>
                     </span>
 
                     <div class="previous-value">
-
-                        Previous 7days
-                        (<%= dashboardData.previousOrders %>)
-
+                        Previous period (<%= data.previous.totalOrders %>)
                     </div>
 
                 </div>
-
 
 
                 <div class="summary-card pending-card">
 
-                    <div class="summary-label">
-                        Pending &amp; Canceled
-                    </div>
+                    <div class="summary-label">Pending &amp; Cancelled</div>
 
                     <div class="summary-subtitle">
-                        Last 7 days
+                        Orders placed in this period
                     </div>
-
 
                     <div class="pending-grid">
 
                         <div>
-
-                            <span class="small-label">
-                                Pending
-                            </span>
-
-                            <strong>
-                                <%= dashboardData.pendingOrders %>
-                            </strong>
-
+                            <span class="small-label">Pending</span>
+                            <strong><%= data.pendingOrders %></strong>
                         </div>
 
-
                         <div>
-
-                            <span class="small-label">
-                                Cancelled
-                            </span>
-
-                            <strong class="cancelled-number">
-                                <%= dashboardData.cancelledOrders %>
-                            </strong>
-
-                            <span class="cancelled-growth">
-                                ↓ <%= dashboardData.cancelledGrowth %>%
-                            </span>
-
+                            <span class="small-label">Cancelled</span>
+                            <strong class="cancelled-number"><%= data.cancelledOrders %></strong>
                         </div>
 
                     </div>
 
                 </div>
 
-
             </section>
 
 
+            <!-- =====================================================
+                 SALES CHART (Chart.js)
+            ====================================================== -->
 
             <section class="sales-chart-card">
 
-
                 <div class="chart-statistics">
 
+                    <div>
+                        <strong><%= inr(data.summary.grossSales) %></strong>
+                        <span>Gross Sales</span>
+                    </div>
 
                     <div>
-
-                        <strong>
-                            <%= dashboardData.totalCollections %>
-                        </strong>
-
-                        <span>
-                            Total Collections
-                        </span>
-
+                        <strong><%= inr(data.summary.totalDiscount) %></strong>
+                        <span>Total Discount</span>
                     </div>
-
 
                     <div>
-
-                        <strong>
-                            <%= dashboardData.netRevenue %>
-                        </strong>
-
-                        <span>
-                            Net Revenue
-                        </span>
-
-                    </div>
-
-
-                </div>
-
-
-                <div class="chart-area">
-
-
-                    <div class="chart-y-axis">
-
-                        <span>40k</span>
-                        <span>30k</span>
-                        <span>20k</span>
-                        <span>10k</span>
-                        <span>0k</span>
-
-                    </div>
-
-
-                    <div class="chart-content">
-
-
-                        <div class="chart-grid-lines">
-
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                            <span></span>
-
-                        </div>
-
-
-                        <svg
-                            class="sales-svg"
-                            viewBox="0 0 900 250"
-                            preserveAspectRatio="none"
-                        >
-
-                            <polyline
-                                points="
-                                    0,180
-                                    80,180
-                                    180,125
-                                    280,125
-                                    370,125
-                                    420,75
-                                    510,135
-                                    590,135
-                                    680,55
-                                    760,55
-                                    810,135
-                                    860,125
-                                    900,125
-                                "
-                                fill="none"
-                                stroke="#c6a16f"
-                                stroke-width="2"
-                            />
-
-                            <circle
-                                cx="420"
-                                cy="75"
-                                r="4"
-                                fill="#c6a16f"
-                            />
-
-                        </svg>
-
-
-                        <div class="chart-tooltip">
-                            Tuesday<br>
-                            <strong>32k</strong>
-                        </div>
-
-
-                        <div class="chart-days">
-
-                            <span>Sun</span>
-                            <span>Mon</span>
-                            <span>Tue</span>
-                            <span>Wed</span>
-                            <span>Thu</span>
-                            <span>Fri</span>
-                            <span>Sat</span>
-
-                        </div>
-
+                        <strong><%= data.summary.itemsSold %></strong>
+                        <span>Items Sold</span>
                     </div>
 
                 </div>
 
+                <div class="an-chart-wrap">
+
+                    <canvas id="sales-chart" aria-label="Sales chart" role="img"></canvas>
+
+                    <p class="an-chart-note" id="an-chart-note" hidden></p>
+
+                </div>
+
+                <script type="application/json" id="chart-data"><%- chartJson %></script>
 
             </section>
 
 
+            <!-- =====================================================
+                 BEST SELLING (top 10)
+            ====================================================== -->
+
             <section class="dashboard-bottom-grid">
 
-
-            
                 <div class="best-selling-card">
 
-                    <h2>
-                        Best selling product
-                    </h2>
-
+                    <h2>Top 10 Best-Selling Products</h2>
 
                     <div class="product-table-header">
-
                         <span>PRODUCT</span>
-                        <span>TOTAL ORDER</span>
+                        <span>QTY SOLD</span>
                         <span>STATUS</span>
-                        <span>PRICE</span>
-
+                        <span>SALES</span>
                     </div>
 
+                    <% if (data.topProducts.length === 0) { %>
 
-                    <% bestSellingProducts.forEach(product => { %>
+                        <p class="an-empty">No sales in this period.</p>
+
+                    <% } %>
+
+                    <% data.topProducts.forEach((product) => { %>
 
                         <div class="product-row">
-
 
                             <div class="product-name">
 
                                 <div class="product-image">
-                                    W
+                                    <% if (product.image) { %>
+                                        <img src="<%= product.image %>" alt="">
+                                    <% } else { %>
+                                        W
+                                    <% } %>
                                 </div>
 
-                                <span>
-                                    <%= product.name %>
-                                </span>
+                                <span><%= product.name %></span>
 
                             </div>
 
+                            <span><%= product.quantity %></span>
 
-                            <span>
-                                <%= product.totalOrders %>
-                            </span>
-
-
-                            <span
-                                class="<%= product.status === 'Stock' ? 'stock-status' : 'stock-status out' %>"
-                            >
-
+                            <span class="<%= product.status === 'In stock' ? 'stock-status' : 'stock-status out' %>">
                                 <span class="status-dot"></span>
-
                                 <%= product.status %>
-
                             </span>
 
-
-                            <strong>
-                                <%= product.price %>
-                            </strong>
-
+                            <strong><%= inr(product.sales) %></strong>
 
                         </div>
 
                     <% }) %>
 
-
-                </div>
-
-
-
-                <div class="sales-progress-card">
-
-                    <h2>
-                        Sales Progress
-                    </h2>
-
-                    <span class="progress-period">
-                        This Week
-                    </span>
-
-
-                    <div class="progress-circle">
-
-                        <div class="progress-inner">
-
-                            <strong>
-                                <%= salesProgress.percentage %>%
-                            </strong>
-
-                            <span>
-                                +<%= salesProgress.increase %>%
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                    <p class="progress-message">
-
-                        You succeed earn ₹8960 today,<br>
-                        its higher than yesterday
-
+                    <p class="an-footnote">
+                        Sales = price after the product offer, before any coupon.
                     </p>
 
-
-                    <div class="progress-divider"></div>
-
-
-                    <div class="progress-stats">
+                </div>
 
 
-                        <div>
+                <div class="an-side">
 
-                            <span>
-                                TARGET
-                            </span>
+                    <div class="an-rank-card">
 
-                            <strong>
-                                <%= salesProgress.target %>
-                                <small>↓</small>
-                            </strong>
+                        <h2>Top 10 Categories</h2>
 
-                        </div>
+                        <% if (data.topCategories.length === 0) { %>
+                            <p class="an-empty">No sales in this period.</p>
+                        <% } %>
 
+                        <ol class="an-rank-list">
+                            <% data.topCategories.forEach((item) => { %>
+                                <li>
+                                    <span class="an-rank-name"><%= item.name %></span>
+                                    <span class="an-rank-qty"><%= item.quantity %> sold</span>
+                                    <strong><%= inr(item.sales) %></strong>
+                                </li>
+                            <% }) %>
+                        </ol>
 
-                        <div>
-
-                            <span>
-                                REVENUE
-                            </span>
-
-                            <strong>
-                                <%= salesProgress.revenue %>
-                                <small class="up">↑</small>
-                            </strong>
-
-                        </div>
+                    </div>
 
 
-                        <div>
+                    <div class="an-rank-card">
 
-                            <span>
-                                TODAY
-                            </span>
+                        <h2>Top 10 Brands</h2>
 
-                            <strong>
-                                <%= salesProgress.today %>
-                                <small class="up">↑</small>
-                            </strong>
+                        <% if (data.topBrands.length === 0) { %>
+                            <p class="an-empty">No sales in this period.</p>
+                        <% } %>
 
-                        </div>
-
+                        <ol class="an-rank-list">
+                            <% data.topBrands.forEach((item) => { %>
+                                <li>
+                                    <span class="an-rank-name"><%= item.name %></span>
+                                    <span class="an-rank-qty"><%= item.quantity %> sold</span>
+                                    <strong><%= inr(item.sales) %></strong>
+                                </li>
+                            <% }) %>
+                        </ol>
 
                     </div>
 
                 </div>
-
 
             </section>
 
-
         </main>
-
 
     </div>
 
+
+    <script src="/vendor/chartjs/chart.umd.js"></script>
+    <script src="/js/adminDashboard.js"></script>
 
 </body>
 

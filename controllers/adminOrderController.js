@@ -7,7 +7,9 @@ const {
     listAdminOrders,
     getAdminOrder,
     changeOrderStatus,
-    cancelOrderItemAsAdmin
+    cancelOrderItemAsAdmin,
+    approveReturn,
+    rejectReturn
 } = require("../services/adminOrderService");
 
 const { setFlash, takeFlash } = require("../helpers/adminFlash");
@@ -19,6 +21,20 @@ const {
 } = require("../config/orderConstants");
 
 const asText = (value) => (typeof value === "string" ? value : "");
+
+// Phase 56: " Rs. 500 was refunded to the customer's wallet." (or nothing)
+const refundNote = (result) => {
+
+    if (result.refundFailed) {
+        return " WARNING: the wallet refund FAILED - please check the server log and refund manually.";
+    }
+
+    if (result.refundedAmount > 0) {
+        return ` \u20B9${Number(result.refundedAmount).toLocaleString("en-IN")} was refunded to the customer's wallet.`;
+    }
+
+    return "";
+};
 
 const buildOrdersUrl = ({ search, status, sort, page }) => {
 
@@ -136,10 +152,10 @@ const updateOrderStatus = async (req, res) => {
 
         setFlash(
             req,
-            "success",
-            result.orderCancelled
+            result.refundFailed ? "error" : "success",
+            (result.orderCancelled
                 ? `Order ${orderId} cancelled. Stock was restored for ${result.cancelledCount} item(s).`
-                : `Order ${orderId} is now ${newStatus}.`
+                : `Order ${orderId} is now ${newStatus}.`) + refundNote(result)
         );
 
         return res.redirect(detailsUrl);
@@ -177,10 +193,10 @@ const cancelOrderItem = async (req, res) => {
 
         setFlash(
             req,
-            "success",
-            result.orderCancelled
+            result.refundFailed ? "error" : "success",
+            (result.orderCancelled
                 ? `${result.productName} cancelled. No active items were left, so the whole order is now Cancelled. Stock restored.`
-                : `${result.productName} cancelled and its stock was restored.`
+                : `${result.productName} cancelled and its stock was restored.`) + refundNote(result)
         );
 
         return res.redirect(detailsUrl);
@@ -204,9 +220,80 @@ const cancelOrderItem = async (req, res) => {
 };
 
 
+// ---------------------------------------------------------
+// RETURN REQUESTS (PHASE 56)
+// ---------------------------------------------------------
+
+const approveOrderReturn = async (req, res) => {
+
+    const orderId = req.params.orderId;
+    const detailsUrl = `/admin/orders/${encodeURIComponent(orderId)}`;
+
+    try {
+
+        const result = await approveReturn(orderId);
+
+        setFlash(
+            req,
+            "success",
+            `Return approved for ${orderId}. Stock was restored.` + refundNote(result)
+        );
+
+        return res.redirect(detailsUrl);
+
+    } catch (error) {
+
+        if (error instanceof OrderError) {
+
+            setFlash(req, "error", error.message);
+
+            return res.redirect(error.status === 404 ? "/admin/orders" : detailsUrl);
+        }
+
+        console.error("Admin approve return error:", error);
+
+        setFlash(req, "error", "Unable to approve this return right now. Please try again.");
+
+        return res.redirect(detailsUrl);
+    }
+};
+
+const rejectOrderReturn = async (req, res) => {
+
+    const orderId = req.params.orderId;
+    const detailsUrl = `/admin/orders/${encodeURIComponent(orderId)}`;
+
+    try {
+
+        await rejectReturn(orderId, asText(req.body.reason));
+
+        setFlash(req, "success", `Return rejected for ${orderId}. No refund was made.`);
+
+        return res.redirect(detailsUrl);
+
+    } catch (error) {
+
+        if (error instanceof OrderError) {
+
+            setFlash(req, "error", error.message);
+
+            return res.redirect(error.status === 404 ? "/admin/orders" : detailsUrl);
+        }
+
+        console.error("Admin reject return error:", error);
+
+        setFlash(req, "error", "Unable to reject this return right now. Please try again.");
+
+        return res.redirect(detailsUrl);
+    }
+};
+
+
 module.exports = {
     loadOrders,
     loadOrderDetails,
     updateOrderStatus,
-    cancelOrderItem
+    cancelOrderItem,
+    approveOrderReturn,
+    rejectOrderReturn
 };

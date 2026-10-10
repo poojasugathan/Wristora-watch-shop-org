@@ -20,6 +20,15 @@ const adminOrderController =
 const adminInventoryController =
     require("../controllers/adminInventoryController");
 
+const adminCouponController =
+    require("../controllers/adminCouponController");
+
+const adminReportController =
+    require("../controllers/adminReportController");
+
+const adminDashboardController =
+    require("../controllers/adminDashboardController");
+
 router.get(
     "/login",
     adminController.loadAdminLogin
@@ -41,7 +50,7 @@ router.post(
 router.get(
     "/dashboard",
     requireAdmin,
-    adminController.loadDashboard
+    adminDashboardController.loadDashboard
 );
 
 
@@ -209,6 +218,40 @@ router.post(
 );
 
 
+// Phase 57: sales report + downloads (admin only).
+router.get(
+    "/sales-report",
+    requireAdmin,
+    adminReportController.loadSalesReport
+);
+
+router.get(
+    "/sales-report/download/pdf",
+    requireAdmin,
+    adminReportController.downloadPdf
+);
+
+router.get(
+    "/sales-report/download/excel",
+    requireAdmin,
+    adminReportController.downloadExcel
+);
+
+
+// Phase 56: answer a customer's return request.
+router.post(
+    "/orders/:orderId/return/approve",
+    requireAdmin,
+    adminOrderController.approveOrderReturn
+);
+
+router.post(
+    "/orders/:orderId/return/reject",
+    requireAdmin,
+    adminOrderController.rejectOrderReturn
+);
+
+
 
 router.get(
     "/inventory",
@@ -223,6 +266,35 @@ router.post(
     adminInventoryController.updateStock
 );
 
+
+
+// =====================================================
+// COUPON MANAGEMENT (PHASE 55)
+// =====================================================
+
+router.get(
+    "/coupons",
+    requireAdmin,
+    adminCouponController.loadCoupons
+);
+
+router.post(
+    "/coupons",
+    requireAdmin,
+    adminCouponController.createCoupon
+);
+
+router.post(
+    "/coupons/:id/toggle",
+    requireAdmin,
+    adminCouponController.toggleCoupon
+);
+
+router.post(
+    "/coupons/:id/delete",
+    requireAdmin,
+    adminCouponController.deleteCoupon
+);
 
 
 module.exports = router;

@@ -1,0 +1,62 @@
+<%- include("../partials/header", { title: title, user: user }) %>
+
+<link rel="stylesheet" href="/css/payment.css">
+
+<main class="payment-page payment-page-fail">
+
+    <section class="payment-fail">
+
+        <span class="payment-tag">Payment Issue</span>
+
+        <h1 class="payment-fail-title">Transaction Unsuccessful</h1>
+
+        <p class="payment-fail-text">
+            We were unable to process your payment for the timepiece selection.
+            No money has been taken for this order.
+        </p>
+
+        <p class="payment-fail-order">Order <%= order.orderId %></p>
+
+        <!-- Messages from the Retry button appear here -->
+        <div id="checkout-client-error" class="products-error" style="display:none;"></div>
+
+        <div class="payment-fail-actions">
+
+            <button
+                type="button"
+                class="payment-btn payment-btn-dark js-retry-payment"
+                data-order-id="<%= order.orderId %>"
+            >
+                Retry Payment
+            </button>
+
+            <a href="/cart" class="payment-btn payment-btn-light">
+                Return to Cart
+            </a>
+
+        </div>
+
+        <p class="payment-fail-links">
+            <a href="/orders">Go to My Orders</a>
+            <span>&middot;</span>
+            <a href="/products">Continue Shopping</a>
+        </p>
+
+        <% if (supportEmail) { %>
+            <a class="payment-support" href="mailto:<%= supportEmail %>">
+                <span>
+                    <strong>Need assistance?</strong>
+                    <em>Contact customer support</em>
+                </span>
+                <i class="bi bi-arrow-right"></i>
+            </a>
+        <% } %>
+
+    </section>
+
+</main>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="/js/payment.js"></script>
+
+<%- include("../partials/footer2") %>

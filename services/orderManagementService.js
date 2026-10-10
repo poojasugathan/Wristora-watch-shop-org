@@ -7,6 +7,10 @@ const Product = require("../models/productModel");
 
 const { ORDER_ID_PATTERN } = require("./orderService");
 
+// Phase 56
+const { refundForCancellation } = require("./refundService");
+const { round2, isActive, calculateActiveAmounts } = require("../helpers/orderAmounts");
+
 const {
     escapeRegex,
     buildPageNumbers
@@ -16,6 +20,8 @@ const {
     ORDER_STATUS,
     ITEM_STATUS,
     RETURN_STATUS,
+    PAYMENT_METHOD,
+    PAYMENT_STATUS,
     CANCELLABLE_ORDER_STATUSES,
     ORDERS_PER_PAGE,
     ORDER_SEARCH_MAX_LENGTH,
@@ -34,53 +40,15 @@ class OrderError extends Error {
     }
 }
 
-const round2 = (n) => Math.round(n * 100) / 100;
-
-const sum = (list, pick) =>
-    list.reduce((total, entry) => total + pick(entry), 0);
-
-
-const isActive = (item) => item.itemStatus !== ITEM_STATUS.CANCELLED;
-
 const cleanText = (value) =>
     typeof value === "string" ? value.trim() : "";
 
 
-const calculateActiveAmounts = (order) => {
-
-    const allItems = order.items || [];
-    const activeItems = allItems.filter(isActive);
-
-    const allTotal = sum(allItems, (i) => i.itemTotal);
-    const activeTotal = sum(activeItems, (i) => i.itemTotal);
-
-    const subtotal = round2(
-        sum(activeItems, (i) => i.itemTotal + i.discountAmount)
-    );
-
-    const discountTotal = round2(
-        sum(activeItems, (i) => i.discountAmount)
-    );
-
-    
-    const ratio = allTotal > 0 ? activeTotal / allTotal : 0;
-    const tax = round2((order.tax || 0) * ratio);
-
-    const shipping = activeItems.length > 0 ? (order.shipping || 0) : 0;
-
-    const finalTotal = round2(activeTotal + tax + shipping);
-
-    const cancelledCount = allItems.length - activeItems.length;
-
-    return {
-        subtotal,
-        discountTotal,
-        tax,
-        shipping,
-        finalTotal,
-        cancelledCount
-    };
-};
+// An online order whose payment is not completed yet (Pending or Failed).
+// It is not a "real" order until the payment is verified as Paid.
+const isAwaitingPayment = (order) =>
+    order.paymentMethod === PAYMENT_METHOD.ONLINE &&
+    order.paymentStatus !== PAYMENT_STATUS.PAID;
 
 const decorateOrder = (order) => {
 
@@ -89,7 +57,15 @@ const decorateOrder = (order) => {
 
     const returnStatus = order.returnStatus || RETURN_STATUS.NONE;
 
+    const awaitingPayment = isAwaitingPayment(order);
+
+    const canRetryPayment =
+        awaitingPayment &&
+        order.paymentStatus === PAYMENT_STATUS.FAILED &&
+        order.orderStatus === ORDER_STATUS.PENDING;
+
     const canCancel =
+        !awaitingPayment &&
         CANCELLABLE_ORDER_STATUSES.includes(order.orderStatus) &&
         activeItems.length > 0;
 
@@ -98,21 +74,33 @@ const decorateOrder = (order) => {
         returnStatus === RETURN_STATUS.NONE &&
         activeItems.length > 0;
 
-    const displayStatus =
-        returnStatus === RETURN_STATUS.REQUESTED
-            ? "Return Requested"
-            : order.orderStatus;
+    let displayStatus = order.orderStatus;
+
+    if (awaitingPayment) {
+        displayStatus =
+            order.paymentStatus === PAYMENT_STATUS.FAILED
+                ? "Payment Failed"
+                : "Payment Pending";
+    } else if (returnStatus === RETURN_STATUS.REQUESTED) {
+        displayStatus = "Return Requested";
+    } else if (returnStatus === RETURN_STATUS.APPROVED) {
+        displayStatus = "Returned";
+    }
 
     return {
         ...order,
         returnStatus,
+        refundedAmount: round2(order.refundedAmount || 0),
         amounts: calculateActiveAmounts(order),
         activeItemCount: activeItems.length,
         leadItem: activeItems[0] || items[0],
+        awaitingPayment,
+        canRetryPayment,
         canCancel,
         canCancelItems: canCancel && activeItems.length > 1,
         canReturn,
-        canDownloadInvoice: order.orderStatus !== ORDER_STATUS.CANCELLED,
+        canDownloadInvoice:
+            order.orderStatus !== ORDER_STATUS.CANCELLED && !awaitingPayment,
         displayStatus,
         statusClass: displayStatus.toLowerCase().replace(/\s+/g, "-")
     };
@@ -192,6 +180,14 @@ const cancelOrderItems = async (userId, orderId, { itemId = null, reason = "" } 
 
     if (order.orderStatus === ORDER_STATUS.CANCELLED) {
         throw new OrderError("This order is already cancelled.");
+    }
+
+    // An unpaid online order holds no stock that could be "restored",
+    // so it cannot be cancelled like a normal order.
+    if (isAwaitingPayment(order)) {
+        throw new OrderError(
+            "This order is waiting for payment, so it can't be cancelled. Please retry the payment."
+        );
     }
 
     if (!CANCELLABLE_ORDER_STATUSES.includes(order.orderStatus)) {
@@ -295,9 +291,27 @@ const cancelOrderItems = async (userId, orderId, { itemId = null, reason = "" } 
         }
     );
 
+    // Phase 56: send the money for the cancelled items back to the wallet.
+    // (Returns 0 for Cash on Delivery, because nothing was paid yet.)
+    let refundedAmount = 0;
+    let refundFailed = false;
+
+    try {
+        const refund = await refundForCancellation(order._id);
+        refundedAmount = refund.refunded;
+    } catch (refundError) {
+        refundFailed = true;
+        console.error(
+            `Refund FAILED for cancelled order ${order.orderId} - needs a manual check:`,
+            refundError
+        );
+    }
+
     return {
         cancelledCount,
-        orderCancelled: closeOrder.modifiedCount === 1
+        orderCancelled: closeOrder.modifiedCount === 1,
+        refundedAmount,
+        refundFailed
     };
 };
 
@@ -360,6 +374,7 @@ const returnOrder = async (userId, orderId, reason) => {
 
 module.exports = {
     OrderError,
+    isAwaitingPayment,
     calculateActiveAmounts,
     listUserOrders,
     getUserOrder,

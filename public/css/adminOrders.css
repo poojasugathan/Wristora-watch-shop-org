@@ -328,7 +328,10 @@
 .ao-status-unavailable,
 .ao-status-blocked          { background: #fff0f0; color: #d12a2a; }
 .ao-status-return-requested,
+.ao-status-payment-pending,
 .ao-status-low-stock        { background: #fff1e6; color: #c05a12; }
+.ao-status-payment-failed   { background: #fff0f0; color: #d12a2a; }
+.ao-status-returned         { background: #efe9ff; color: #6b46c1; }
 .ao-status-unlisted         { background: #f0f1f4; color: #4f5968; }
 
 /* ---------- empty state ---------- */

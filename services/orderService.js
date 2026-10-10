@@ -15,9 +15,27 @@ const {
 
 const {
     PAYMENT_METHOD,
+    PAYMENT_STATUS,
     TAX_RATE_PERCENT,
     SHIPPING_CHARGE
 } = require("../config/orderConstants");
+
+const {
+    CouponError,
+    resolveCouponForLines,
+    redeemCoupon,
+    releaseCoupon
+} = require("./couponService");
+
+// Phase 56: paying with the wallet.
+const {
+    WalletError,
+    debitWallet,
+    creditWallet,
+    attachOrderToTransaction
+} = require("./walletService");
+
+const { WALLET_TX_REASON } = require("../config/walletConstants");
 
 class CheckoutError extends Error {
     constructor(message, type) {
@@ -144,7 +162,9 @@ const evaluateCartItems = async (cartItems) => {
 };
 
 
-const calculatePricing = (lines) => {
+// couponDiscount (Phase 55) is the amount a validated coupon takes off.
+// It is applied AFTER the product/category offers and BEFORE tax.
+const calculatePricing = (lines, couponDiscount = 0) => {
 
     const subtotal = round2(
         lines.reduce((sum, l) => sum + l.itemTotal + l.discountAmount, 0)
@@ -156,13 +176,27 @@ const calculatePricing = (lines) => {
 
     const afterDiscount = round2(subtotal - discountTotal);
 
-    const tax = round2((afterDiscount * TAX_RATE_PERCENT) / 100);
+    const safeCoupon = Math.min(
+        Math.max(0, couponDiscount || 0),
+        afterDiscount
+    );
+
+    const afterCoupon = round2(afterDiscount - safeCoupon);
+
+    const tax = round2((afterCoupon * TAX_RATE_PERCENT) / 100);
 
     const shipping = SHIPPING_CHARGE;
 
-    const finalTotal = round2(afterDiscount + tax + shipping);
+    const finalTotal = round2(afterCoupon + tax + shipping);
 
-    return { subtotal, discountTotal, tax, shipping, finalTotal };
+    return {
+        subtotal,
+        discountTotal,
+        couponDiscount: round2(safeCoupon),
+        tax,
+        shipping,
+        finalTotal
+    };
 };
 
 
@@ -193,14 +227,13 @@ const createOrderWithUniqueId = async (data) => {
 };
 
 
-const placeOrder = async (userId, { addressId, paymentMethod }) => {
+// ---------------------------------------------------------
+// Small helpers shared by Cash on Delivery (below) and the
+// online-payment flow (services/paymentService.js), so both
+// build orders in exactly the same way.
+// ---------------------------------------------------------
 
-    if (paymentMethod !== PAYMENT_METHOD.COD) {
-        throw new CheckoutError(
-            "Please choose Cash on Delivery to continue.",
-            "payment"
-        );
-    }
+const findAddressForUser = async (userId, addressId) => {
 
     if (!addressId || !mongoose.Types.ObjectId.isValid(addressId)) {
         throw new CheckoutError(
@@ -221,6 +254,53 @@ const placeOrder = async (userId, { addressId, paymentMethod }) => {
         );
     }
 
+    return address;
+};
+
+const toAddressSnapshot = (address) => ({
+    addressName: address.addressName || "",
+    firstName: address.firstName,
+    lastName: address.lastName,
+    phone: address.phone,
+    addressLine1: address.addressLine1,
+    addressLine2: address.addressLine2 || "",
+    city: address.city,
+    state: address.state,
+    pinCode: address.pinCode,
+    country: address.country
+});
+
+const toOrderItems = (lines) => lines.map((l) => ({
+    product: l.productId,
+    productName: l.productName,
+    brand: l.brand,
+    productImage: l.productImage,
+    quantity: l.quantity,
+    mrp: l.mrp,
+    discountPercent: l.discountPercent,
+    unitPrice: l.unitPrice,
+    discountAmount: l.discountAmount,
+    itemTotal: l.itemTotal
+}));
+
+
+// Phase 56: this function now places BOTH "Cash on Delivery" and
+// "Wallet" orders. They share every step (cart claim, stock, coupon,
+// pricing). The only difference: a Wallet order takes the money from
+// the wallet before the order is saved, and is saved as "Paid".
+const placeOrder = async (userId, { addressId, paymentMethod, couponCode = "" }) => {
+
+    const isWalletPayment = paymentMethod === PAYMENT_METHOD.WALLET;
+
+    if (paymentMethod !== PAYMENT_METHOD.COD && !isWalletPayment) {
+        throw new CheckoutError(
+            "Please choose Cash on Delivery or Wallet to continue.",
+            "payment"
+        );
+    }
+
+    const address = await findAddressForUser(userId, addressId);
+
     const claimedCart = await Cart.findOneAndUpdate(
         { user: userId, "items.0": { $exists: true } },
         { $set: { items: [] } }
@@ -232,6 +312,9 @@ const placeOrder = async (userId, { addressId, paymentMethod }) => {
 
     const claimedItems = claimedCart.items;
     const reducedLines = [];
+    let redeemedCoupon = null;
+    let walletPaymentKey = null;
+    let walletDebited = 0;
 
     try {
 
@@ -262,51 +345,118 @@ const placeOrder = async (userId, { addressId, paymentMethod }) => {
             reducedLines.push(line);
         }
 
-        const pricing = calculatePricing(lines);
+        // Phase 55: validate the coupon again on the server, then spend one use.
+        let couponResult = null;
+
+        try {
+            couponResult = await resolveCouponForLines(couponCode, userId, lines);
+
+            if (couponResult) {
+                await redeemCoupon(couponResult.coupon, userId);
+                redeemedCoupon = couponResult.coupon;
+            }
+        } catch (couponError) {
+
+            if (couponError instanceof CouponError) {
+                throw new CheckoutError(couponError.message, "coupon");
+            }
+
+            throw couponError;
+        }
+
+        const pricing = calculatePricing(
+            lines,
+            couponResult ? couponResult.discount : 0
+        );
+
+        // Phase 56: take the money from the wallet. The amount is the
+        // total the SERVER just calculated; the balance is read from
+        // MongoDB. If the balance is too low, this throws and everything
+        // above is rolled back below.
+        if (isWalletPayment) {
+
+            walletPaymentKey = `PAY:${userId}:${Date.now()}:${Math.random().toString(36).slice(2, 10)}`;
+
+            try {
+
+                await debitWallet(userId, {
+                    amount: pricing.finalTotal,
+                    reason: WALLET_TX_REASON.ORDER_PAYMENT,
+                    description: "Payment for order",
+                    referenceKey: walletPaymentKey
+                });
+
+                walletDebited = pricing.finalTotal;
+
+            } catch (walletError) {
+
+                walletPaymentKey = null;
+
+                if (walletError instanceof WalletError) {
+                    throw new CheckoutError(walletError.message, "wallet");
+                }
+
+                throw walletError;
+            }
+        }
 
         const order = await createOrderWithUniqueId({
             user: userId,
 
-            items: lines.map((l) => ({
-                product: l.productId,
-                productName: l.productName,
-                brand: l.brand,
-                productImage: l.productImage,
-                quantity: l.quantity,
-                mrp: l.mrp,
-                discountPercent: l.discountPercent,
-                unitPrice: l.unitPrice,
-                discountAmount: l.discountAmount,
-                itemTotal: l.itemTotal
-            })),
+            items: toOrderItems(lines),
 
             subtotal: pricing.subtotal,
             discountTotal: pricing.discountTotal,
+            couponCode: couponResult ? couponResult.coupon.code : "",
+            couponDiscount: pricing.couponDiscount,
             tax: pricing.tax,
             shipping: pricing.shipping,
             finalTotal: pricing.finalTotal,
 
-            addressSnapshot: {
-                addressName: address.addressName || "",
-                firstName: address.firstName,
-                lastName: address.lastName,
-                phone: address.phone,
-                addressLine1: address.addressLine1,
-                addressLine2: address.addressLine2 || "",
-                city: address.city,
-                state: address.state,
-                pinCode: address.pinCode,
-                country: address.country
-            },
+            addressSnapshot: toAddressSnapshot(address),
 
-            paymentMethod: PAYMENT_METHOD.COD
+            paymentMethod: isWalletPayment
+                ? PAYMENT_METHOD.WALLET
+                : PAYMENT_METHOD.COD,
+
+            // A wallet order is paid the moment it is placed.
+            ...(isWalletPayment
+                ? { paymentStatus: PAYMENT_STATUS.PAID, paidAt: new Date() }
+                : {})
         });
+
+        if (walletPaymentKey) {
+            await attachOrderToTransaction(walletPaymentKey, order.orderId);
+        }
 
         return order;
 
     } catch (error) {
 
-        
+        // Phase 56: the order was not created, so give the wallet money back.
+        if (walletPaymentKey && walletDebited > 0) {
+
+            try {
+
+                await creditWallet(userId, {
+                    amount: walletDebited,
+                    reason: WALLET_TX_REASON.PAYMENT_REVERSAL,
+                    description: "Payment reversed (order could not be placed)",
+                    referenceKey: `REVERSAL:${walletPaymentKey}`
+                });
+
+            } catch (reverseError) {
+                console.error(
+                    "Wallet payment reversal FAILED - please fix manually:",
+                    walletPaymentKey,
+                    reverseError
+                );
+            }
+        }
+
+        if (redeemedCoupon) {
+            await releaseCoupon(redeemedCoupon, userId);
+        }
         for (const line of reducedLines) {
             try {
                 await Product.updateOne(
@@ -337,5 +487,9 @@ module.exports = {
     ORDER_ID_PATTERN,
     evaluateCartItems,
     calculatePricing,
+    createOrderWithUniqueId,
+    findAddressForUser,
+    toAddressSnapshot,
+    toOrderItems,
     placeOrder
 };

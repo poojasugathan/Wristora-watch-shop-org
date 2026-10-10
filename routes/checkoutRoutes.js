@@ -26,6 +26,54 @@ router.get(
 );
 
 
+// ---------- Coupons (Phase 55) ----------
+
+router.post(
+    "/coupon/apply",
+    requireAuth,
+    checkoutController.applyCoupon
+);
+
+router.post(
+    "/coupon/remove",
+    requireAuth,
+    checkoutController.removeCoupon
+);
+
+
+// ---------- Online payment (Razorpay) ----------
+
+router.post(
+    "/online/create",
+    requireAuth,
+    checkoutController.startOnlinePayment
+);
+
+router.post(
+    "/online/verify",
+    requireAuth,
+    checkoutController.verifyOnlinePayment
+);
+
+router.post(
+    "/online/failed",
+    requireAuth,
+    checkoutController.failOnlinePayment
+);
+
+router.post(
+    "/online/retry",
+    requireAuth,
+    checkoutController.retryOnlinePayment
+);
+
+router.get(
+    "/payment-failed/:orderId",
+    requireAuth,
+    checkoutController.loadPaymentFailed
+);
+
+
 router.get(
     "/address/new",
     requireAuth,

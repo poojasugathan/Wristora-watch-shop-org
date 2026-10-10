@@ -1,0 +1,119 @@
+/* =====================================================
+   ADMIN SALES REPORT (PHASE 57)
+   Loaded after adminDashboard.css and adminOrders.css,
+   so buttons, pills, tables and pagination are reused.
+===================================================== */
+
+.sr-downloads {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.sr-filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.sr-filter .ao-pills {
+    margin: 0;
+}
+
+.sr-period {
+    cursor: pointer;
+}
+
+.sr-period input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.sr-dates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.sr-dates[hidden] {
+    display: none;
+}
+
+.sr-dates label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #526070;
+}
+
+.sr-dates input {
+    height: 35px;
+    padding: 0 10px;
+    border: 1px solid #dedfe3;
+    border-radius: 7px;
+    background: #fff;
+    font-size: 12px;
+    color: #222;
+}
+
+.sr-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.sr-card {
+    padding: 16px 18px;
+    background: #fff;
+    border: 1px solid #ededed;
+    border-radius: 11px;
+}
+
+.sr-card span {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 11px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: #737d8e;
+}
+
+.sr-card strong {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 22px;
+    color: #172033;
+}
+
+.sr-card.highlight {
+    background: #172033;
+    border-color: #172033;
+}
+
+.sr-card.highlight span {
+    color: #b9c2d3;
+}
+
+.sr-card.highlight strong {
+    color: #fff;
+}
+
+.sr-note {
+    margin: 0 0 18px;
+    font-size: 11px;
+    color: #737d8e;
+}
+
+.sr-table td {
+    vertical-align: top;
+}
+
+.sr-products {
+    max-width: 240px;
+    font-size: 11px;
+    color: #526070;
+}

@@ -1,0 +1,89 @@
+/* =====================================================
+   CHECKOUT COUPON BOX (PHASE 55)
+===================================================== */
+
+.coupon-box {
+    margin: 14px 0 12px;
+    padding: 14px;
+    border: 1px dashed #c9c9c9;
+    border-radius: 10px;
+    background: #fafafa;
+}
+
+.coupon-title {
+    margin: 0 0 10px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    color: #1c1c1c;
+}
+
+.coupon-input-row {
+    display: flex;
+    gap: 8px;
+}
+
+.coupon-input-row input {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 12px;
+    border: 1px solid #d6d6d6;
+    border-radius: 8px;
+    font-size: 14px;
+    text-transform: uppercase;
+    background: #ffffff;
+}
+
+.coupon-input-row input:focus {
+    outline: none;
+    border-color: #1c1c1c;
+}
+
+.coupon-apply-btn,
+.coupon-remove-btn {
+    padding: 10px 16px;
+    border: 1px solid #1c1c1c;
+    border-radius: 8px;
+    background: #1c1c1c;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.coupon-apply-btn:disabled,
+.coupon-remove-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.coupon-remove-btn {
+    background: #ffffff;
+    color: #1c1c1c;
+}
+
+.coupon-applied {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: #e8f5e9;
+    color: #2e7d32;
+    font-size: 14px;
+}
+
+.coupon-message {
+    margin: 8px 0 0;
+    font-size: 13px;
+    min-height: 0;
+}
+
+.coupon-message.is-error {
+    color: #c62828;
+}
+
+.coupon-message.is-ok {
+    color: #2e7d32;
+}

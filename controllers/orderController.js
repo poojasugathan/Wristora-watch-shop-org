@@ -11,10 +11,32 @@ const {
 
 const { generateInvoiceBuffer } = require("../services/invoiceService");
 
+const { expireStalePaymentOrders } = require("../services/paymentService");
+
 const {
     PAYMENT_METHOD_LABEL
 } = require("../config/orderConstants");
 
+
+// Phase 56: builds the message shown after a cancellation.
+const cancelMessage = (baseMessage, result) => {
+
+    if (result.refundFailed) {
+        return `${baseMessage} We couldn't send your refund automatically - our team has been notified and will fix it.`;
+    }
+
+    if (result.refundedAmount > 0) {
+
+        const amount = Number(result.refundedAmount).toLocaleString("en-IN", {
+            minimumFractionDigits: Number.isInteger(result.refundedAmount) ? 0 : 2,
+            maximumFractionDigits: 2
+        });
+
+        return `${baseMessage} \u20B9${amount} has been refunded to your wallet.`;
+    }
+
+    return baseMessage;
+};
 
 const sendJsonError = (res, error, logLabel) => {
 
@@ -41,6 +63,8 @@ const loadOrders = async (req, res) => {
     const page = parseInt(req.query.page, 10) || 1;
 
     try {
+
+        await expireStalePaymentOrders(req.session.user.id);
 
         const result = await listUserOrders(req.session.user.id, {
             search,
@@ -126,8 +150,8 @@ const cancelOrder = async (req, res) => {
 
         return res.json({
             success: true,
-            message: "Your order has been cancelled.",
-            ...result
+            ...result,
+            message: cancelMessage("Your order has been cancelled.", result)
         });
 
     } catch (error) {
@@ -150,10 +174,13 @@ const cancelOrderItem = async (req, res) => {
 
         return res.json({
             success: true,
-            message: result.orderCancelled
-                ? "Your order has been cancelled."
-                : "The item has been cancelled.",
-            ...result
+            ...result,
+            message: cancelMessage(
+                result.orderCancelled
+                    ? "Your order has been cancelled."
+                    : "The item has been cancelled.",
+                result
+            )
         });
 
     } catch (error) {

@@ -1,0 +1,260 @@
+/* =====================================================
+   PAYMENT SUCCESS / FAILURE PAGES (PHASE 54)
+   Matches the Wristora design: cream background, gold
+   accent, dark buttons. Fonts are the ones the site loads.
+====================================================== */
+
+.payment-page {
+    background: #fcfbf7;
+    padding: 4rem 1rem 5rem;
+    min-height: 60vh;
+}
+
+/* ---------- success card ---------- */
+
+.payment-card {
+    max-width: 512px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 20px;
+    padding: 2.5rem 2.5rem 2.25rem;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.07);
+    text-align: center;
+}
+
+.payment-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    margin: 0 auto 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+}
+
+.payment-icon-success {
+    background: #f7f1e8;
+    color: #b08d57;
+    border: 1px solid #eee3d2;
+}
+
+.payment-title {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 2rem;
+    font-weight: 500;
+    margin: 0 0 0.5rem;
+    color: #1c1c1c;
+}
+
+.payment-text {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0 0 1.75rem;
+}
+
+.payment-rows {
+    text-align: left;
+}
+
+.payment-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.7rem 0;
+    font-size: 0.9rem;
+}
+
+.payment-row span {
+    color: #555;
+}
+
+.payment-row strong {
+    font-weight: 500;
+    color: #1c1c1c;
+    text-align: right;
+    word-break: break-all;
+}
+
+.payment-mono {
+    font-family: "Courier New", monospace;
+    font-size: 0.85rem;
+}
+
+.payment-divider {
+    border-top: 1px dashed #e2e2e2;
+    margin: 1.1rem 0 1.4rem;
+}
+
+.payment-amount {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.payment-amount span {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 1.25rem;
+    color: #444;
+}
+
+.payment-amount strong {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #1c1c1c;
+}
+
+.payment-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+/* ---------- buttons (both pages) ---------- */
+
+.payment-btn {
+    display: inline-block;
+    padding: 0.95rem 1.7rem;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity 0.15s ease;
+}
+
+.payment-btn:hover {
+    opacity: 0.88;
+}
+
+.payment-btn[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.payment-btn-dark {
+    background: #1c1a15;
+    color: #fff;
+    border: 1px solid #1c1a15;
+}
+
+.payment-btn-light {
+    background: #f3f4f7;
+    color: #1c1c1c;
+    border: 1px solid #1c1c1c;
+}
+
+/* ---------- failure page ---------- */
+
+.payment-page-fail {
+    padding-top: 6rem;
+}
+
+.payment-fail {
+    max-width: 820px;
+    margin: 0 auto;
+}
+
+.payment-tag {
+    display: inline-block;
+    background: #ffd9d9;
+    color: #a40000;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.4rem 0.8rem;
+    border-radius: 3px;
+}
+
+.payment-fail-title {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 3.4rem;
+    font-weight: 500;
+    line-height: 1.1;
+    color: #1c1c1c;
+    margin: 1.5rem 0 1.25rem;
+}
+
+.payment-fail-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #4a4a4a;
+    max-width: 640px;
+    margin: 0 0 0.6rem;
+}
+
+.payment-fail-order {
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    color: #8a8a8a;
+    margin: 0 0 2rem;
+}
+
+.payment-fail-actions {
+    display: flex;
+    gap: 1.1rem;
+    flex-wrap: wrap;
+}
+
+.payment-fail-links {
+    margin: 1.75rem 0 0;
+    font-size: 0.85rem;
+    color: #8a8a8a;
+}
+
+.payment-fail-links a {
+    color: #1c1c1c;
+    text-decoration: underline;
+}
+
+.payment-fail-links span {
+    margin: 0 0.5rem;
+}
+
+.payment-support {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 3.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid #ece9e1;
+    text-decoration: none;
+    color: #6b4b43;
+}
+
+.payment-support strong,
+.payment-support em {
+    display: block;
+    font-style: normal;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.payment-support strong {
+    color: #1c1c1c;
+    font-weight: 600;
+}
+
+@media (max-width: 600px) {
+
+    .payment-card {
+        padding: 2rem 1.25rem;
+    }
+
+    .payment-fail-title {
+        font-size: 2.3rem;
+    }
+
+    .payment-btn {
+        width: 100%;
+        text-align: center;
+    }
+}

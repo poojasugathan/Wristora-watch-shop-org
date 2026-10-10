@@ -96,6 +96,11 @@ const orderSchema = new mongoose.Schema(
         shipping: { type: Number, default: 0, min: 0 },
         finalTotal: { type: Number, required: true, min: 0 },
 
+        // Phase 55: the coupon used for this order (empty when none).
+        // couponDiscount is the full amount the coupon took off the order.
+        couponCode: { type: String, default: "", trim: true },
+        couponDiscount: { type: Number, default: 0, min: 0 },
+
         addressSnapshot: {
             type: addressSnapshotSchema,
             required: true
@@ -112,6 +117,19 @@ const orderSchema = new mongoose.Schema(
             enum: Object.values(PAYMENT_STATUS),
             default: PAYMENT_STATUS.PENDING
         },
+
+        // Online payments only (empty for Cash on Delivery).
+        // razorpayOrderId  = the payment "ticket" Razorpay created for this order.
+        // razorpayPaymentId = the real payment, saved only after the backend verified it.
+        razorpayOrderId: { type: String, default: "" },
+        razorpayPaymentId: { type: String, default: "" },
+        paidAt: { type: Date, default: null },
+
+        // Phase 56: the total amount already sent back to the customer's
+        // wallet for this order (cancellations + an approved return).
+        // The refund code compares against this number, so the same
+        // money can never be refunded twice.
+        refundedAmount: { type: Number, default: 0, min: 0 },
 
         orderStatus: {
             type: String,
@@ -130,7 +148,11 @@ const orderSchema = new mongoose.Schema(
             default: RETURN_STATUS.NONE
         },
         returnReason: { type: String, default: "", trim: true },
-        returnRequestedAt: { type: Date, default: null }
+        returnRequestedAt: { type: Date, default: null },
+
+        // Phase 56: what the admin decided, and when.
+        returnProcessedAt: { type: Date, default: null },
+        returnAdminNote: { type: String, default: "", trim: true }
     },
     {
         timestamps: true

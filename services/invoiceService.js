@@ -213,6 +213,15 @@ const generateInvoiceBuffer = (order, customer) =>
                 totalRow("Discount", "- " + money(amounts.discountTotal), false, "#2e7d32");
             }
 
+            if (amounts.couponDiscount > 0) {
+                totalRow(
+                    amounts.couponCode ? `Coupon (${amounts.couponCode})` : "Coupon",
+                    "- " + money(amounts.couponDiscount),
+                    false,
+                    "#2e7d32"
+                );
+            }
+
             if (amounts.tax > 0) {
                 totalRow("Tax", money(amounts.tax));
             }

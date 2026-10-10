@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title><%= title %> | Wristora</title>
+
+    <link rel="stylesheet" href="/css/adminDashboard.css">
+    <link rel="stylesheet" href="/css/adminCoupons.css">
+
+</head>
+
+
+<body>
+
+<div class="admin-layout">
+
+    <%- include("partials/sidebar", { currentPage: "coupons" }) %>
+
+    <main class="admin-main cp-main">
+
+        <div class="cp-header">
+            <div>
+                <h1>Coupons</h1>
+                <h2>Create and manage discount coupons</h2>
+            </div>
+        </div>
+
+        <% if (flash) { %>
+            <div class="cp-flash <%= flash.type %>"><%= flash.message %></div>
+        <% } %>
+
+        <% if (error) { %>
+            <div class="cp-flash error"><%= error %></div>
+        <% } %>
+
+
+        <!-- ===================== CREATE COUPON ===================== -->
+
+        <section class="cp-card">
+
+            <h3 class="cp-card-title">Create Coupon</h3>
+
+            <form action="/admin/coupons" method="POST" class="cp-form" id="coupon-form">
+
+                <div class="cp-field">
+                    <label for="code">Coupon code</label>
+                    <input
+                        type="text"
+                        id="code"
+                        name="code"
+                        maxlength="20"
+                        placeholder="e.g. WELCOME10"
+                        value="<%= formData.code || '' %>"
+                        required
+                    >
+                </div>
+
+                <div class="cp-field">
+                    <label for="discountType">Discount type</label>
+                    <select id="discountType" name="discountType" required>
+                        <option value="PERCENT" <%= formData.discountType === "PERCENT" ? "selected" : "" %>>
+                            <%= typeLabels.PERCENT %> (%)
+                        </option>
+                        <option value="FIXED" <%= formData.discountType === "FIXED" ? "selected" : "" %>>
+                            <%= typeLabels.FIXED %> (&#8377;)
+                        </option>
+                    </select>
+                </div>
+
+                <div class="cp-field">
+                    <label for="discountValue">Discount value</label>
+                    <input
+                        type="number"
+                        id="discountValue"
+                        name="discountValue"
+                        min="0.01"
+                        step="0.01"
+                        placeholder="10"
+                        value="<%= formData.discountValue || '' %>"
+                        required
+                    >
+                    <small id="value-hint">Percentage: 1 to <%= maxPercent %>.</small>
+                </div>
+
+                <div class="cp-field">
+                    <label for="minimumPurchase">Minimum purchase (&#8377;)</label>
+                    <input
+                        type="number"
+                        id="minimumPurchase"
+                        name="minimumPurchase"
+                        min="0"
+                        step="0.01"
+                        placeholder="0"
+                        value="<%= formData.minimumPurchase || '' %>"
+                    >
+                </div>
+
+                <div class="cp-field" id="max-discount-field">
+                    <label for="maximumDiscount">Maximum discount (&#8377;)</label>
+                    <input
+                        type="number"
+                        id="maximumDiscount"
+                        name="maximumDiscount"
+                        min="0"
+                        step="0.01"
+                        placeholder="0 = no cap"
+                        value="<%= formData.maximumDiscount || '' %>"
+                    >
+                    <small>Only for percentage coupons. 0 means no cap.</small>
+                </div>
+
+                <div class="cp-field">
+                    <label for="startDate">Start date</label>
+                    <input
+                        type="date"
+                        id="startDate"
+                        name="startDate"
+                        value="<%= formData.startDate || '' %>"
+                        required
+                    >
+                </div>
+
+                <div class="cp-field">
+                    <label for="expiryDate">Expiry date</label>
+                    <input
+                        type="date"
+                        id="expiryDate"
+                        name="expiryDate"
+                        value="<%= formData.expiryDate || '' %>"
+                        required
+                    >
+                </div>
+
+                <div class="cp-field">
+                    <label for="usageLimit">Total usage limit</label>
+                    <input
+                        type="number"
+                        id="usageLimit"
+                        name="usageLimit"
+                        min="0"
+                        step="1"
+                        placeholder="0 = unlimited"
+                        value="<%= formData.usageLimit || '' %>"
+                    >
+                </div>
+
+                <div class="cp-field">
+                    <label for="perUserLimit">Uses per customer</label>
+                    <input
+                        type="number"
+                        id="perUserLimit"
+                        name="perUserLimit"
+                        min="1"
+                        step="1"
+                        placeholder="1"
+                        value="<%= formData.perUserLimit || '' %>"
+                    >
+                </div>
+
+                <div class="cp-field cp-field-wide">
+                    <label for="description">Description (optional)</label>
+                    <input
+                        type="text"
+                        id="description"
+                        name="description"
+                        maxlength="200"
+                        placeholder="Shown to the admin only"
+                        value="<%= formData.description || '' %>"
+                    >
+                </div>
+
+                <div class="cp-actions">
+                    <button type="submit" class="cp-submit">Create Coupon</button>
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- ===================== COUPON LIST ===================== -->
+
+        <div class="cp-list-header">
+
+            <h3 class="cp-card-title">
+                All Coupons
+                <span class="cp-count">(<%= totalCoupons %>)</span>
+            </h3>
+
+            <form action="/admin/coupons" method="GET" class="cp-search">
+                <input
+                    type="text"
+                    name="search"
+                    placeholder="Search code"
+                    value="<%= search %>"
+                    autocomplete="off"
+                >
+                <% if (search) { %>
+                    <a href="/admin/coupons" class="cp-clear">Clear</a>
+                <% } %>
+            </form>
+
+        </div>
+
+        <section class="cp-card cp-table-card">
+
+            <% if (coupons.length > 0) { %>
+
+                <div class="cp-table-scroll">
+
+                    <table class="cp-table">
+
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Discount</th>
+                                <th>Min. purchase</th>
+                                <th>Valid</th>
+                                <th>Used</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <% coupons.forEach((coupon) => { %>
+
+                                <tr>
+
+                                    <td>
+                                        <strong><%= coupon.code %></strong>
+                                        <% if (coupon.description) { %>
+                                            <br><small><%= coupon.description %></small>
+                                        <% } %>
+                                    </td>
+
+                                    <td>
+                                        <% if (coupon.discountType === "PERCENT") { %>
+                                            <%= coupon.discountValue %>%
+                                            <% if (coupon.maximumDiscount > 0) { %>
+                                                <br><small>up to &#8377;<%= coupon.maximumDiscount.toLocaleString("en-IN") %></small>
+                                            <% } %>
+                                        <% } else { %>
+                                            &#8377;<%= coupon.discountValue.toLocaleString("en-IN") %>
+                                        <% } %>
+                                    </td>
+
+                                    <td>
+                                        <%= coupon.minimumPurchase > 0
+                                            ? "₹" + coupon.minimumPurchase.toLocaleString("en-IN")
+                                            : "None" %>
+                                    </td>
+
+                                    <td>
+                                        <%= new Date(coupon.startDate).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) %>
+                                        <br>
+                                        <small>to <%= new Date(coupon.expiryDate).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) %></small>
+                                    </td>
+
+                                    <td>
+                                        <%= coupon.usedCount %><%= coupon.usageLimit > 0 ? " / " + coupon.usageLimit : "" %>
+                                        <br>
+                                        <small><%= coupon.perUserLimit %> per customer</small>
+                                    </td>
+
+                                    <td>
+                                        <span class="cp-status <%= coupon.state.key %>">
+                                            <%= coupon.state.label %>
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <div class="cp-row-actions">
+
+                                            <form action="/admin/coupons/<%= coupon._id %>/toggle" method="POST">
+                                                <button type="submit" class="cp-btn">
+                                                    <%= coupon.isActive ? "Deactivate" : "Activate" %>
+                                                </button>
+                                            </form>
+
+                                            <form
+                                                action="/admin/coupons/<%= coupon._id %>/delete"
+                                                method="POST"
+                                                class="cp-delete-form"
+                                            >
+                                                <button type="submit" class="cp-btn danger">Delete</button>
+                                            </form>
+
+                                        </div>
+                                    </td>
+
+                                </tr>
+
+                            <% }) %>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            <% } else { %>
+
+                <div class="cp-empty">
+                    <h3>No coupons found</h3>
+                    <p><%= search ? "Try a different search." : "Create your first coupon above." %></p>
+                </div>
+
+            <% } %>
+
+        </section>
+
+
+        <% if (totalPages > 1) { %>
+
+            <div class="cp-pagination">
+
+                <% const q = search ? "&search=" + encodeURIComponent(search) : ""; %>
+
+                <% if (currentPage > 1) { %>
+                    <a href="/admin/coupons?page=<%= currentPage - 1 %><%= q %>">Previous</a>
+                <% } else { %>
+                    <span class="disabled">Previous</span>
+                <% } %>
+
+                <% pageNumbers.forEach((p) => { %>
+                    <% if (p === "...") { %>
+                        <span class="dots">...</span>
+                    <% } else if (p === currentPage) { %>
+                        <span class="current"><%= p %></span>
+                    <% } else { %>
+                        <a href="/admin/coupons?page=<%= p %><%= q %>"><%= p %></a>
+                    <% } %>
+                <% }) %>
+
+                <% if (currentPage < totalPages) { %>
+                    <a href="/admin/coupons?page=<%= currentPage + 1 %><%= q %>">Next</a>
+                <% } else { %>
+                    <span class="disabled">Next</span>
+                <% } %>
+
+            </div>
+
+        <% } %>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    // Small helpers for the form. The server validates everything again.
+
+    (function () {
+
+        const typeSelect = document.getElementById("discountType");
+        const maxField = document.getElementById("max-discount-field");
+        const hint = document.getElementById("value-hint");
+
+        const refresh = () => {
+
+            const isPercent = typeSelect.value === "PERCENT";
+
+            maxField.style.display = isPercent ? "" : "none";
+
+            hint.textContent = isPercent
+                ? "Percentage: 1 to <%= maxPercent %>."
+                : "Fixed amount in rupees.";
+        };
+
+        typeSelect.addEventListener("change", refresh);
+        refresh();
+
+        document.addEventListener("submit", (event) => {
+
+            if (event.target.classList.contains("cp-delete-form")) {
+
+                if (!confirm("Delete this coupon? Old orders that used it are not affected.")) {
+                    event.preventDefault();
+                }
+            }
+        });
+
+    })();
+
+</script>
+
+</body>
+
+</html>

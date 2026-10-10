@@ -198,6 +198,13 @@
                             </div>
                         <% } %>
 
+                        <% if (order.amounts.couponDiscount > 0) { %>
+                            <div class="ao-totals-row">
+                                <span>Coupon<%= order.amounts.couponCode ? " (" + order.amounts.couponCode + ")" : "" %></span>
+                                <span>−₹<%= order.amounts.couponDiscount.toLocaleString("en-IN") %></span>
+                            </div>
+                        <% } %>
+
                         <% if (order.amounts.tax > 0) { %>
                             <div class="ao-totals-row">
                                 <span>Tax</span>
@@ -285,15 +292,23 @@
                         </form>
 
                         <p class="ao-note">
-                            Cancelling returns the stock of every active item to the shop.
+                            Cancelling returns the stock of every active item to the shop
+                            and refunds a paid order to the customer's wallet.
                         </p>
 
                     <% } else { %>
 
-                        <p>
-                            This order is <strong><%= order.orderStatus %></strong>,
-                            so its status can no longer be changed.
-                        </p>
+                        <% if (order.awaitingPayment) { %>
+                            <p>
+                                This online order is <strong>waiting for payment</strong>
+                                (<%= order.paymentStatus %>), so its status can't be changed yet.
+                            </p>
+                        <% } else { %>
+                            <p>
+                                This order is <strong><%= order.orderStatus %></strong>,
+                                so its status can no longer be changed.
+                            </p>
+                        <% } %>
 
                     <% } %>
 
@@ -318,6 +333,79 @@
                                     month: "short",
                                     year: "numeric"
                                 }) %>
+                            </p>
+                        <% } %>
+
+                        <% if (order.canProcessReturn) { %>
+
+                            <p class="ao-note">
+                                Approving puts the watches back in stock and refunds
+                                the customer's wallet.
+                            </p>
+
+                            <!-- Phase 56: ACCEPT -->
+                            <form
+                                action="/admin/orders/<%= order.orderId %>/return/approve"
+                                method="POST"
+                                onsubmit="return confirm('Approve this return? The customer will be refunded to their wallet and the stock will be restored.');"
+                                style="margin-bottom:14px;"
+                            >
+                                <button type="submit" class="ao-btn dark">
+                                    Approve Return &amp; Refund
+                                </button>
+                            </form>
+
+                            <!-- Phase 56: REJECT -->
+                            <form
+                                action="/admin/orders/<%= order.orderId %>/return/reject"
+                                method="POST"
+                                onsubmit="return confirm('Reject this return? No refund will be made.');"
+                            >
+                                <div class="ao-form-row">
+                                    <label for="rejectReason">Reason for rejecting (optional)</label>
+                                    <textarea
+                                        name="reason"
+                                        id="rejectReason"
+                                        maxlength="300"
+                                        placeholder="The customer will see this message."
+                                    ></textarea>
+                                    <button type="submit" class="ao-btn small danger">
+                                        Reject Return
+                                    </button>
+                                </div>
+                            </form>
+
+                        <% } %>
+
+                    </section>
+
+                <% } else if (order.returnStatus === "Approved" || order.returnStatus === "Rejected") { %>
+
+                    <section class="ao-panel">
+
+                        <h3>Return <%= order.returnStatus %></h3>
+
+                        <p><strong>Customer's reason:</strong> <%= order.returnReason %></p>
+
+                        <% if (order.returnProcessedAt) { %>
+                            <p>
+                                <strong>Answered on:</strong>
+                                <%= new Date(order.returnProcessedAt).toLocaleString("en-IN", {
+                                    dateStyle: "medium",
+                                    timeStyle: "short",
+                                    timeZone: "Asia/Kolkata"
+                                }) %>
+                            </p>
+                        <% } %>
+
+                        <% if (order.returnStatus === "Rejected" && order.returnAdminNote) { %>
+                            <p><strong>Your note:</strong> <%= order.returnAdminNote %></p>
+                        <% } %>
+
+                        <% if (order.returnStatus === "Approved") { %>
+                            <p>
+                                <strong>Refunded to wallet:</strong>
+                                &#8377;<%= order.refundedAmount.toLocaleString("en-IN") %>
                             </p>
                         <% } %>
 
@@ -380,6 +468,28 @@
 
                     <p><strong>Method:</strong> <%= paymentLabel %></p>
                     <p><strong>Status:</strong> <%= order.paymentStatus %></p>
+
+                    <% if (order.refundedAmount > 0) { %>
+                        <p>
+                            <strong>Refunded to wallet:</strong>
+                            &#8377;<%= order.refundedAmount.toLocaleString("en-IN") %>
+                        </p>
+                    <% } %>
+
+                    <% if (order.razorpayPaymentId) { %>
+                        <p><strong>Payment ID:</strong> <%= order.razorpayPaymentId %></p>
+                    <% } %>
+
+                    <% if (order.paidAt) { %>
+                        <p>
+                            <strong>Paid on:</strong>
+                            <%= new Date(order.paidAt).toLocaleString("en-IN", {
+                                dateStyle: "medium",
+                                timeStyle: "short",
+                                timeZone: "Asia/Kolkata"
+                            }) %>
+                        </p>
+                    <% } %>
 
                 </section>
 

@@ -68,13 +68,38 @@
             </div>
 
             <!-- STATUS TRACKER -->
-            <% if (isCancelled) { %>
+            <% if (order.awaitingPayment) { %>
+
+                <div class="orders-alert orders-alert-error">
+                    <i class="bi bi-credit-card"></i>
+                    <% if (order.paymentStatus === "Failed") { %>
+                        The payment for this order was not completed, so the order has not been confirmed.
+                    <% } else { %>
+                        The payment for this order is still in progress.
+                    <% } %>
+
+                    <% if (order.canRetryPayment) { %>
+                        <button
+                            type="button"
+                            class="order-btn order-btn-dark order-btn-small js-retry-payment"
+                            data-order-id="<%= order.orderId %>"
+                        >
+                            Retry Payment
+                        </button>
+                    <% } %>
+                </div>
+
+            <% } else if (isCancelled) { %>
 
                 <div class="orders-alert orders-alert-error">
                     <i class="bi bi-x-circle"></i>
                     This order has been cancelled.
                     <% if (order.cancellationReason) { %>
                         Reason: <%= order.cancellationReason %>
+                    <% } %>
+                    <% if (order.refundedAmount > 0) { %>
+                        &#8377;<%= money(order.refundedAmount) %> has been refunded to your
+                        <a href="/wallet">wallet</a>.
                     <% } %>
                 </div>
 
@@ -108,6 +133,24 @@
                     <i class="bi bi-arrow-return-left"></i>
                     Return requested on <%= formatDateTime(order.returnRequestedAt) %>.
                     Reason: <%= order.returnReason %>
+                    We will refund you as soon as the return is approved.
+                </div>
+            <% } else if (order.returnStatus === "Approved") { %>
+                <div class="orders-alert orders-alert-info">
+                    <i class="bi bi-check-circle"></i>
+                    Your return was approved<% if (order.returnProcessedAt) { %> on <%= formatDateTime(order.returnProcessedAt) %><% } %>.
+                    <% if (order.refundedAmount > 0) { %>
+                        &#8377;<%= money(order.refundedAmount) %> has been refunded to your
+                        <a href="/wallet">wallet</a>.
+                    <% } %>
+                </div>
+            <% } else if (order.returnStatus === "Rejected") { %>
+                <div class="orders-alert orders-alert-error">
+                    <i class="bi bi-x-circle"></i>
+                    Your return request was not approved.
+                    <% if (order.returnAdminNote) { %>
+                        Reason: <%= order.returnAdminNote %>
+                    <% } %>
                 </div>
             <% } %>
 
@@ -185,6 +228,11 @@
                     <h3 class="od-section-title">Payment</h3>
                     <p class="od-text"><%= paymentLabel %></p>
                     <p class="od-text od-muted">Payment status: <%= order.paymentStatus %></p>
+                    <% if (order.refundedAmount > 0) { %>
+                        <p class="od-text od-muted">
+                            Refunded to wallet: &#8377;<%= money(order.refundedAmount) %>
+                        </p>
+                    <% } %>
 
                     <h3 class="od-section-title">Delivery Address</h3>
                     <p class="od-text">
@@ -211,6 +259,13 @@
                         <div class="od-summary-row od-discount">
                             <span>Discount</span>
                             <span>-&#8377;<%= money(amounts.discountTotal) %></span>
+                        </div>
+                    <% } %>
+
+                    <% if (amounts.couponDiscount > 0) { %>
+                        <div class="od-summary-row od-discount">
+                            <span>Coupon<%= amounts.couponCode ? " (" + amounts.couponCode + ")" : "" %></span>
+                            <span>-&#8377;<%= money(amounts.couponDiscount) %></span>
                         </div>
                     <% } %>
 
@@ -273,6 +328,11 @@
     </div>
 
 </main>
+
+<% if (order.canRetryPayment) { %>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="/js/payment.js"></script>
+<% } %>
 
 <script src="/js/orders.js"></script>
 

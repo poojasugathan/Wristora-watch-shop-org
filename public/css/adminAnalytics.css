@@ -1,0 +1,211 @@
+/* =====================================================
+   ADMIN DASHBOARD ANALYTICS (PHASE 58)
+   Loaded AFTER adminDashboard.css, so the existing cards,
+   tables and colours are reused. This file only adds the
+   new pieces: filter dates, chart box, Top 10 lists.
+===================================================== */
+
+/* ---------- filter ---------- */
+
+.an-filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.an-period {
+    cursor: pointer;
+}
+
+.an-period input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.an-dates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.an-dates[hidden] {
+    display: none;
+}
+
+.an-dates label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #526070;
+}
+
+.an-dates input {
+    height: 34px;
+    padding: 0 8px;
+    border: 1px solid #dedfe3;
+    border-radius: 7px;
+    background: #fff;
+    font-size: 12px;
+}
+
+.an-apply {
+    height: 34px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 7px;
+    background: #172033;
+    color: #fff;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.an-error {
+    margin-bottom: 18px;
+    padding: 11px 14px;
+    border: 1px solid #f3c3c8;
+    border-radius: 8px;
+    background: #fdecee;
+    color: #a3202c;
+    font-size: 13px;
+}
+
+
+/* ---------- growth badge (down) ---------- */
+
+.growth-badge.negative {
+    background: #ffecec;
+    color: #f04d4d;
+}
+
+
+/* ---------- chart ---------- */
+
+.an-chart-wrap {
+    position: relative;
+    height: 300px;
+    margin-top: 28px;
+}
+
+.an-chart-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    margin: 0;
+    font-size: 13px;
+    color: #7b8492;
+    text-align: center;
+}
+
+.an-chart-note[hidden] {
+    display: none;
+}
+
+
+/* ---------- products table extras ---------- */
+
+.product-image {
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.an-empty {
+    margin: 22px 12px;
+    font-size: 13px;
+    color: #7b8492;
+}
+
+.an-footnote {
+    margin: 14px 12px 0;
+    font-size: 11px;
+    color: #7b8492;
+}
+
+
+/* ---------- categories + brands ---------- */
+
+.an-side {
+    display: flex;
+    flex-direction: column;
+    gap: 29px;
+    min-width: 0;
+}
+
+.an-rank-card {
+    padding: 26px 22px;
+    background: #fff;
+    border: 1px solid #ededed;
+    border-radius: 11px;
+}
+
+.an-rank-card h2 {
+    margin: 0 0 12px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 17px;
+}
+
+.an-rank-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: rank;
+}
+
+.an-rank-list li {
+    counter-increment: rank;
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 0;
+    border-top: 1px solid #f1f1f1;
+    font-size: 12px;
+}
+
+.an-rank-list li::before {
+    content: counter(rank);
+    color: #7b8492;
+    font-size: 11px;
+}
+
+.an-rank-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+.an-rank-qty {
+    color: #7b8492;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+
+    .an-filter {
+        justify-content: flex-start;
+    }
+
+    .an-chart-wrap {
+        height: 240px;
+    }
+
+    .an-rank-list li {
+        grid-template-columns: 20px minmax(0, 1fr) auto;
+    }
+
+    .an-rank-qty {
+        display: none;
+    }
+}

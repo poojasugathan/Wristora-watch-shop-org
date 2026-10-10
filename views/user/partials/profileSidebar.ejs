@@ -1,5 +1,5 @@
 <%
-    // active = "profile" | "orders" | "wishlist" | "addresses"
+    // active = "profile" | "orders" | "wishlist" | "addresses" | "wallet"
     const activeLink = typeof active !== "undefined" ? active : "";
 %>
 
@@ -27,7 +27,7 @@
             <span>Addresses</span>
         </a>
 
-        <a href="/wallet" class="profile-sidebar-link">
+        <a href="/wallet" class="profile-sidebar-link <%= activeLink === 'wallet' ? 'active' : '' %>">
             <i class="bi bi-wallet2"></i>
             <span>Wallet</span>
         </a>

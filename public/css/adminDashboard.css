@@ -31,7 +31,13 @@ a {
 
 .admin-sidebar {
     width: 236px;
-    min-height: 100vh;
+    /* Always exactly the screen height. If the menu is taller than the
+       screen (small laptop, or one more menu link), the sidebar scrolls
+       by itself, so the Logout button at the bottom can always be reached. */
+    height: 100vh;
+    overflow-y: auto;
+    top: 0;
+    left: 0;
     background: #ffffff;
     border-right: 1px solid #e4e4e4;
     display: flex;
@@ -39,6 +45,7 @@ a {
     flex-direction: column;
     flex-shrink: 0;
     padding: 25px 11px 15px;
+    box-sizing: border-box;
 }
 
 .sidebar-brand {
@@ -630,6 +637,8 @@ a {
     .admin-sidebar {
         width: 100%;
         min-height: auto;
+        height: auto;
+        overflow-y: visible;
         position: relative;
     }
 

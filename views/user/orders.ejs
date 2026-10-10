@@ -140,6 +140,16 @@
                                             </a>
                                         <% } %>
 
+                                        <% if (order.canRetryPayment) { %>
+                                            <button
+                                                type="button"
+                                                class="order-btn js-retry-payment"
+                                                data-order-id="<%= order.orderId %>"
+                                            >
+                                                Retry Payment
+                                            </button>
+                                        <% } %>
+
                                         <a href="/orders/<%= order.orderId %>" class="order-btn order-btn-dark">
                                             View Details
                                         </a>
@@ -212,6 +222,11 @@
     </div>
 
 </main>
+
+<% if (orders.some((o) => o.canRetryPayment)) { %>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="/js/payment.js"></script>
+<% } %>
 
 <script src="/js/orders.js"></script>
 

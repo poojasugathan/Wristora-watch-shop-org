@@ -1,0 +1,274 @@
+/* =====================================================
+   ADMIN COUPONS PAGE (PHASE 55)
+===================================================== */
+
+.cp-main {
+    padding: 28px 32px;
+}
+
+.cp-header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.cp-header h2 {
+    margin: 4px 0 20px;
+    font-size: 13px;
+    font-weight: 400;
+    color: #777;
+}
+
+.cp-flash {
+    margin-bottom: 16px;
+    padding: 12px 15px;
+    border-radius: 8px;
+    font-size: 13px;
+    border: 1px solid transparent;
+}
+
+.cp-flash.success {
+    background: #effaf5;
+    border-color: #bfe8d6;
+    color: #0b7a55;
+}
+
+.cp-flash.error {
+    background: #fff3f3;
+    border-color: #f0c8c8;
+    color: #c93636;
+}
+
+.cp-card {
+    background: #ffffff;
+    border: 1px solid #e8e8e8;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.cp-card-title {
+    margin: 0 0 16px;
+    font-size: 16px;
+}
+
+.cp-count {
+    font-weight: 400;
+    color: #888;
+    font-size: 13px;
+}
+
+.cp-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.cp-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.cp-field-wide {
+    grid-column: 1 / -1;
+}
+
+.cp-field label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #333;
+}
+
+.cp-field input,
+.cp-field select {
+    padding: 10px 12px;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    font-size: 14px;
+    background: #ffffff;
+}
+
+.cp-field input:focus,
+.cp-field select:focus {
+    outline: none;
+    border-color: #1c1c1c;
+}
+
+.cp-field small {
+    font-size: 11px;
+    color: #888;
+}
+
+.cp-actions {
+    grid-column: 1 / -1;
+}
+
+.cp-submit {
+    padding: 11px 22px;
+    border: none;
+    border-radius: 8px;
+    background: #1c1c1c;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.cp-list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.cp-list-header .cp-card-title {
+    margin-bottom: 12px;
+}
+
+.cp-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.cp-search input {
+    padding: 9px 12px;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+.cp-clear {
+    font-size: 12px;
+    color: #c93636;
+    text-decoration: none;
+}
+
+.cp-table-card {
+    padding: 0;
+    overflow: hidden;
+}
+
+.cp-table-scroll {
+    overflow-x: auto;
+}
+
+.cp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.cp-table th {
+    text-align: left;
+    padding: 12px 14px;
+    font-size: 11px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: #777;
+    background: #fafafa;
+    border-bottom: 1px solid #ececec;
+    white-space: nowrap;
+}
+
+.cp-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: top;
+}
+
+.cp-table small {
+    color: #888;
+    font-size: 11px;
+}
+
+.cp-status {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.cp-status.active {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.cp-status.inactive {
+    background: #eeeeee;
+    color: #666666;
+}
+
+.cp-status.expired {
+    background: #fdecea;
+    color: #c62828;
+}
+
+.cp-status.scheduled {
+    background: #fff4e0;
+    color: #b26a00;
+}
+
+.cp-row-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.cp-row-actions form {
+    margin: 0;
+}
+
+.cp-btn {
+    padding: 7px 12px;
+    border: 1px solid #1c1c1c;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #1c1c1c;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.cp-btn.danger {
+    border-color: #c93636;
+    color: #c93636;
+}
+
+.cp-empty {
+    padding: 40px 20px;
+    text-align: center;
+    color: #777;
+}
+
+.cp-pagination {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+    font-size: 13px;
+}
+
+.cp-pagination a,
+.cp-pagination span {
+    padding: 7px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #1c1c1c;
+}
+
+.cp-pagination .current {
+    background: #1c1c1c;
+    color: #ffffff;
+    border-color: #1c1c1c;
+}
+
+.cp-pagination .disabled,
+.cp-pagination .dots {
+    color: #aaa;
+    border-color: transparent;
+}

@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const fs = require("fs");
 const env=require("dotenv").config();
 const cookieParser = require("cookie-parser");
 
@@ -18,6 +19,7 @@ const cartRoutes = require("./routes/cartRoutes");
 const wishlistRoutes = require("./routes/wishlistRoutes");
 const checkoutRoutes= require("./routes/checkoutRoutes");
 const orderRoutes = require("./routes/orderRoutes");
+const walletRoutes = require("./routes/walletRoutes");
 const attachHeaderData = require("./middlewares/headerDataMiddleware");
 const { notFoundHandler, errorHandler } = require("./middlewares/errorMiddleware");
 const attachCartCount = require("./middlewares/cartCountMiddleware");
@@ -56,6 +58,18 @@ app.use(noCache);
 
 app.use(express.static(path.join(__dirname, "public")));
 
+// Phase 58: the admin dashboard chart library (Chart.js) is served straight
+// from node_modules, so no extra file has to be copied into /public.
+// If "npm install chart.js@4" has not been run yet, the app still starts and
+// the dashboard simply shows a note instead of the chart.
+const chartJsFolder = path.join(__dirname, "node_modules", "chart.js", "dist");
+
+if (fs.existsSync(chartJsFolder)) {
+    app.use("/vendor/chartjs", express.static(chartJsFolder));
+} else {
+    console.warn("Chart.js is not installed. Run: npm install chart.js@4");
+}
+
 
 app.set("view engine", "ejs");
 
@@ -74,6 +88,7 @@ app.use("/cart", cartRoutes);
 app.use("/wishlist", wishlistRoutes);
 app.use("/checkout", checkoutRoutes);
 app.use("/orders", orderRoutes);
+app.use("/wallet", walletRoutes);
 
 app.get("/", (req, res) => {
     res.render("user/home", {

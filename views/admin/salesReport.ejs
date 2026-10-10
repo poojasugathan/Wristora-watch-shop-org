@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title><%= title %> | Wristora</title>
+
+    <link rel="stylesheet" href="/css/adminDashboard.css">
+
+    <link rel="stylesheet" href="/css/adminOrders.css">
+
+    <link rel="stylesheet" href="/css/adminSalesReport.css">
+
+</head>
+
+<%
+    const inr = (n) =>
+        "₹" + Number(n || 0).toLocaleString("en-IN", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
+    const pageUrl = (page) =>
+        "/admin/sales-report?" + downloadQuery + "&page=" + page;
+
+    const paymentNames = {
+        COD: "Cash on Delivery",
+        ONLINE: "Online (Razorpay)",
+        WALLET: "Wallet"
+    };
+%>
+
+<body>
+
+<div class="admin-layout">
+
+    <%- include("partials/sidebar", { currentPage: "salesReport" }) %>
+
+
+    <main class="admin-main ao-main">
+
+        <!-- =====================================================
+             HEADER
+        ====================================================== -->
+
+        <div class="ao-header">
+
+            <div>
+                <h1>Sales Report</h1>
+
+                <p>
+                    <% if (range) { %>
+                        Showing sales for <strong><%= range.label %></strong>
+                    <% } else { %>
+                        Choose a period to see your sales
+                    <% } %>
+                </p>
+            </div>
+
+            <% if (range) { %>
+                <div class="sr-downloads">
+
+                    <a
+                        class="ao-btn dark"
+                        href="/admin/sales-report/download/pdf?<%= downloadQuery %>"
+                    >
+                        Download PDF
+                    </a>
+
+                    <a
+                        class="ao-btn dark"
+                        href="/admin/sales-report/download/excel?<%= downloadQuery %>"
+                    >
+                        Download Excel
+                    </a>
+
+                </div>
+            <% } %>
+
+        </div>
+
+
+        <% if (flash) { %>
+            <div class="ao-flash <%= flash.type %>">
+                <%= flash.message %>
+            </div>
+        <% } %>
+
+        <% if (error) { %>
+            <div class="ao-flash error">
+                <%= error %>
+            </div>
+        <% } %>
+
+
+        <!-- =====================================================
+             FILTER (the server does the filtering)
+        ====================================================== -->
+
+        <form class="sr-filter" action="/admin/sales-report" method="GET" id="sr-filter">
+
+            <div class="ao-pills">
+                <% periods.forEach((item) => { %>
+                    <label class="ao-pill sr-period <%= period === item.value ? 'active' : '' %>">
+                        <input
+                            type="radio"
+                            name="period"
+                            value="<%= item.value %>"
+                            <%= period === item.value ? "checked" : "" %>
+                        >
+                        <%= item.label %>
+                    </label>
+                <% }) %>
+            </div>
+
+            <div class="sr-dates" id="sr-dates" <%= period === "custom" ? "" : "hidden" %>>
+
+                <label>
+                    From
+                    <input type="date" name="from" value="<%= from %>">
+                </label>
+
+                <label>
+                    To
+                    <input type="date" name="to" value="<%= to %>">
+                </label>
+
+            </div>
+
+            <button type="submit" class="ao-btn dark">Apply</button>
+
+        </form>
+
+
+        <% if (report) { %>
+
+            <!-- =====================================================
+                 SUMMARY CARDS
+            ====================================================== -->
+
+            <section class="sr-cards">
+
+                <div class="sr-card">
+                    <span>Total Orders</span>
+                    <strong><%= report.summary.totalOrders %></strong>
+                </div>
+
+                <div class="sr-card">
+                    <span>Items Sold</span>
+                    <strong><%= report.summary.itemsSold %></strong>
+                </div>
+
+                <div class="sr-card">
+                    <span>Gross Sales</span>
+                    <strong><%= inr(report.summary.grossSales) %></strong>
+                </div>
+
+                <div class="sr-card">
+                    <span>Product / Offer Discount</span>
+                    <strong><%= inr(report.summary.productDiscount) %></strong>
+                </div>
+
+                <div class="sr-card">
+                    <span>Coupon Deductions</span>
+                    <strong><%= inr(report.summary.couponDiscount) %></strong>
+                </div>
+
+                <div class="sr-card">
+                    <span>Total Discount</span>
+                    <strong><%= inr(report.summary.totalDiscount) %></strong>
+                </div>
+
+                <div class="sr-card highlight">
+                    <span>Net Sales</span>
+                    <strong><%= inr(report.summary.netSales) %></strong>
+                </div>
+
+                <div class="sr-card">
+                    <span>Total Order Amount</span>
+                    <strong><%= inr(report.summary.orderAmount) %></strong>
+                </div>
+
+            </section>
+
+            <p class="sr-note">
+                Cancelled orders, approved returns and unpaid online orders are not counted.
+                Cancelled items inside an order are left out.
+                Net Sales = Gross Sales - discounts - coupon.
+            </p>
+
+
+            <!-- =====================================================
+                 ORDER TABLE
+            ====================================================== -->
+
+            <section class="ao-card">
+
+                <% if (report.rows.length > 0) { %>
+
+                    <table class="ao-table sr-table">
+
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Date</th>
+                                <th>Customer</th>
+                                <th>Products</th>
+                                <th>Qty</th>
+                                <th>Gross</th>
+                                <th>Discount</th>
+                                <th>Coupon</th>
+                                <th>Final Amount</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <% report.rows.forEach((row) => { %>
+
+                                <tr>
+
+                                    <td>
+                                        <a class="ao-link" href="/admin/orders/<%= row.orderId %>">
+                                            <%= row.orderId %>
+                                        </a>
+                                        <div class="ao-muted">
+                                            <%= paymentNames[row.paymentMethod] || row.paymentMethod %>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <%= new Date(row.createdAt).toLocaleDateString("en-IN", {
+                                            day: "2-digit",
+                                            month: "short",
+                                            year: "numeric",
+                                            timeZone: "Asia/Kolkata"
+                                        }) %>
+                                    </td>
+
+                                    <td><%= row.customer %></td>
+
+                                    <td class="sr-products"><%= row.products %></td>
+
+                                    <td><%= row.itemsSold %></td>
+
+                                    <td><%= inr(row.grossSales) %></td>
+
+                                    <td><%= inr(row.productDiscount) %></td>
+
+                                    <td>
+                                        <%= inr(row.couponDiscount) %>
+                                        <% if (row.couponCode) { %>
+                                            <div class="ao-muted"><%= row.couponCode %></div>
+                                        <% } %>
+                                    </td>
+
+                                    <td><strong><%= inr(row.finalAmount) %></strong></td>
+
+                                </tr>
+
+                            <% }) %>
+
+                        </tbody>
+
+                    </table>
+
+                <% } else { %>
+
+                    <div class="ao-empty">
+                        <h3>No sales found</h3>
+                        <p>There are no sales in this period.</p>
+                    </div>
+
+                <% } %>
+
+            </section>
+
+
+            <% if (report.totalPages > 1) { %>
+
+                <nav class="ao-pagination">
+
+                    <% if (report.currentPage > 1) { %>
+                        <a href="<%= pageUrl(report.currentPage - 1) %>" class="ao-page">Previous</a>
+                    <% } else { %>
+                        <span class="ao-page disabled">Previous</span>
+                    <% } %>
+
+                    <% report.pageNumbers.forEach((number) => { %>
+
+                        <% if (number === "...") { %>
+                            <span class="ao-page disabled">…</span>
+                        <% } else if (number === report.currentPage) { %>
+                            <span class="ao-page active"><%= number %></span>
+                        <% } else { %>
+                            <a href="<%= pageUrl(number) %>" class="ao-page"><%= number %></a>
+                        <% } %>
+
+                    <% }) %>
+
+                    <% if (report.currentPage < report.totalPages) { %>
+                        <a href="<%= pageUrl(report.currentPage + 1) %>" class="ao-page">Next</a>
+                    <% } else { %>
+                        <span class="ao-page disabled">Next</span>
+                    <% } %>
+
+                </nav>
+
+            <% } %>
+
+        <% } %>
+
+    </main>
+
+</div>
+
+<script src="/js/salesReport.js"></script>
+
+</body>
+
+</html>

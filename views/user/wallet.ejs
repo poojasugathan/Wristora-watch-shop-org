@@ -1,0 +1,221 @@
+<%- include("../partials/header", { title: title, user: user }) %>
+
+<link rel="stylesheet" href="/css/profile.css">
+<link rel="stylesheet" href="/css/orders.css">
+<link rel="stylesheet" href="/css/wallet.css">
+
+<%
+    // Whole rupees without decimals, otherwise 2 decimals.
+    const money = (n) => Number(n).toLocaleString("en-IN", {
+        minimumFractionDigits: Number.isInteger(n) ? 0 : 2,
+        maximumFractionDigits: 2
+    });
+
+    // 25 - 07 - 2024
+    const formatDate = (d) =>
+        new Date(d).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            timeZone: "Asia/Kolkata"
+        }).replace(/\//g, " - ");
+
+    const pageLink = (page) => "/wallet?page=" + page;
+%>
+
+<main class="profile-page orders-page wallet-page">
+
+    <div class="profile-container">
+
+        <%- include("partials/profileSidebar", { active: "wallet" }) %>
+
+        <section class="orders-content wallet-content">
+
+            <h1 class="wallet-title">My Wallet</h1>
+
+            <% if (errorMessage) { %>
+                <div class="orders-alert orders-alert-error"><%= errorMessage %></div>
+            <% } %>
+
+            <!-- BALANCE (read from MongoDB by the server) -->
+            <div class="wallet-balance-card">
+                <span class="wallet-balance-label">Available wallet balance :</span>
+                <strong class="wallet-balance-amount" id="wallet-balance">&#8377;<%= Number(balance).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></strong>
+            </div>
+
+            <!-- TRANSACTIONS -->
+            <div class="wallet-table-wrap">
+
+                <% if (transactions.length > 0) { %>
+
+                    <table class="wallet-table">
+
+                        <thead>
+                            <tr>
+                                <th>Transaction ID</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Description</th>
+                                <th class="wallet-col-status">Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <% transactions.forEach((tx) => { %>
+                                <tr>
+                                    <td class="wallet-tx-id">#<%= tx.transactionId %></td>
+                                    <td><%= formatDate(tx.createdAt) %></td>
+                                    <td class="wallet-tx-amount">&#8377;<%= money(tx.amount) %></td>
+                                    <td class="wallet-tx-desc"><%= tx.description %></td>
+                                    <td class="wallet-col-status">
+                                        <span class="wallet-tx-type wallet-tx-<%= tx.type.toLowerCase() %>">
+                                            <%= tx.type %>
+                                        </span>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+
+                    </table>
+
+                <% } else { %>
+
+                    <div class="wallet-empty">
+                        <i class="bi bi-wallet2"></i>
+                        <h2>No transactions yet</h2>
+                        <p>Refunds and wallet payments will appear here.</p>
+                    </div>
+
+                <% } %>
+
+            </div>
+
+            <% if (totalPages > 1) { %>
+
+                <nav class="orders-pagination" aria-label="Wallet pages">
+
+                    <% if (currentPage > 1) { %>
+                        <a href="<%= pageLink(currentPage - 1) %>" class="orders-page-btn">&laquo; Previous</a>
+                    <% } else { %>
+                        <span class="orders-page-btn disabled">&laquo; Previous</span>
+                    <% } %>
+
+                    <div class="orders-page-numbers">
+                        <% pageNumbers.forEach((pageItem) => { %>
+                            <% if (pageItem === "...") { %>
+                                <span class="orders-page-ellipsis">&hellip;</span>
+                            <% } else { %>
+                                <a
+                                    href="<%= pageLink(pageItem) %>"
+                                    class="orders-page-number <%= pageItem === currentPage ? 'active' : '' %>"
+                                ><%= pageItem %></a>
+                            <% } %>
+                        <% }) %>
+                    </div>
+
+                    <% if (currentPage < totalPages) { %>
+                        <a href="<%= pageLink(currentPage + 1) %>" class="orders-page-btn">Next &raquo;</a>
+                    <% } else { %>
+                        <span class="orders-page-btn disabled">Next &raquo;</span>
+                    <% } %>
+
+                </nav>
+
+            <% } %>
+
+            <div class="wallet-add-row">
+                <button
+                    type="button"
+                    class="wallet-add-btn"
+                    id="wallet-open-modal"
+                    <%= topupEnabled ? "" : "disabled" %>
+                >
+                    Add Money
+                </button>
+
+                <% if (!topupEnabled) { %>
+                    <p class="wallet-add-note">Adding money is not available right now.</p>
+                <% } %>
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+
+<!-- =====================================================
+     ADD MONEY WINDOW
+     The page only collects an amount. The server checks it,
+     creates the Razorpay payment, and verifies the payment
+     before any money is added.
+====================================================== -->
+
+<% if (topupEnabled) { %>
+
+    <div class="wallet-modal-overlay" id="wallet-modal" hidden>
+
+        <div class="wallet-modal" role="dialog" aria-modal="true" aria-labelledby="wallet-modal-title">
+
+            <button type="button" class="wallet-modal-close" id="wallet-close-modal" aria-label="Close">
+                <i class="bi bi-x-lg"></i>
+            </button>
+
+            <h2 class="wallet-modal-title" id="wallet-modal-title">Add Money to Wallet</h2>
+
+            <div id="wallet-modal-error" class="wallet-modal-error" style="display:none;"></div>
+
+            <label class="wallet-field-label" for="wallet-amount">Enter Amount</label>
+            <input
+                type="number"
+                id="wallet-amount"
+                class="wallet-field"
+                min="<%= topupMin %>"
+                max="<%= topupMax %>"
+                step="1"
+                inputmode="numeric"
+                placeholder="&#8377; <%= topupMin %> - <%= topupMax.toLocaleString('en-IN') %>"
+            >
+
+            <div class="wallet-or"><span>OR</span></div>
+
+            <div class="wallet-quick">
+                <% quickAmounts.forEach((amount) => { %>
+                    <button type="button" class="wallet-quick-btn" data-amount="<%= amount %>">
+                        &#8377;<%= amount %>
+                    </button>
+                <% }) %>
+            </div>
+
+            <label class="wallet-field-label wallet-field-label-caps" for="wallet-description">Description</label>
+            <input
+                type="text"
+                id="wallet-description"
+                class="wallet-field"
+                maxlength="<%= descriptionMax %>"
+                placeholder="Description"
+                autocomplete="off"
+            >
+
+            <div class="wallet-modal-footer">
+                <span class="wallet-modal-pay">Payment : Razorpay</span>
+                <button type="button" class="wallet-modal-submit" id="wallet-submit">
+                    Add Money
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        // Only limits for the friendly message. The server checks them again.
+        window.WALLET_LIMITS = { min: <%= topupMin %>, max: <%= topupMax %> };
+    </script>
+    <script src="/js/wallet.js"></script>
+
+<% } %>
+
+<%- include("../partials/footer2") %>

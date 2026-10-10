@@ -3,6 +3,7 @@
 <link rel="stylesheet" href="/css/products.css">
 <link rel="stylesheet" href="/css/cart.css">
 <link rel="stylesheet" href="/css/checkout.css">
+<link rel="stylesheet" href="/css/coupon.css">
 
 <%
     // Show whole rupees without decimals, otherwise 2 decimals.
@@ -10,6 +11,20 @@
         minimumFractionDigits: Number.isInteger(n) ? 0 : 2,
         maximumFractionDigits: 2
     });
+%>
+
+<%
+    // Phase 55: the coupon (if any) that the SERVER validated for this page.
+    const couponApplied =
+        typeof appliedCoupon !== "undefined" && appliedCoupon ? appliedCoupon : null;
+
+    // Phase 56: the wallet balance the SERVER read from MongoDB.
+    // It is only displayed here. The real check happens again when the
+    // order is placed.
+    const walletAmount =
+        typeof walletBalance !== "undefined" ? Number(walletBalance) : 0;
+
+    const walletEnough = walletAmount >= pricing.finalTotal;
 %>
 
 <main class="cart-page">
@@ -31,6 +46,10 @@
 
         <% if (typeof notice !== "undefined" && notice) { %>
             <div class="checkout-notice"><%= notice %></div>
+        <% } %>
+
+        <% if (typeof couponNotice !== "undefined" && couponNotice) { %>
+            <div class="checkout-notice"><%= couponNotice %></div>
         <% } %>
 
         <div id="checkout-client-error" class="products-error" style="display:none;"></div>
@@ -139,23 +158,80 @@
                             <h2>Payment Method</h2>
                         </div>
 
-                        <label class="checkout-address-card">
+                        <div class="checkout-address-list">
 
-                            <input
-                                type="radio"
-                                name="paymentMethod"
-                                value="COD"
-                                checked
+                            <label class="checkout-address-card">
+
+                                <input
+                                    type="radio"
+                                    name="paymentMethod"
+                                    value="COD"
+                                    checked
+                                >
+
+                                <div class="checkout-address-details">
+                                    <span class="checkout-address-name"><%= paymentLabel %></span>
+                                    <p class="checkout-address-line">
+                                        Pay in cash when your order is delivered.
+                                    </p>
+                                </div>
+
+                            </label>
+
+                            <label class="checkout-address-card <%= onlineEnabled ? '' : 'is-disabled' %>">
+
+                                <input
+                                    type="radio"
+                                    name="paymentMethod"
+                                    value="ONLINE"
+                                    <%= onlineEnabled ? "" : "disabled" %>
+                                >
+
+                                <div class="checkout-address-details">
+                                    <span class="checkout-address-name"><%= onlineLabel %></span>
+                                    <p class="checkout-address-line">
+                                        <% if (onlineEnabled) { %>
+                                            Pay securely with UPI, card or net banking.
+                                        <% } else { %>
+                                            Online payment is not available right now.
+                                        <% } %>
+                                    </p>
+                                </div>
+
+                            </label>
+
+                            <!-- Phase 56: pay with the wallet -->
+                            <label
+                                class="checkout-address-card <%= walletEnough ? '' : 'is-disabled' %>"
+                                id="wallet-option"
+                                data-balance="<%= walletAmount %>"
                             >
 
-                            <div class="checkout-address-details">
-                                <span class="checkout-address-name"><%= paymentLabel %></span>
-                                <p class="checkout-address-line">
-                                    Pay in cash when your order is delivered.
-                                </p>
-                            </div>
+                                <input
+                                    type="radio"
+                                    name="paymentMethod"
+                                    value="WALLET"
+                                    <%= walletEnough ? "" : "disabled" %>
+                                >
 
-                        </label>
+                                <div class="checkout-address-details">
+                                    <span class="checkout-address-name"><%= walletLabel %></span>
+                                    <p class="checkout-address-line">
+                                        Available balance: &#8377;<%= money(walletAmount) %>
+                                    </p>
+                                    <p
+                                        class="checkout-address-line"
+                                        id="wallet-shortfall"
+                                        style="<%= walletEnough ? 'display:none;' : '' %>"
+                                    >
+                                        Your balance is not enough for this order.
+                                        <a href="/wallet">Add money</a>
+                                    </p>
+                                </div>
+
+                            </label>
+
+                        </div>
 
                     </section>
 
@@ -234,12 +310,66 @@
                         </div>
                     <% } %>
 
-                    <% if (pricing.tax > 0) { %>
-                        <div class="checkout-summary-row">
-                            <span>Tax</span>
-                            <span>&#8377;<%= money(pricing.tax) %></span>
+                    <!-- Phase 55: coupon box. The page only DISPLAYS what the
+                         server calculated; it never decides the discount. -->
+                    <div class="coupon-box">
+
+                        <p class="coupon-title">Have a coupon?</p>
+
+                        <div
+                            id="coupon-apply-area"
+                            style="<%= couponApplied ? 'display:none;' : '' %>"
+                        >
+                            <div class="coupon-input-row">
+                                <input
+                                    type="text"
+                                    id="coupon-input"
+                                    maxlength="20"
+                                    placeholder="Enter coupon code"
+                                    autocomplete="off"
+                                >
+                                <button type="button" id="coupon-apply-btn" class="coupon-apply-btn">
+                                    Apply
+                                </button>
+                            </div>
                         </div>
-                    <% } %>
+
+                        <div
+                            id="coupon-applied-area"
+                            class="coupon-applied"
+                            style="<%= couponApplied ? '' : 'display:none;' %>"
+                        >
+                            <span>
+                                <i class="bi bi-tag-fill"></i>
+                                <strong id="coupon-applied-code"><%= couponApplied ? couponApplied.code : "" %></strong>
+                                applied
+                            </span>
+                            <button type="button" id="coupon-remove-btn" class="coupon-remove-btn">
+                                Remove
+                            </button>
+                        </div>
+
+                        <p id="coupon-message" class="coupon-message"></p>
+
+                    </div>
+
+                    <div
+                        id="coupon-row"
+                        class="checkout-summary-row"
+                        style="<%= pricing.couponDiscount > 0 ? '' : 'display:none;' %>"
+                    >
+                        <span>Coupon Discount</span>
+                        <span class="checkout-summary-free" id="coupon-amount">- &#8377;<%= money(pricing.couponDiscount || 0) %></span>
+                    </div>
+
+                    <div
+                        id="tax-row"
+                        class="checkout-summary-row"
+                        style="<%= pricing.tax > 0 ? '' : 'display:none;' %>"
+                    >
+                        <span>Tax</span>
+                        <span id="tax-amount">&#8377;<%= money(pricing.tax) %></span>
+                    </div>
 
                     <div class="checkout-summary-row">
                         <span>Shipping</span>
@@ -254,11 +384,11 @@
 
                     <div class="checkout-summary-row checkout-summary-total">
                         <span>Total</span>
-                        <span>&#8377;<%= money(pricing.finalTotal) %></span>
+                        <span id="summary-total">&#8377;<%= money(pricing.finalTotal) %></span>
                     </div>
 
                     <p class="checkout-summary-payment">
-                        Payment: <strong><%= paymentLabel %></strong>
+                        Payment: <strong id="summary-payment-label"><%= paymentLabel %></strong>
                     </p>
 
                     <button
@@ -284,6 +414,11 @@
 
 </main>
 
+<% if (onlineEnabled) { %>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="/js/payment.js"></script>
+<% } %>
+<script src="/js/coupon.js"></script>
 <script src="/js/checkout.js"></script>
 
 <%- include("../partials/footer2") %>

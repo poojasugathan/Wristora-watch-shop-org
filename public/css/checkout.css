@@ -408,3 +408,10 @@
     }
 
 }
+
+/* ---- Payment method card that cannot be chosen (Phase 54) ---- */
+
+.checkout-address-card.is-disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}

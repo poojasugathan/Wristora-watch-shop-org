@@ -1,0 +1,92 @@
+<%- include("../partials/header", { title: title, user: user }) %>
+
+<link rel="stylesheet" href="/css/payment.css">
+
+<%
+    const money = (n) => Number(n).toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+
+    // Example result: 28-09-2025, 13:22:16 (Indian time)
+    const paidAtText = new Date(order.paidAt || order.updatedAt)
+        .toLocaleString("en-GB", {
+            timeZone: "Asia/Kolkata",
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false
+        })
+        .replace(/\//g, "-");
+%>
+
+<main class="payment-page">
+
+    <div class="payment-card">
+
+        <div class="payment-icon payment-icon-success">
+            <i class="bi bi-check-lg"></i>
+        </div>
+
+        <h1 class="payment-title">Payment Success!</h1>
+
+        <p class="payment-text">
+            Thank you for your order. Your payment has been confirmed.
+        </p>
+
+        <div class="payment-rows">
+
+            <div class="payment-row">
+                <span>Order ID</span>
+                <strong><%= order.orderId %></strong>
+            </div>
+
+            <div class="payment-row">
+                <span>Transaction Id</span>
+                <strong class="payment-mono"><%= order.razorpayPaymentId %></strong>
+            </div>
+
+            <div class="payment-row">
+                <span>Payment Time</span>
+                <strong><%= paidAtText %></strong>
+            </div>
+
+            <div class="payment-row">
+                <span>Payment Method</span>
+                <strong>Razorpay</strong>
+            </div>
+
+            <div class="payment-row">
+                <span>Sender Name</span>
+                <strong><%= customerName %></strong>
+            </div>
+
+        </div>
+
+        <div class="payment-divider"></div>
+
+        <div class="payment-amount">
+            <span>Amount</span>
+            <strong>&#8377;<%= money(order.finalTotal) %></strong>
+        </div>
+
+        <div class="payment-actions">
+
+            <a href="/orders/<%= order.orderId %>" class="payment-btn payment-btn-dark">
+                View Order Details
+            </a>
+
+            <a href="/products" class="payment-btn payment-btn-light">
+                Continue Shopping
+            </a>
+
+        </div>
+
+    </div>
+
+</main>
+
+<%- include("../partials/footer2") %>

@@ -263,6 +263,9 @@
 .order-status-shipped,
 .order-status-out-for-delivery { color: #1f6fb2; }
 .order-status-return-requested { color: #b06a1a; }
+.order-status-returned { color: #6b46c1; }
+.order-status-payment-pending { color: #b06a1a; }
+.order-status-payment-failed { color: #c8202f; }
 
 .od-meta .order-status {
     margin-left: 12px;
@@ -749,4 +752,10 @@
         justify-content: stretch;
         flex-direction: column;
     }
+}
+
+/* ---- Retry Payment button inside the order-details alert (Phase 54) ---- */
+
+.orders-alert .js-retry-payment {
+    margin-left: 12px;
 }
