@@ -15,6 +15,7 @@ const profileRoutes = require("./routes/profileRoutes");
 const addressRoutes = require("./routes/addressRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const productRoutes = require("./routes/productRoutes");
+const productController = require("./controllers/productController");
 const cartRoutes = require("./routes/cartRoutes");
 const wishlistRoutes = require("./routes/wishlistRoutes");
 const checkoutRoutes= require("./routes/checkoutRoutes");
@@ -58,10 +59,7 @@ app.use(noCache);
 
 app.use(express.static(path.join(__dirname, "public")));
 
-// Phase 58: the admin dashboard chart library (Chart.js) is served straight
-// from node_modules, so no extra file has to be copied into /public.
-// If "npm install chart.js@4" has not been run yet, the app still starts and
-// the dashboard simply shows a note instead of the chart.
+
 const chartJsFolder = path.join(__dirname, "node_modules", "chart.js", "dist");
 
 if (fs.existsSync(chartJsFolder)) {
@@ -90,11 +88,7 @@ app.use("/checkout", checkoutRoutes);
 app.use("/orders", orderRoutes);
 app.use("/wallet", walletRoutes);
 
-app.get("/", (req, res) => {
-    res.render("user/home", {
-        title: "Wristora"
-    });
-});
+app.get("/", productController.loadHomePage);
 
 
 app.use(notFoundHandler);

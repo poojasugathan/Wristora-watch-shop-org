@@ -64,135 +64,48 @@
             NEW ACQUISITIONS
         </h2>
 
+        <% if (acquisitions.length === 0) { %>
+            <p class="home-empty-text">New pieces are arriving soon.</p>
+        <% } %>
+
         <div class="product-grid">
 
-            <!-- Product 1 -->
-            <div class="product-card">
+            <% acquisitions.forEach((product) => { %>
 
-                <div class="product-image-box">
+                <a href="/products/<%= product._id %>" class="product-card">
 
-                    <img
-                        src="/images/rolex-daytona.png"
-                        alt="Rolex Cosmograph Daytona"
-                    >
+                    <div class="product-image-box">
 
-                </div>
+                        <% if (product.discount && product.discount > 0) { %>
+                            <span class="product-badge rare">-<%= product.discount %>%</span>
+                        <% } else if (product.stock <= 0) { %>
+                            <span class="product-badge">SOLD OUT</span>
+                        <% } %>
 
-                <h3>Rolex Cosmograph Daytona</h3>
+                        <% if (product.images && product.images.length > 0) { %>
+                            <img src="<%= product.images[0].url %>" alt="<%= product.productName %>">
+                        <% } %>
 
-                <p class="product-category">
-                    Yellow Gold
-                </p>
+                    </div>
 
-                <div class="rating">
-                    ★★★★★
-                    <span>5.0/5</span>
-                </div>
+                    <h3><%= product.productName %></h3>
 
-                <p class="product-price">
-                    ₹32,400
-                </p>
+                    <% if (product.category && product.category.name) { %>
+                        <p class="product-category"><%= product.category.name %></p>
+                    <% } else if (product.brand) { %>
+                        <p class="product-category"><%= product.brand %></p>
+                    <% } %>
 
-            </div>
+                    <p class="product-price">
+                        &#8377;<%= product.sellingPrice.toLocaleString("en-IN") %>
+                        <% if (product.discount && product.discount > 0) { %>
+                            <del>&#8377;<%= product.price.toLocaleString("en-IN") %></del>
+                        <% } %>
+                    </p>
 
+                </a>
 
-            <!-- Product 2 -->
-            <div class="product-card">
-
-                <div class="product-image-box">
-
-                    <span class="product-badge">
-                        RESERVED
-                    </span>
-
-                    <img
-                        src="/images/patek-nautilus.jpg"
-                        alt="Patek Philippe Nautilus"
-                    >
-
-                </div>
-
-                <h3>Patek Philippe Nautilus</h3>
-
-                <p class="product-category">
-                    5711A
-                </p>
-
-                <div class="rating">
-                    ★★★★★
-                    <span>4.8/5</span>
-                </div>
-
-                <p class="product-price">
-                    ₹98,000
-                </p>
-
-            </div>
-
-
-            <!-- Product 3 -->
-            <div class="product-card">
-
-                <div class="product-image-box">
-
-                    <img
-                        src="/images/audemars-royal-oak.jpg"
-                        alt="Audemars Piguet Royal Oak"
-                    >
-
-                </div>
-
-                <h3>Audemars Piguet Royal Oak</h3>
-
-                <p class="product-category">
-                    15500ST
-                </p>
-
-                <div class="rating">
-                    ★★★★★
-                    <span>5.0/5</span>
-                </div>
-
-                <p class="product-price">
-                    ₹45,500
-                </p>
-
-            </div>
-
-
-            <!-- Product 4 -->
-            <div class="product-card">
-
-                <div class="product-image-box">
-
-                    <span class="product-badge rare">
-                        -10% RARE
-                    </span>
-
-                    <img
-                        src="/images/vacheron-222.jpg"
-                        alt="Vacheron Constantin 222"
-                    >
-
-                </div>
-
-                <h3>Vacheron Constantin 222</h3>
-
-                <p class="product-category">
-                    42042
-                </p>
-
-                <div class="rating">
-                    ★★★★★
-                    <span>4.9/5</span>
-                </div>
-
-                <p class="product-price">
-                    ₹72,000
-                    <del>₹80,000</del>
-                </p>
-
-            </div>
+            <% }) %>
 
         </div>
 
@@ -214,114 +127,48 @@
             NEW ARRIVALS
         </h2>
 
+        <% if (arrivals.length === 0) { %>
+            <p class="home-empty-text">New pieces are arriving soon.</p>
+        <% } %>
+
         <div class="product-grid">
 
-            <!-- Product 1 -->
-            <div class="product-card">
+            <% arrivals.forEach((product) => { %>
 
-                <div class="product-image-box white-bg">
+                <a href="/products/<%= product._id %>" class="product-card">
 
-                    <img
-                        src="/images/omega-speedmaster.jpg"
-                        alt="Omega Speedmaster Moonwatch"
-                    >
+                    <div class="product-image-box white-bg">
 
-                </div>
+                        <% if (product.discount && product.discount > 0) { %>
+                            <span class="product-badge rare">-<%= product.discount %>%</span>
+                        <% } else if (product.stock <= 0) { %>
+                            <span class="product-badge">SOLD OUT</span>
+                        <% } %>
 
-                <h3>
-                    Omega Speedmaster 'Moonwatch'
-                </h3>
+                        <% if (product.images && product.images.length > 0) { %>
+                            <img src="<%= product.images[0].url %>" alt="<%= product.productName %>">
+                        <% } %>
 
-                <p class="product-category">
-                    Professional Series
-                </p>
+                    </div>
 
-                <p class="product-price">
-                    ₹7,200
-                </p>
+                    <h3><%= product.productName %></h3>
 
-            </div>
+                    <% if (product.category && product.category.name) { %>
+                        <p class="product-category"><%= product.category.name %></p>
+                    <% } else if (product.brand) { %>
+                        <p class="product-category"><%= product.brand %></p>
+                    <% } %>
 
+                    <p class="product-price">
+                        &#8377;<%= product.sellingPrice.toLocaleString("en-IN") %>
+                        <% if (product.discount && product.discount > 0) { %>
+                            <del>&#8377;<%= product.price.toLocaleString("en-IN") %></del>
+                        <% } %>
+                    </p>
 
-            <!-- Product 2 -->
-            <div class="product-card">
+                </a>
 
-                <div class="product-image-box white-bg">
-
-                    <img
-                        src="/images/cartier-tank.jpg"
-                        alt="Cartier Tank Louis"
-                    >
-
-                </div>
-
-                <h3>
-                    Cartier Tank Louis
-                </h3>
-
-                <p class="product-category">
-                    Yellow Gold
-                </p>
-
-                <p class="product-price">
-                    ₹12,400
-                </p>
-
-            </div>
-
-
-            <!-- Product 3 -->
-            <div class="product-card">
-
-                <div class="product-image-box white-bg">
-
-                    <img
-                        src="/images/iwc-pilot.jpg"
-                        alt="IWC Big Pilot Watch"
-                    >
-
-                </div>
-
-                <h3>
-                    IWC Big Pilot's Watch
-                </h3>
-
-                <p class="product-category">
-                    Edition Heritage
-                </p>
-
-                <p class="product-price">
-                    ₹11,500
-                </p>
-
-            </div>
-
-
-            <!-- Product 4 -->
-            <div class="product-card">
-
-                <div class="product-image-box white-bg">
-
-                    <img
-                        src="/images/jlc-reverso.jpg"
-                        alt="JLC Reverso Tribute"
-                    >
-
-                </div>
-
-                <h3>
-                    JLC Reverso Tribute
-                </h3>
-
-                <p class="product-category">
-                    Duoface Calendar
-                </p>
-
-                <p class="product-price">
-                    ₹14,900
-                </p>
-
-            </div>
+            <% }) %>
 
         </div>
 
@@ -366,14 +213,14 @@
                 >
             </a>
 
-            <a href="/products?brand=Patek Philippe" class="brand-card">
+            <a href="/products?brand=Patek%20Philippe" class="brand-card">
                 <img
                     src="/images/patek-logo.jpg"
                     alt="Patek Philippe"
                 >
             </a>
 
-            <a href="/products?brand=Audemars Piguet" class="brand-card">
+            <a href="/products?brand=Audemars%20Piguet" class="brand-card">
                 <img
                     src="/images/ap-logo.jpg"
                     alt="Audemars Piguet"

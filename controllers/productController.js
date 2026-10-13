@@ -629,7 +629,57 @@ const loadProductDetails = async (req, res) => {
  
  
 
+
+// =====================================================
+// HOME PAGE
+// Shows real products from the collection in the two
+// home sections. If the shop has fewer than 8 products,
+// the same products are repeated to fill every slot.
+// =====================================================
+
+const HOME_SECTION_SIZE = 4;
+
+const loadHomePage = async (req, res, next) => {
+
+    try {
+
+        const products = await Product.find({
+            isDeleted: false,
+            isListed: true,
+            isBlocked: false
+        })
+            .populate("category", "name")
+            .sort({ createdAt: -1 })
+            .limit(HOME_SECTION_SIZE * 2)
+            .lean();
+
+        // Repeat products when there are not enough of them
+        const filled = [];
+
+        if (products.length > 0) {
+            for (let i = 0; i < HOME_SECTION_SIZE * 2; i++) {
+                filled.push(products[i % products.length]);
+            }
+        }
+
+        return res.render("user/home", {
+            title: "Wristora",
+            acquisitions: filled.slice(0, HOME_SECTION_SIZE),
+            arrivals: filled.slice(HOME_SECTION_SIZE, HOME_SECTION_SIZE * 2)
+        });
+
+    } catch (error) {
+
+        console.error("Load home page error:", error);
+
+        return next(error);
+
+    }
+
+};
+
 module.exports = {
+    loadHomePage,
     loadProductListing,
 
     loadProductDetails
